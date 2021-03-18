@@ -1,0 +1,81 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.Login" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">#2E2E2E</item>
+        <item name="colorPrimaryVariant">@color/white</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/teal_200</item>
+        <item name="colorSecondaryVariant">@color/teal_700</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <item name="android:windowLightStatusBar">true</item>
+
+        <item name="fontFamily">@font/quicksand_medium</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <!-- Customize your theme here. -->
+    </style>
+
+    <style name="Theme.Home" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">#2E2E2E</item>
+        <item name="colorPrimaryVariant">@color/white</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/teal_200</item>
+        <item name="colorSecondaryVariant">@color/teal_700</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:statusBarColor">@color/light</item>
+
+        <item name="fontFamily">@font/quicksand_medium</item>
+        <!-- Status bar color. -->
+        <!-- Customize your theme here. -->
+    </style>
+
+    <style name="NumberPickerStyle">
+        <item name="android:textSize">22dp</item>
+        <item name="android:textColorPrimary">@color/darkgrey</item>
+        <item name="android:colorControlNormal" tools:targetApi="lollipop">@color/darkgrey</item>
+    </style>
+
+    <style name="Theme.Details" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">#2E2E2E</item>
+        <item name="colorPrimaryVariant">@color/white</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/teal_200</item>
+        <item name="colorSecondaryVariant">@color/teal_700</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:statusBarColor">#6DE3E3E3</item>
+
+        <item name="fontFamily">@font/quicksand_medium</item>
+        <!-- Status bar color. -->
+        <!-- Customize your theme here. -->
+    </style>
+
+
+    <style name="ProgressDialog" parent="android:Theme.DeviceDefault.Dialog">
+        <item name="DialogTitleAppearance">@android:style/TextAppearance.Medium</item>
+        <item name="DialogTitleText">Verifying Code!</item>
+        <item name="DialogSpotColor">@color/white</item>
+        <item name="DialogSpotCount">4</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:background">@color/darkgrey</item>
+    </style>
+
+
+    <style name="SelectableItemTheme">
+        <item name="colorControlHighlight">#4C4C4C</item>
+    </style>
+
+    <style name="SelectableItemBackground">
+        <item name="android:theme">@style/SelectableItemTheme</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+    </style>
+
+
+</resources>
