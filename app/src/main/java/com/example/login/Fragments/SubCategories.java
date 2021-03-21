@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.login.Cart;
+import com.example.login.Home;
 import com.example.login.R;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
@@ -182,7 +184,34 @@ public class SubCategories extends Fragment {
 
             holder.name.setText(items.get(position));
 
-            if (position == 0) {
+            Home home=(Home)getActivity();
+            Log.i("ct",home.cat);
+
+            if(home.cat.equals(items.get(position)))
+            {
+                holder.name.setTextSize(18);
+                holder.name.setTypeface(holder.name.getTypeface(), Typeface.BOLD);
+                holder.name.setTextColor(Color.BLACK);
+                home.cat="";
+
+
+
+                Query query = FirebaseDatabase.getInstance().getReference().child("Items").orderByChild("subcategory").equalTo(holder.name.getText().toString());
+
+
+                FirebaseRecyclerOptions<itemdetails> options = new FirebaseRecyclerOptions.Builder<itemdetails>()
+                        .setQuery(query, new SnapshotParser<itemdetails>() {
+                            @NonNull
+                            @Override
+                            public itemdetails parseSnapshot(@NonNull DataSnapshot snapshot) {
+                                return new itemdetails(snapshot.child("image").getValue(String.class), snapshot.child("name").getValue(String.class), snapshot.child("rating").getValue(String.class), snapshot.child("category").getValue(String.class), snapshot.child("price").getValue(String.class), snapshot.getKey());
+                            }
+                        }).build();
+
+                firebaseRecyclerAdapter.updateOptions(options);
+            }
+
+            if (position == 0 && home.cat.equals("")) {
                 holder.name.setTextSize(18);
                 holder.name.setTypeface(holder.name.getTypeface(), Typeface.BOLD);
                 holder.name.setTextColor(Color.BLACK);

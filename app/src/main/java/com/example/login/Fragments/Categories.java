@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.login.Cart;
+import com.example.login.Home;
 import com.example.login.R;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
@@ -62,6 +64,7 @@ public class Categories extends Fragment {
         recyclerView = view.findViewById(R.id.listrecyview);
         recyclerView2 = view.findViewById(R.id.productsrecyview);
         progressBar=view.findViewById(R.id.progressbar);
+
 
 
         view.findViewById(R.id.cart).setOnClickListener(new View.OnClickListener() {
@@ -122,14 +125,14 @@ public class Categories extends Fragment {
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.HORIZONTAL, false));
 
-        FirebaseDatabase.getInstance().getReference().child("Items").addListenerForSingleValueEvent(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference().child("Categories").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 its = new ArrayList<>();
                 its.add("All");
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    if (!its.contains(dataSnapshot.child("category").getValue(String.class))) {
-                        its.add(dataSnapshot.child("category").getValue(String.class));
+                    if (!its.contains(dataSnapshot.child("name").getValue(String.class))) {
+                        its.add(dataSnapshot.child("name").getValue(String.class));
                     }
                 }
 
@@ -185,18 +188,57 @@ public class Categories extends Fragment {
         }
 
         @Override
+        public void onViewAttachedToWindow(@NonNull SubCategoryViewHolder holder) {
+            super.onViewAttachedToWindow(holder);
+          /*  Home home=(Home)getActivity();
+            if(home.posi!=0)
+            {
+                    Long itemId = recyclerView.getAdapter().getItemId(home.posi);
+
+                    View itemView = recyclerView.findViewHolderForItemId(itemId).itemView;
+                    Log.i("pos", String.valueOf(itemId));
+
+                    itemView.performClick();
+            }*/
+        }
+
+        @Override
         public void onBindViewHolder(@NonNull SubCategoryViewHolder holder, int position) {
 
             holder.name.setText(items.get(position));
+            Home home=(Home)getActivity();
+            if(home.cat.equals(items.get(position)))
+            {
+                holder.name.setTextSize(18);
+                holder.name.setTypeface(holder.name.getTypeface(), Typeface.BOLD);
+                holder.name.setTextColor(Color.BLACK);
+                home.cat="";
 
-            if (position == 0) {
+
+                Query query = FirebaseDatabase.getInstance().getReference().child("Items").orderByChild("category").equalTo(holder.name.getText().toString());
+
+
+                FirebaseRecyclerOptions<itemdetails> options = new FirebaseRecyclerOptions.Builder<itemdetails>()
+                        .setQuery(query, new SnapshotParser<itemdetails>() {
+                            @NonNull
+                            @Override
+                            public itemdetails parseSnapshot(@NonNull DataSnapshot snapshot) {
+                                return new itemdetails(snapshot.child("image").getValue(String.class), snapshot.child("name").getValue(String.class), snapshot.child("rating").getValue(String.class), snapshot.child("category").getValue(String.class), snapshot.child("price").getValue(String.class), snapshot.getKey());
+                            }
+                        }).build();
+
+                firebaseRecyclerAdapter.updateOptions(options);
+            }
+
+            if (position == 0 && home.cat.equals("")) {
                 holder.name.setTextSize(18);
                 holder.name.setTypeface(holder.name.getTypeface(), Typeface.BOLD);
                 holder.name.setTextColor(Color.BLACK);
             }
 
 
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
+
+            holder.name.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 

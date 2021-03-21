@@ -72,10 +72,17 @@
         <item name="colorControlHighlight">#4C4C4C</item>
     </style>
 
+    <style name="SelectableItemTheme2">
+        <item name="colorControlHighlight">#D1D1D1</item>
+    </style>
+
     <style name="SelectableItemBackground">
         <item name="android:theme">@style/SelectableItemTheme</item>
         <item name="android:background">?attr/selectableItemBackground</item>
     </style>
 
-
+    <style name="SelectableItemBackground2">
+        <item name="android:theme">@style/SelectableItemTheme2</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+    </style>
 </resources>

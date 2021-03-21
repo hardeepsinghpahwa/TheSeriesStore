@@ -41,6 +41,8 @@ public class Home extends AppCompatActivity {
     ArrayList<SliderItem> items;
     SliderView sliderView;
     BottomNavigationView bottomNavigationView;
+    public int posi=0;
+    public String cat="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

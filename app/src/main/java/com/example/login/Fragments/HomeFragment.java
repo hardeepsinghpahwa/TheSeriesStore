@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -35,6 +36,7 @@ import com.facebook.shimmer.ShimmerFrameLayout;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.firebase.ui.database.SnapshotParser;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -64,6 +66,7 @@ public class HomeFragment extends Fragment {
     FirebaseRecyclerAdapter<itemdetails, ItemViewHolder> firebaseRecyclerAdapter,firebaseRecyclerAdapter3;
     FirebaseRecyclerAdapter<itemdetails,CategoryViewHolder>firebaseRecyclerAdapter2;
     ArrayList<String> names;
+    BottomNavigationView bottomNavigationView;
     ShimmerFrameLayout tshirtsshimmer,slideviewshimmer,contentplatformsshimmer;
 
     public HomeFragment() {
@@ -79,6 +82,7 @@ public class HomeFragment extends Fragment {
 
         sliderView = view.findViewById(R.id.imageSlider);
 
+        bottomNavigationView=getActivity().findViewById(R.id.bottom_navigation);
         sliderView.setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION);
         sliderView.setScrollTimeInSec(2);
         sliderView.setAutoCycle(true);
@@ -204,6 +208,18 @@ public class HomeFragment extends Fragment {
                 holder.name.setText(model.getName());
                 Glide.with(getActivity()).load(model.getImage()).into(holder.image);
 
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        /*View view = bottomNavigationView.findViewById(R.id.page_2);
+                        view.performClick();*/
+                        bottomNavigationView.setSelectedItemId(R.id.page_2);
+                        Home home=(Home)getActivity();
+                        home.posi=position;
+                        home.cat=firebaseRecyclerAdapter2.getItem(position).getName();
+                    }
+                });
+
             }
 
             @Override
@@ -322,6 +338,19 @@ public class HomeFragment extends Fragment {
         public void onBindViewHolder(@NonNull SubCategoryViewHolder holder, int position) {
 
             holder.name.setText(items.get(position));
+
+
+            holder.constraintLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    bottomNavigationView.setSelectedItemId(R.id.page_3);
+                    Home home=(Home)getActivity();
+                    home.posi=position;
+                    home.cat=items.get(position);
+
+                }
+            });
 
             Query query2 = FirebaseDatabase.getInstance().getReference().child("Items").orderByChild("subcategory").equalTo(items.get(position));
 
@@ -452,11 +481,13 @@ public class HomeFragment extends Fragment {
 
         TextView name;
         RecyclerView recyclerView;
+        ConstraintLayout constraintLayout;
 
         public SubCategoryViewHolder(@NonNull View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.name);
             recyclerView = itemView.findViewById(R.id.subcategoryrecyview);
+            constraintLayout=itemView.findViewById(R.id.cons5);
         }
     }
 

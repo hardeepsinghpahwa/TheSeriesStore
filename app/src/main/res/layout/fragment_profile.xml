@@ -101,7 +101,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:drawableTint="#9A9A9A"
-        android:gravity="center"
+        android:gravity="left"
         android:textColor="#9A9A9A"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="@+id/name"
