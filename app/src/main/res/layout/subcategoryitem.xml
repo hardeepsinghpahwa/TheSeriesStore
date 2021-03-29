@@ -15,7 +15,7 @@
         android:layout_marginTop="10dp"
         android:orientation="horizontal"
         android:foreground="?attr/selectableItemBackground"
-        android:background="#4FC3F7"
+        android:background="@color/light"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -28,11 +28,10 @@
             android:gravity="left"
             android:padding="10dp"
             android:text="TextView"
-            android:textColor="@color/white"
+            android:textColor="@color/darkgrey"
             android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/imageView10"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -40,17 +39,17 @@
         <androidx.cardview.widget.CardView
             android:layout_width="wrap_content"
             android:layout_height="0dp"
+            app:cardCornerRadius="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
-                android:id="@+id/imageView10"
+                android:id="@+id/image"
                 android:layout_width="100dp"
                 android:layout_height="match_parent"
                 android:layout_gravity="end"
-                android:scaleType="fitXY"
-                android:src="@drawable/big" />
+                android:scaleType="fitXY" />
 
         </androidx.cardview.widget.CardView>
 
@@ -64,4 +63,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cons5" />
+
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -65,7 +65,8 @@ public class HomeFragment extends Fragment {
     RecyclerView tshirts,contentplatforms,shopbycat;
     FirebaseRecyclerAdapter<itemdetails, ItemViewHolder> firebaseRecyclerAdapter,firebaseRecyclerAdapter3;
     FirebaseRecyclerAdapter<itemdetails,CategoryViewHolder>firebaseRecyclerAdapter2;
-    ArrayList<String> names;
+    ArrayList<String> names,images;
+    TextView tshirtsseeall,shopbycontentplatformsseeall,shopbyseriesseeall;
     BottomNavigationView bottomNavigationView;
     ShimmerFrameLayout tshirtsshimmer,slideviewshimmer,contentplatformsshimmer;
 
@@ -100,6 +101,31 @@ public class HomeFragment extends Fragment {
         contentplatforms=view.findViewById(R.id.contentplatformsrecyview);
         shopbycat=view.findViewById(R.id.shopbyseriesrecyview);
 
+
+        tshirtsseeall=view.findViewById(R.id.tshirtsseeall);
+        shopbycontentplatformsseeall=view.findViewById(R.id.shopbycontentplatformsseeall);
+        shopbyseriesseeall=view.findViewById(R.id.shopbyseriesseeall);
+
+        tshirtsseeall.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            }
+        });
+
+        shopbyseriesseeall.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bottomNavigationView.setSelectedItemId(R.id.page_3);
+            }
+        });
+
+
+        shopbycontentplatformsseeall.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bottomNavigationView.setSelectedItemId(R.id.page_2);
+            }
+        });
 
 
         view.findViewById(R.id.cart).setOnClickListener(new View.OnClickListener() {
@@ -269,20 +295,24 @@ public class HomeFragment extends Fragment {
         contentplatforms.setAdapter(firebaseRecyclerAdapter2);
 
 
-        FirebaseDatabase.getInstance().getReference().child("Items").addListenerForSingleValueEvent(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference().child("SubCategories").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 names=new ArrayList<>();
+                images=new ArrayList<>();
 
                 for(DataSnapshot dataSnapshot:snapshot.getChildren())
                 {
-                    if(!names.contains(dataSnapshot.child("subcategory").getValue(String.class)))
+                    if(!names.contains(dataSnapshot.child("name").getValue(String.class)))
                     {
-                        names.add(dataSnapshot.child("subcategory").getValue(String.class));
+                        names.add(dataSnapshot.child("name").getValue(String.class));
                     }
+
+                        images.add(dataSnapshot.child("image").getValue(String.class));
+
                 }
                 shopbycat.setLayoutManager(new LinearLayoutManager(getActivity()));
-                shopbycat.setAdapter(new SubAdapter(names));
+                shopbycat.setAdapter(new SubAdapter(names,images));
             }
 
             @Override
@@ -321,10 +351,11 @@ public class HomeFragment extends Fragment {
 
     public class SubAdapter extends RecyclerView.Adapter<SubCategoryViewHolder>
     {
-        ArrayList<String> items;
+        ArrayList<String> items,imgs;
 
-        public SubAdapter(ArrayList<String> items) {
+        public SubAdapter(ArrayList<String> items, ArrayList<String> imgs) {
             this.items = items;
+            this.imgs = imgs;
         }
 
         @NonNull
@@ -339,6 +370,7 @@ public class HomeFragment extends Fragment {
 
             holder.name.setText(items.get(position));
 
+            Glide.with(getActivity()).load(imgs.get(position)).into(holder.imageView);
 
             holder.constraintLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -368,9 +400,21 @@ public class HomeFragment extends Fragment {
                 protected void onBindViewHolder(@NonNull ItemViewHolder holder, int position, @NonNull itemdetails model) {
 //                holder.category.setText(model.getCategory());
                     holder.name.setText(model.getName());
-                    holder.price.setText(model.getPrice());
+                    Format format = NumberFormat.getCurrencyInstance(new Locale("en", "in"));
+                    holder.price.setText(format.format(new BigDecimal(model.getPrice())));
                     //    holder..setText(model.getRating());
                     Glide.with(getActivity()).load(model.getImage()).into(holder.image);
+
+                    holder.itemView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent=new Intent(getActivity(), ItemDetail.class);
+                            intent.putExtra("id",firebaseRecyclerAdapter.getItem(position).getId());
+                            startActivity(intent);
+                            customType(getActivity(),"left-to-right");
+                        }
+                    });
+
                 }
 
                 @NonNull
@@ -482,12 +526,14 @@ public class HomeFragment extends Fragment {
         TextView name;
         RecyclerView recyclerView;
         ConstraintLayout constraintLayout;
+        ImageView imageView;
 
         public SubCategoryViewHolder(@NonNull View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.name);
             recyclerView = itemView.findViewById(R.id.subcategoryrecyview);
             constraintLayout=itemView.findViewById(R.id.cons5);
+            imageView=itemView.findViewById(R.id.image);
         }
     }
 

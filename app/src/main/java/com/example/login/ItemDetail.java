@@ -3,6 +3,7 @@ package com.example.login;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -60,7 +61,8 @@ public class ItemDetail extends AppCompatActivity {
     TextView name, price, product, detail1, detail2, detail3, detail4, addtowishlist, addtocart;
     RecyclerView colors, sizes;
     String id, colorcode, colorname, size, sizename, currentimage;
-    int no = 0;
+    int no = 0,count=0;
+    ConstraintLayout progresslayout;
     FirebaseRecyclerAdapter<colordetails, ColorViewHolder> firebaseRecyclerAdapter;
     FirebaseRecyclerAdapter<colordetails, SizeViewHolder> firebaseRecyclerAdapter2;
 
@@ -68,6 +70,8 @@ public class ItemDetail extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_detail);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
         colors = findViewById(R.id.colorsrecyview);
         image = findViewById(R.id.image);
@@ -83,6 +87,7 @@ public class ItemDetail extends AppCompatActivity {
         addtowishlist = findViewById(R.id.wishlistitem);
         cart = findViewById(R.id.cart);
         back = findViewById(R.id.back);
+        progresslayout=findViewById(R.id.progresslayout);
 
         back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,11 +105,15 @@ public class ItemDetail extends AppCompatActivity {
             }
         });
 
-        id = "01";
+        //id = "01";
+        id=getIntent().getStringExtra("id");
 
         FirebaseDatabase.getInstance().getReference().child("Items").child(id).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                progresslayout.setVisibility(View.GONE);
                 name.setText(Objects.requireNonNull(snapshot).child("name").getValue(String.class));
                 Format format = NumberFormat.getCurrencyInstance(new Locale("en", "in"));
                 price.setText(format.format(new BigDecimal(Objects.requireNonNull(snapshot).child("price").getValue(String.class))));
@@ -141,49 +150,106 @@ public class ItemDetail extends AppCompatActivity {
                 addtocart.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Map map = new HashMap();
-                        map.put("id", id);
-                        map.put("colorcode", colorcode);
-                        map.put("colorname", colorname);
-                        map.put("size", size);
-                        map.put("sizename", sizename);
-                        map.put("image", currentimage);
+                        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                        progresslayout.bringToFront();
+                        progresslayout.setVisibility(View.VISIBLE);
 
-                        FirebaseDatabase.getInstance().getReference().child("Profiles").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Cart").child(UUID.randomUUID().toString()).setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        FirebaseDatabase.getInstance().getReference().child("Profiles").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Cart").addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()) {
-                                    Toast.makeText(ItemDetail.this, "Added", Toast.LENGTH_SHORT).show();
-                                    Sneaker.with(ItemDetail.this)
-                                            .setTitle("Item Added To Cart", R.color.white)
-                                            .setMessage("Check Your Cart", R.color.white)
-                                            .setDuration(2000)
-                                            .setIcon(R.drawable.info, R.color.white)
-                                            .autoHide(true)
-                                            .setHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
-                                            .setCornerRadius(10, 0)
-                                            .setOnSneakerClickListener(new OnSneakerClickListener() {
-                                                @Override
-                                                public void onSneakerClick(View view) {
-                                                    startActivity(new Intent(ItemDetail.this, Cart.class));
-                                                    customType(ItemDetail.this, "fadein-to-fadeout");
-                                                }
-                                            })
-                                            .sneak(R.color.green);
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                count=0;
+                                for(DataSnapshot dataSnapshot:snapshot.getChildren())
+                                {
+                                    if(dataSnapshot.child("id").getValue(String.class).equals(id) && dataSnapshot.child("colorcode").getValue(String.class).equals(colorcode) && dataSnapshot.child("size").getValue(String.class).equals(size))
+                                    {
+                                        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                                        Log.i("colr",colorcode);
+                                        Log.i("colr2",dataSnapshot.child("colorcode").getValue(String.class));
+                                        Log.i("count", String.valueOf(count));
 
-                                } else {
-                                    Sneaker.with(ItemDetail.this)
-                                            .setTitle("Error Adding Item To Cart", R.color.white)
-                                            .setMessage("Please Try Again")
-                                            .setDuration(2000)
-                                            .setIcon(R.drawable.info, R.color.white)
-                                            .autoHide(true)
-                                            .setHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
-                                            .setCornerRadius(10, 0)
-                                            .sneak(R.color.teal_200);
+                                        progresslayout.setVisibility(View.GONE);
+                                        count++;
+                                        Sneaker.with(ItemDetail.this)
+                                                .setTitle("Item Already In Cart", R.color.white)
+                                                .setMessage("Check Your Cart", R.color.white)
+                                                .setDuration(2000)
+                                                .setIcon(R.drawable.info, R.color.white)
+                                                .autoHide(true)
+                                                .setHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
+                                                .setCornerRadius(10, 0)
+                                                .setOnSneakerClickListener(new OnSneakerClickListener() {
+                                                    @Override
+                                                    public void onSneakerClick(View view) {
+                                                        startActivity(new Intent(ItemDetail.this, Cart.class));
+                                                        customType(ItemDetail.this, "fadein-to-fadeout");
+                                                    }
+                                                })
+                                                .sneak(R.color.teal_200);
+                                        break;
+                                    }
                                 }
+                                if(count==0) {
+
+                                    Map map = new HashMap();
+                                    map.put("id", id);
+                                    map.put("colorcode", colorcode);
+                                    map.put("colorname", colorname);
+                                    map.put("size", size);
+                                    map.put("quantity",1);
+                                    map.put("sizename", sizename);
+                                    map.put("image", currentimage);
+
+                                    FirebaseDatabase.getInstance().getReference().child("Profiles").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Cart").child(UUID.randomUUID().toString()).setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()) {
+                                                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                                                progresslayout.setVisibility(View.GONE);
+                                                Toast.makeText(ItemDetail.this, "Added", Toast.LENGTH_SHORT).show();
+                                                Sneaker.with(ItemDetail.this)
+                                                        .setTitle("Item Added To Cart", R.color.white)
+                                                        .setMessage("Check Your Cart", R.color.white)
+                                                        .setDuration(2000)
+                                                        .setIcon(R.drawable.info, R.color.white)
+                                                        .autoHide(true)
+                                                        .setHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
+                                                        .setCornerRadius(10, 0)
+                                                        .setOnSneakerClickListener(new OnSneakerClickListener() {
+                                                            @Override
+                                                            public void onSneakerClick(View view) {
+                                                                startActivity(new Intent(ItemDetail.this, Cart.class));
+                                                                customType(ItemDetail.this, "fadein-to-fadeout");
+                                                            }
+                                                        })
+                                                        .sneak(R.color.green);
+
+                                            } else {
+                                                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                                                progresslayout.setVisibility(View.GONE);
+                                                Sneaker.with(ItemDetail.this)
+                                                        .setTitle("Error Adding Item To Cart", R.color.white)
+                                                        .setMessage("Please Try Again")
+                                                        .setDuration(2000)
+                                                        .setIcon(R.drawable.info, R.color.white)
+                                                        .autoHide(true)
+                                                        .setHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
+                                                        .setCornerRadius(10, 0)
+                                                        .sneak(R.color.teal_200);
+                                            }
+                                        }
+                                    });
+
+                                }
+
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
                             }
                         });
+
                     }
                 });
 
@@ -224,6 +290,8 @@ public class ItemDetail extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
 
+                        colorcode = firebaseRecyclerAdapter.getItem(position).getColorcode();
+                        colorname = firebaseRecyclerAdapter.getItem(position).getName();
                         for (int i = 0; i < firebaseRecyclerAdapter.getItemCount(); i++) {
                             if (position == i) {
                                 View view = colors.getLayoutManager().findViewByPosition(i);
@@ -314,6 +382,8 @@ public class ItemDetail extends AppCompatActivity {
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        size = firebaseRecyclerAdapter2.getItem(position).getColorcode();
+                        sizename = firebaseRecyclerAdapter2.getItem(position).getName();
 
                         for (int i = 0; i < firebaseRecyclerAdapter2.getItemCount(); i++) {
                             if (position == i) {

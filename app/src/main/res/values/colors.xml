@@ -6,13 +6,13 @@
     <color name="teal_200">#FF5252</color>
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="white">#FFFFFF</color>
     <color name="darkgrey">#202020</color>
     <color name="light">#d7f5f7</color>
     <color name="green">#7FCA28</color>
     <color name="grey">#C3C3C3</color>
     <color name="lightgrey">#2DE3E3E3</color>
-
+    <color name="blue">#42A5F5</color>
     <color name="ucrop_color_toolbar">@color/white</color>
     <color name="ucrop_color_statusbar">@color/teal_700</color>
     <color name="ucrop_color_widget_active">@color/teal_700</color>
