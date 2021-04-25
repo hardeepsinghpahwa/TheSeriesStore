@@ -1,6 +1,7 @@
 package com.example.login;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -9,12 +10,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
-import android.media.Image;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +23,8 @@ import android.widget.TextView;
 import com.baoyachi.stepview.HorizontalStepView;
 import com.baoyachi.stepview.bean.StepBean;
 import com.bumptech.glide.Glide;
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 import com.example.login.Fragments.itemdetails;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
@@ -34,6 +34,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
@@ -45,7 +46,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
+import java.util.UUID;
 
 import dev.shreyaspatil.MaterialDialog.MaterialDialog;
 import dev.shreyaspatil.MaterialDialog.interfaces.DialogInterface;
@@ -57,11 +58,11 @@ public class Cart extends AppCompatActivity {
     RecyclerView recyclerView;
     FirebaseRecyclerAdapter<cartitemdetails, CartViewHolder> firebaseRecyclerAdapter;
     double t = 0;
-    int no=0;
+    int no = 0;
     TextView total, total2, subtotal;
-    ConstraintLayout cartlayout,progresslayout;
+    ConstraintLayout cartlayout, progresslayout;
     CardView back, emptycart;
-    TextView itemsnumber;
+    TextView itemsnumber, proceed;
     private final String[] steps = {"Cart", "Address", "Payment", "Placed"};
 
     @Override
@@ -70,6 +71,16 @@ public class Cart extends AppCompatActivity {
         setContentView(R.layout.activity_cart);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
+        proceed = findViewById(R.id.continuetopay);
+
+        proceed.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(Cart.this, Address.class));
+                customType(Cart.this, "left-to-right");
+            }
+        });
 
         HorizontalStepView setpview5 = (HorizontalStepView) findViewById(R.id.stepsView);
         List<StepBean> stepsBeanList = new ArrayList<>();
@@ -85,14 +96,13 @@ public class Cart extends AppCompatActivity {
         stepsBeanList.add(stepBean3);
 
         setpview5.setStepViewTexts(stepsBeanList)//???
-
                 .setTextSize(12)//set textSize
                 .setStepsViewIndicatorCompletedLineColor(ContextCompat.getColor(getApplicationContext(), R.color.darkgrey))//??StepsViewIndicator??????
                 .setStepsViewIndicatorUnCompletedLineColor(ContextCompat.getColor(getApplicationContext(), android.R.color.darker_gray))//??StepsViewIndicator???????
                 .setStepViewComplectedTextColor(ContextCompat.getColor(getApplicationContext(), R.color.darkgrey))//??StepsView text??????
-                .setStepViewUnComplectedTextColor(ContextCompat.getColor(getApplicationContext(), android.R.color.darker_gray))//??StepsView text???????
+                .setStepViewUnComplectedTextColor(ContextCompat.getColor(getApplicationContext(), R.color.darkgrey))//??StepsView text???????
                 .setStepsViewIndicatorCompleteIcon(ContextCompat.getDrawable(getApplicationContext(), R.drawable.checkedd))//??StepsViewIndicator CompleteIcon
-                .setStepsViewIndicatorDefaultIcon(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ring))//??StepsViewIndicator DefaultIcon
+                .setStepsViewIndicatorDefaultIcon(ContextCompat.getDrawable(getApplicationContext(), R.drawable.outline_radio_button_checked_24))//??StepsViewIndicator DefaultIcon
                 .setStepsViewIndicatorAttentionIcon(ContextCompat.getDrawable(getApplicationContext(), R.drawable.uncheckedd));
 
         recyclerView = findViewById(R.id.cartrecyview);
@@ -110,8 +120,8 @@ public class Cart extends AppCompatActivity {
         back = findViewById(R.id.back);
         emptycart = findViewById(R.id.emptycart);
         cartlayout = findViewById(R.id.cartlayout);
-        itemsnumber=findViewById(R.id.itemno);
-        progresslayout=findViewById(R.id.progresslayout);
+        itemsnumber = findViewById(R.id.itemno);
+        progresslayout = findViewById(R.id.progresslayout);
 
         back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -120,17 +130,32 @@ public class Cart extends AppCompatActivity {
             }
         });
 
+        FirebaseDatabase.getInstance().getReference().child("Profiles").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Cart").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    YoYo.with(Techniques.FadeInDown)
+                            .duration(1000)
+                            .playOn(recyclerView);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
         FirebaseDatabase.getInstance().getReference().child("Profiles").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Cart").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                t=0;
-                no=0;
-                for(DataSnapshot dataSnapshot:snapshot.getChildren())
-                {
+                t = 0;
+                no = 0;
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     FirebaseDatabase.getInstance().getReference().child("Items").child(dataSnapshot.child("id").getValue(String.class)).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot2) {
-                            t=t+((dataSnapshot.child("quantity").getValue(Integer.class)))*Integer.valueOf(snapshot2.child("price").getValue(String.class));
+                            t = t + ((dataSnapshot.child("quantity").getValue(Integer.class))) * Integer.valueOf(snapshot2.child("price").getValue(String.class));
                             Format format = NumberFormat.getCurrencyInstance(new Locale("en", "in"));
                             subtotal.setText(format.format(new BigDecimal(String.valueOf(t))));
                         }
@@ -142,13 +167,39 @@ public class Cart extends AppCompatActivity {
                     });
                     no++;
 
-                    if(no==snapshot.getChildrenCount())
-                    {
+                    if (no == snapshot.getChildrenCount()) {
                         Format format = NumberFormat.getCurrencyInstance(new Locale("en", "in"));
                         subtotal.setText(format.format(new BigDecimal(String.valueOf(t))));
                     }
                 }
 
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+        FirebaseDatabase.getInstance().getReference().child("Profiles").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Cart").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                final Handler handler = new Handler(Looper.getMainLooper());
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                        progresslayout.setVisibility(View.GONE);
+                    }
+                }, 700);
+                if (!snapshot.exists()) {
+                    cartlayout.setVisibility(View.GONE);
+                    findViewById(R.id.emptycartimg).setVisibility(View.VISIBLE);
+                    findViewById(R.id.emptycarttext).setVisibility(View.VISIBLE);
+                } else {
+                    cartlayout.setVisibility(View.VISIBLE);
+                    findViewById(R.id.emptycartimg).setVisibility(View.GONE);
+                    findViewById(R.id.emptycarttext).setVisibility(View.GONE);
+                }
             }
 
             @Override
@@ -214,33 +265,13 @@ public class Cart extends AppCompatActivity {
             }
         });
 
-        query.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                if (!snapshot.exists()) {
-                    cartlayout.setVisibility(View.GONE);
-                    findViewById(R.id.emptycartimg).setVisibility(View.VISIBLE);
-                    findViewById(R.id.emptycarttext).setVisibility(View.VISIBLE);
-                    recyclerView.scheduleLayoutAnimation();
-                } else {
-                    cartlayout.setVisibility(View.VISIBLE);
-                    findViewById(R.id.emptycartimg).setVisibility(View.GONE);
-                    findViewById(R.id.emptycarttext).setVisibility(View.GONE);
-                }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
         FirebaseRecyclerOptions<cartitemdetails> options = new FirebaseRecyclerOptions.Builder<cartitemdetails>()
                 .setQuery(query, new SnapshotParser<cartitemdetails>() {
                     @NonNull
                     @Override
                     public cartitemdetails parseSnapshot(@NonNull DataSnapshot snapshot) {
-                        return new cartitemdetails(snapshot.child("size").getValue(String.class), snapshot.child("sizename").getValue(String.class), snapshot.child("colorcode").getValue(String.class), snapshot.child("colorname").getValue(String.class), snapshot.child("id").getValue(String.class), snapshot.child("image").getValue(String.class),snapshot.child("quantity").getValue(Integer.class));
+                        return new cartitemdetails(snapshot.child("size").getValue(String.class), snapshot.child("sizename").getValue(String.class), snapshot.child("colorcode").getValue(String.class), snapshot.child("colorname").getValue(String.class), snapshot.child("id").getValue(String.class), snapshot.child("image").getValue(String.class), snapshot.child("quantity").getValue(Integer.class));
                     }
                 }).build();
 
@@ -250,13 +281,44 @@ public class Cart extends AppCompatActivity {
             @Override
             public void onViewAttachedToWindow(@NonNull CartViewHolder holder) {
                 super.onViewAttachedToWindow(holder);
-                itemsnumber.setText(firebaseRecyclerAdapter.getItemCount()+" items");
-                progresslayout.setVisibility(View.GONE);
+                itemsnumber.setText(firebaseRecyclerAdapter.getItemCount() + " items");
                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
             }
 
             @Override
             protected void onBindViewHolder(@NonNull CartViewHolder holder, int position, @NonNull cartitemdetails model) {
+
+                holder.move.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        progresslayout.setVisibility(View.VISIBLE);
+                        DatabaseReference fromPath = firebaseRecyclerAdapter.getRef(position);
+                        DatabaseReference toPath = FirebaseDatabase.getInstance().getReference().child("Profiles").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Wishlist");
+
+
+                        fromPath.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                toPath.child(UUID.randomUUID().toString()).setValue(dataSnapshot.getValue(), new DatabaseReference.CompletionListener() {
+                                            @Override
+                                            public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
+                                                progresslayout.setVisibility(View.GONE);
+                                                fromPath.removeValue();
+                                            }
+                                        }
+                                );
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+
+                    }
+                });
+
+
 
                 FirebaseDatabase.getInstance().getReference().child("Items").child(model.getId()).addValueEventListener(new ValueEventListener() {
                     @Override
@@ -269,7 +331,7 @@ public class Cart extends AppCompatActivity {
 
                         holder.product.setText(itemdetails.getProduct());
 
-                        holder.quantity.setText(""+model.getQuantity());
+                        holder.quantity.setText("" + model.getQuantity());
 
 
                     }
@@ -294,20 +356,17 @@ public class Cart extends AppCompatActivity {
                         firebaseRecyclerAdapter.getRef(position).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                snapshot.child("quantity").getRef().setValue(snapshot.child("quantity").getValue(Integer.class)+1).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                snapshot.child("quantity").getRef().setValue(snapshot.child("quantity").getValue(Integer.class) + 1).addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
-                                        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                                         final Handler handler = new Handler(Looper.getMainLooper());
                                         handler.postDelayed(new Runnable() {
                                             @Override
                                             public void run() {
+                                                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                                                 progresslayout.setVisibility(View.GONE);
                                             }
-                                        }, 1000);
-                                        if(task.isSuccessful())
-                                        {
-                                        }
+                                        }, 700);
                                     }
                                 });
                             }
@@ -329,7 +388,7 @@ public class Cart extends AppCompatActivity {
                         firebaseRecyclerAdapter.getRef(position).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                if(snapshot.child("quantity").getValue(Integer.class)>1) {
+                                if (snapshot.child("quantity").getValue(Integer.class) > 1) {
                                     progresslayout.setVisibility(View.VISIBLE);
                                     getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                                             WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
@@ -337,16 +396,15 @@ public class Cart extends AppCompatActivity {
                                     snapshot.child("quantity").getRef().setValue(snapshot.child("quantity").getValue(Integer.class) - 1).addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
+
                                             final Handler handler = new Handler(Looper.getMainLooper());
                                             handler.postDelayed(new Runnable() {
                                                 @Override
                                                 public void run() {
+                                                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                                                     progresslayout.setVisibility(View.GONE);
                                                 }
-                                            }, 1000);
-                                            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                                            if (task.isSuccessful()) {
-                                            }
+                                            }, 700);
                                         }
                                     });
                                 }
@@ -448,12 +506,12 @@ public class Cart extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        customType(Cart.this, "fadein-to-fadeout");
+        customType(Cart.this, "up-to-bottom");
     }
 
     private class CartViewHolder extends RecyclerView.ViewHolder {
 
-        TextView name, size, price, quantity, product;
+        TextView name, size, price, quantity, product, move;
         ImageView add, minus, image;
         CardView delete;
 
@@ -462,8 +520,9 @@ public class Cart extends AppCompatActivity {
 
             name = itemView.findViewById(R.id.name);
             image = itemView.findViewById(R.id.image);
-            size = itemView.findViewById(R.id.size);
+            size = itemView.findViewById(R.id.specs);
             price = itemView.findViewById(R.id.price);
+            move = itemView.findViewById(R.id.movetowishlist);
             quantity = itemView.findViewById(R.id.quantity);
             add = itemView.findViewById(R.id.plus);
             product = itemView.findViewById(R.id.product);

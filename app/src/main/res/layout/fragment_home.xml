@@ -29,27 +29,65 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView2" />
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cart"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="42dp"
         android:layout_marginEnd="10dp"
-        android:foreground="?attr/selectableItemBackground"
-        app:cardCornerRadius="20dp"
         app:layout_constraintBottom_toBottomOf="@+id/imageView2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/imageView2">
 
-        <ImageView
-            android:id="@+id/imageView8"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:padding="8dp"
-            app:srcCompat="@drawable/bag"
-            app:tint="@color/darkgrey" />
 
-    </androidx.cardview.widget.CardView>
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cart"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:foreground="?attr/selectableItemBackground"
+            app:cardCornerRadius="20dp"
+            android:layout_margin="5dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+
+            <ImageView
+                android:id="@+id/imageView8"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:padding="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/bag"
+                app:tint="@color/darkgrey" />
+
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            app:cardBackgroundColor="@color/darkgrey"
+            app:cardCornerRadius="7.5dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/cartcount"
+                android:textStyle="bold"
+                android:layout_gravity="center"
+                android:includeFontPadding="false"
+                android:textSize="8sp"
+                android:textColor="@color/white"/>
+
+        </androidx.cardview.widget.CardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
         android:id="@+id/imageView2"
@@ -69,8 +107,8 @@
         android:id="@+id/nestedScrollView2"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:overScrollMode="never"
         android:layout_marginTop="20dp"
+        android:overScrollMode="never"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -388,9 +426,9 @@
                 android:id="@+id/tshirtsrecyview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:overScrollMode="never"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="10dp"
+                android:overScrollMode="never"
                 android:visibility="visible"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/textView9"
@@ -537,17 +575,17 @@
 
             <TextView
                 android:id="@+id/tshirtsseeall"
+                style="@style/SelectableItemBackground2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="10dp"
                 android:background="@drawable/rounded"
+                android:foreground="?attr/selectableItemBackground"
                 android:includeFontPadding="false"
                 android:paddingLeft="10dp"
                 android:paddingTop="3dp"
                 android:paddingRight="10dp"
                 android:paddingBottom="3dp"
-                style="@style/SelectableItemBackground2"
-                android:foreground="?attr/selectableItemBackground"
                 android:text="See All"
                 android:textColor="@color/white"
                 android:textStyle="bold"
@@ -557,15 +595,15 @@
 
             <TextView
                 android:id="@+id/shopbycontentplatformsseeall"
+                style="@style/SelectableItemBackground2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="10dp"
                 android:background="@drawable/rounded"
+                android:foreground="?attr/selectableItemBackground"
                 android:includeFontPadding="false"
                 android:paddingLeft="10dp"
                 android:paddingTop="3dp"
-                style="@style/SelectableItemBackground2"
-                android:foreground="?attr/selectableItemBackground"
                 android:paddingRight="10dp"
                 android:paddingBottom="3dp"
                 android:text="See All"
@@ -577,16 +615,16 @@
 
             <TextView
                 android:id="@+id/shopbyseriesseeall"
+                style="@style/SelectableItemBackground2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="10dp"
                 android:background="@drawable/rounded"
+                android:foreground="?attr/selectableItemBackground"
                 android:includeFontPadding="false"
                 android:paddingLeft="10dp"
                 android:paddingTop="3dp"
                 android:paddingRight="10dp"
-                style="@style/SelectableItemBackground2"
-                android:foreground="?attr/selectableItemBackground"
                 android:paddingBottom="3dp"
                 android:text="See All"
                 android:textColor="@color/white"
@@ -600,8 +638,8 @@
                 android:id="@+id/shopbyseriesrecyview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:overScrollMode="never"
                 android:layout_marginTop="10dp"
+                android:overScrollMode="never"
                 android:visibility="visible"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

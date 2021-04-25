@@ -9,7 +9,11 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.core.widget.NestedScrollView
             android:id="@+id/nestedScrollView"
@@ -52,8 +56,8 @@
                     app:layout_constraintTop_toTopOf="parent">
 
                     <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
                         android:layout_gravity="center"
                         android:adjustViewBounds="true"
                         android:cropToPadding="false"
@@ -282,7 +286,7 @@
                     android:background="@color/white"
                     android:foreground="?attr/selectableItemBackground"
                     android:gravity="center"
-                    android:text="WishList"
+                    android:text="Add To WishList"
                     android:textColor="@color/darkgrey"
                     android:textStyle="bold"
                     tools:layout_editor_absoluteX="164dp"
@@ -298,6 +302,7 @@
                     android:foreground="?attr/selectableItemBackground"
                     android:gravity="center"
                     android:text="Add To Cart"
+                    app:drawableTint="@color/white"
                     android:textColor="@color/white"
                     android:textStyle="bold"
                     tools:layout_editor_absoluteX="164dp"

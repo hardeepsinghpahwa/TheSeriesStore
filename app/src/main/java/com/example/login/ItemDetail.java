@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,10 +22,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
-import com.example.login.Fragments.itemdetails;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.firebase.ui.database.SnapshotParser;
@@ -40,8 +37,6 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.irozon.sneaker.Sneaker;
 import com.irozon.sneaker.interfaces.OnSneakerClickListener;
-
-import org.w3c.dom.Text;
 
 import java.math.BigDecimal;
 import java.text.Format;
@@ -147,6 +142,110 @@ public class ItemDetail extends AppCompatActivity {
                     detail4.setVisibility(View.GONE);
                 }
 
+                addtowishlist.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        {
+                            getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                            progresslayout.bringToFront();
+                            progresslayout.setVisibility(View.VISIBLE);
+
+                            FirebaseDatabase.getInstance().getReference().child("Profiles").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Wishlist").addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    count=0;
+                                    for(DataSnapshot dataSnapshot:snapshot.getChildren())
+                                    {
+                                        if(dataSnapshot.child("id").getValue(String.class).equals(id) && dataSnapshot.child("colorcode").getValue(String.class).equals(colorcode) && dataSnapshot.child("size").getValue(String.class).equals(size))
+                                        {
+                                            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
+                                            progresslayout.setVisibility(View.GONE);
+                                            count++;
+                                            Sneaker.with(ItemDetail.this)
+                                                    .setTitle("Item Already In Wishlist", R.color.white)
+                                                    .setMessage("Check Your Wishlist", R.color.white)
+                                                    .setDuration(2000)
+                                                    .setIcon(R.drawable.info, R.color.white)
+                                                    .autoHide(true)
+                                                    .setHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
+                                                    .setCornerRadius(10, 0)
+                                                    .setOnSneakerClickListener(new OnSneakerClickListener() {
+                                                        @Override
+                                                        public void onSneakerClick(View view) {
+                                                            startActivity(new Intent(ItemDetail.this, Cart.class));
+                                                            customType(ItemDetail.this, "fadein-to-fadeout");
+                                                        }
+                                                    })
+                                                    .sneak(R.color.teal_200);
+                                            break;
+                                        }
+                                    }
+                                    if(count==0) {
+
+                                        Map map = new HashMap();
+                                        map.put("id", id);
+                                        map.put("colorcode", colorcode);
+                                        map.put("colorname", colorname);
+                                        map.put("size", size);
+                                        map.put("sizename", sizename);
+                                        map.put("image", currentimage);
+
+                                        FirebaseDatabase.getInstance().getReference().child("Profiles").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Wishlist").child(UUID.randomUUID().toString()).setValue(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if (task.isSuccessful()) {
+                                                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                                                    progresslayout.setVisibility(View.GONE);
+                                                    Toast.makeText(ItemDetail.this, "Added", Toast.LENGTH_SHORT).show();
+                                                    Sneaker.with(ItemDetail.this)
+                                                            .setTitle("Item Added To Wishlist", R.color.white)
+                                                            .setMessage("Check Your Wishlist", R.color.white)
+                                                            .setDuration(2000)
+                                                            .setIcon(R.drawable.info, R.color.white)
+                                                            .autoHide(true)
+                                                            .setHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
+                                                            .setCornerRadius(10, 0)
+                                                            .setOnSneakerClickListener(new OnSneakerClickListener() {
+                                                                @Override
+                                                                public void onSneakerClick(View view) {
+                                                                    startActivity(new Intent(ItemDetail.this, Wishlist.class));
+                                                                    customType(ItemDetail.this, "fadein-to-fadeout");
+                                                                }
+                                                            })
+                                                            .sneak(R.color.green);
+
+                                                } else {
+                                                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                                                    progresslayout.setVisibility(View.GONE);
+                                                    Sneaker.with(ItemDetail.this)
+                                                            .setTitle("Error Adding Item To Wishlist", R.color.white)
+                                                            .setMessage("Please Try Again")
+                                                            .setDuration(2000)
+                                                            .setIcon(R.drawable.info, R.color.white)
+                                                            .autoHide(true)
+                                                            .setHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
+                                                            .setCornerRadius(10, 0)
+                                                            .sneak(R.color.teal_200);
+                                                }
+                                            }
+                                        });
+
+                                    }
+
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                }
+                            });
+
+                        }
+                    }
+                });
+
                 addtocart.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -164,9 +263,6 @@ public class ItemDetail extends AppCompatActivity {
                                     if(dataSnapshot.child("id").getValue(String.class).equals(id) && dataSnapshot.child("colorcode").getValue(String.class).equals(colorcode) && dataSnapshot.child("size").getValue(String.class).equals(size))
                                     {
                                         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                                        Log.i("colr",colorcode);
-                                        Log.i("colr2",dataSnapshot.child("colorcode").getValue(String.class));
-                                        Log.i("count", String.valueOf(count));
 
                                         progresslayout.setVisibility(View.GONE);
                                         count++;
@@ -459,7 +555,7 @@ public class ItemDetail extends AppCompatActivity {
         public SizeViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            size = itemView.findViewById(R.id.size);
+            size = itemView.findViewById(R.id.specs);
             colorlayout = itemView.findViewById(R.id.colorlayout);
 
         }

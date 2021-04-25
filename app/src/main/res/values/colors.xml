@@ -10,7 +10,8 @@
     <color name="darkgrey">#202020</color>
     <color name="light">#d7f5f7</color>
     <color name="green">#7FCA28</color>
-    <color name="grey">#C3C3C3</color>
+    <color name="grey">#E1E1E1</color>
+    <color name="textgrey">#939393</color>
     <color name="lightgrey">#2DE3E3E3</color>
     <color name="blue">#42A5F5</color>
     <color name="ucrop_color_toolbar">@color/white</color>

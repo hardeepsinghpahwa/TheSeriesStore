@@ -20,6 +20,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.Adapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -54,6 +56,8 @@ import java.util.UUID;
 import dev.shreyaspatil.MaterialDialog.MaterialDialog;
 import dmax.dialog.SpotsDialog;
 
+import static maes.tech.intentanim.CustomIntent.customType;
+
 public class Address extends AppCompatActivity {
 
 
@@ -71,6 +75,13 @@ public class Address extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_address);
 
+
+        findViewById(R.id.back).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
         recyclerView = findViewById(R.id.addressrecyview);
         noaddresstext = findViewById(R.id.noaddressestext);
         addnew = findViewById(R.id.addnew);
@@ -81,6 +92,7 @@ public class Address extends AppCompatActivity {
         progresslayout.bringToFront();
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
 
         addnew.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -339,6 +351,12 @@ public class Address extends AppCompatActivity {
         StepBean stepBean2 = new StepBean("Payment", 0);
         StepBean stepBean3 = new StepBean("Placed", 0);
 
+        if(getIntent().getStringExtra("pro")!=null)
+        {
+            findViewById(R.id.continuecard).setVisibility(View.GONE);
+            setpview5.setVisibility(View.GONE);
+        }
+
         stepsBeanList.add(stepBean0);
 
         stepsBeanList.add(stepBean1);
@@ -351,7 +369,7 @@ public class Address extends AppCompatActivity {
                 .setStepsViewIndicatorCompletedLineColor(ContextCompat.getColor(getApplicationContext(), R.color.darkgrey))//??StepsViewIndicator??????
                 .setStepsViewIndicatorUnCompletedLineColor(ContextCompat.getColor(getApplicationContext(), android.R.color.darker_gray))//??StepsViewIndicator???????
                 .setStepViewComplectedTextColor(ContextCompat.getColor(getApplicationContext(), R.color.darkgrey))//??StepsView text??????
-                .setStepViewUnComplectedTextColor(ContextCompat.getColor(getApplicationContext(), android.R.color.darker_gray))//??StepsView text???????
+                .setStepViewUnComplectedTextColor(ContextCompat.getColor(getApplicationContext(), R.color.darkgrey))//??StepsView text???????
                 .setStepsViewIndicatorCompleteIcon(ContextCompat.getDrawable(getApplicationContext(), R.drawable.checkedd))//??StepsViewIndicator CompleteIcon
                 .setStepsViewIndicatorDefaultIcon(ContextCompat.getDrawable(getApplicationContext(), R.drawable.outline_radio_button_checked_24))//??StepsViewIndicator DefaultIcon
                 .setStepsViewIndicatorAttentionIcon(ContextCompat.getDrawable(getApplicationContext(), R.drawable.uncheckedd));
@@ -359,6 +377,17 @@ public class Address extends AppCompatActivity {
 
         Query query = FirebaseDatabase.getInstance().getReference().child("Profiles").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Addresses");
 
+        query.getRef().addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                recyclerView.scheduleLayoutAnimation();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
         query.getRef().addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -373,6 +402,7 @@ public class Address extends AppCompatActivity {
                             intent.putExtra("address", address);
                             intent.putExtra("phone", phone);
                             startActivity(intent);
+                            customType(Address.this,"left-to-right");
                         }
                         else {
                             Sneaker.with(Address.this)
@@ -416,12 +446,6 @@ public class Address extends AppCompatActivity {
         firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<addressdetail, AddressViewHolder>(options) {
 
             @Override
-            public void onViewAttachedToWindow(@NonNull AddressViewHolder holder) {
-                super.onViewAttachedToWindow(holder);
-                recyclerView.scheduleLayoutAnimation();
-            }
-
-            @Override
             protected void onBindViewHolder(@NonNull AddressViewHolder holder, int position, @NonNull addressdetail model) {
 
                 if (posi == position) {
@@ -437,6 +461,11 @@ public class Address extends AppCompatActivity {
 
                 } else {
                     holder.check.setChecked(false, false);
+                }
+
+                if(getIntent().getStringExtra("pro")!=null)
+                {
+                    holder.check.setVisibility(View.GONE);
                 }
 
                 if (!model.getType().equals("")) {
@@ -753,5 +782,11 @@ public class Address extends AppCompatActivity {
             edit = itemView.findViewById(R.id.edit);
             type = itemView.findViewById(R.id.type);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        customType(Address.this,"right-to-left");
     }
 }

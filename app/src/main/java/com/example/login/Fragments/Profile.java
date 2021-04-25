@@ -20,9 +20,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.login.Address;
 import com.example.login.Cart;
 import com.example.login.EditProfile;
+import com.example.login.MyOrders;
 import com.example.login.R;
+import com.example.login.Wishlist;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -44,7 +47,7 @@ public class Profile extends Fragment {
     }
 
 
-    CardView profile;
+    CardView profile,orders,wishlist,address;
     TextView name,phone,email;
     ImageView profilepic;
 
@@ -55,18 +58,65 @@ public class Profile extends Fragment {
         View view= inflater.inflate(R.layout.fragment_profile, container, false);
 
         profile=view.findViewById(R.id.profile);
-
+        orders=view.findViewById(R.id.orders);
         name = view.findViewById(R.id.name);
         email = view.findViewById(R.id.email);
         profilepic = view.findViewById(R.id.profilepic);
         phone = view.findViewById(R.id.phone);
+        wishlist=view.findViewById(R.id.wishlist);
+        address=view.findViewById(R.id.address);
 
+        address.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=(new Intent(getActivity(), Address.class));
+                intent.putExtra("pro","true");
+                startActivity(intent);
+                customType(getActivity(),"left-to-right");
+            }
+        });
+
+        wishlist.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(), Wishlist.class));
+                customType(getActivity(),"left-to-right");
+            }
+        });
+
+        TextView cartcount;
+        cartcount=view.findViewById(R.id.cartcount);
+
+        FirebaseDatabase.getInstance().getReference().child("Profiles").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Cart").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.exists())
+                {
+                    cartcount.setText(""+snapshot.getChildrenCount());
+                }
+                else {
+                    cartcount.setText("0");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+        orders.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(), MyOrders.class));
+                customType(getActivity(),"left-to-right");
+            }
+        });
 
         view.findViewById(R.id.cart).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getActivity(), Cart.class));
-                customType(getActivity(),"fadein-to-fadeout");
+                customType(getActivity(),"bottom-to-up");
             }
         });
 
@@ -101,3 +151,4 @@ public class Profile extends Fragment {
         return view;
     }
 }
+

@@ -2,4 +2,4 @@
 <layoutAnimation xmlns:android="http://schemas.android.com/apk/res/android"
     android:animation="@anim/falldownanim"
     android:animationOrder="normal"
-    android:delay="25%" />
+    android:delay="40%" />

@@ -106,6 +106,28 @@ public class HomeFragment extends Fragment {
         shopbycontentplatformsseeall=view.findViewById(R.id.shopbycontentplatformsseeall);
         shopbyseriesseeall=view.findViewById(R.id.shopbyseriesseeall);
 
+
+        TextView cartcount;
+        cartcount=view.findViewById(R.id.cartcount);
+
+        FirebaseDatabase.getInstance().getReference().child("Profiles").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Cart").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.exists())
+                {
+                    cartcount.setText(""+snapshot.getChildrenCount());
+                }
+                else {
+                    cartcount.setText("0");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
         tshirtsseeall.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -132,7 +154,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getActivity(), Cart.class));
-                customType(getActivity(),"fadein-to-fadeout");
+                customType(getActivity(),"bottom-to-up");
             }
         });
 
@@ -175,7 +197,7 @@ public class HomeFragment extends Fragment {
                     @NonNull
                     @Override
                     public itemdetails parseSnapshot(@NonNull DataSnapshot snapshot) {
-                        return new itemdetails(snapshot.child("image").getValue(String.class), snapshot.child("name").getValue(String.class), snapshot.child("rating").getValue(String.class), snapshot.child("category").getValue(String.class), snapshot.child("price").getValue(String.class), snapshot.getKey());
+                        return new itemdetails(snapshot.child("image").getValue(String.class), snapshot.child("name").getValue(String.class), snapshot.child("rating").getValue(String.class), snapshot.child("category").getValue(String.class), snapshot.child("price").getValue(String.class), snapshot.getKey(),snapshot.child("product").getValue(String.class));
                     }
                 }).build();
 
@@ -184,7 +206,7 @@ public class HomeFragment extends Fragment {
                     @NonNull
                     @Override
                     public itemdetails parseSnapshot(@NonNull DataSnapshot snapshot) {
-                        return new itemdetails(snapshot.child("image").getValue(String.class), snapshot.child("name").getValue(String.class), snapshot.child("rating").getValue(String.class), snapshot.child("category").getValue(String.class), snapshot.child("price").getValue(String.class), snapshot.getKey());
+                        return new itemdetails(snapshot.child("image").getValue(String.class), snapshot.child("name").getValue(String.class), snapshot.child("rating").getValue(String.class), snapshot.child("category").getValue(String.class), snapshot.child("price").getValue(String.class), snapshot.getKey(),snapshot.child("product").getValue(String.class));
                     }
                 }).build();
 
@@ -391,7 +413,7 @@ public class HomeFragment extends Fragment {
                         @NonNull
                         @Override
                         public itemdetails parseSnapshot(@NonNull DataSnapshot snapshot) {
-                            return new itemdetails(snapshot.child("image").getValue(String.class), snapshot.child("name").getValue(String.class), snapshot.child("rating").getValue(String.class), snapshot.child("category").getValue(String.class), snapshot.child("price").getValue(String.class), snapshot.getKey());
+                            return new itemdetails(snapshot.child("image").getValue(String.class), snapshot.child("name").getValue(String.class), snapshot.child("rating").getValue(String.class), snapshot.child("category").getValue(String.class), snapshot.child("price").getValue(String.class), snapshot.getKey(),snapshot.child("product").getValue(String.class));
                         }
                     }).build();
 

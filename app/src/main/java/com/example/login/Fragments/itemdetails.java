@@ -17,13 +17,14 @@ public class itemdetails {
         this.id = id;
     }
 
-    public itemdetails(String image, String name, String rating, String category, String price, String id) {
+    public itemdetails(String image, String name, String rating, String category, String price, String id,String product) {
         this.image = image;
         this.name = name;
         this.rating = rating;
         this.category = category;
         this.price = price;
         this.id = id;
+        this.product = product;
     }
 
     public String getSubcategory() {

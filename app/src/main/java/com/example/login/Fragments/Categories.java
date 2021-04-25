@@ -11,6 +11,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,10 +27,12 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.login.Cart;
 import com.example.login.Home;
+import com.example.login.ItemDetail;
 import com.example.login.R;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.firebase.ui.database.SnapshotParser;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -71,7 +75,29 @@ public class Categories extends Fragment {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getActivity(), Cart.class));
-                customType(getActivity(),"fadein-to-fadeout");
+                customType(getActivity(),"bottom-to-up");
+            }
+        });
+
+
+        TextView cartcount;
+        cartcount=view.findViewById(R.id.cartcount);
+
+        FirebaseDatabase.getInstance().getReference().child("Profiles").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Cart").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.exists())
+                {
+                    cartcount.setText(""+snapshot.getChildrenCount());
+                }
+                else {
+                    cartcount.setText("0");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
 
@@ -84,7 +110,7 @@ public class Categories extends Fragment {
                     @NonNull
                     @Override
                     public itemdetails parseSnapshot(@NonNull DataSnapshot snapshot) {
-                        return new itemdetails(snapshot.child("image").getValue(String.class), snapshot.child("name").getValue(String.class), snapshot.child("rating").getValue(String.class), snapshot.child("category").getValue(String.class), snapshot.child("price").getValue(String.class), snapshot.getKey());
+                        return new itemdetails(snapshot.child("image").getValue(String.class), snapshot.child("name").getValue(String.class), snapshot.child("rating").getValue(String.class), snapshot.child("category").getValue(String.class), snapshot.child("price").getValue(String.class), snapshot.getKey(),snapshot.child("product").getValue(String.class));
                     }
                 }).build();
 
@@ -96,12 +122,23 @@ public class Categories extends Fragment {
                     holder.itemView.setBackgroundColor(ContextCompat.getColor(getActivity(),R.color.lightgrey));
                 }*/
 
-//                holder.category.setText(model.getCategory());
+                holder.product.setText(model.getProduct());
                 holder.name.setText(model.getName());
                 Format format = NumberFormat.getCurrencyInstance(new Locale("en", "in"));
                 holder.price.setText(format.format(new BigDecimal(model.getPrice())));
                 //    holder.rating.setText(model.getRating());
                 Glide.with(getActivity()).load(model.getImage()).into(holder.image);
+
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent=new Intent(getActivity(), ItemDetail.class);
+                        intent.putExtra("id",firebaseRecyclerAdapter.getItem(position).getId());
+                        startActivity(intent);
+                        customType(getActivity(),"left-to-right");
+                    }
+                });
+
             }
 
             @Override
@@ -145,7 +182,13 @@ public class Categories extends Fragment {
             }
         });
 
-        recyclerView2.setAdapter(firebaseRecyclerAdapter);
+        final Handler handler = new Handler(Looper.getMainLooper());
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                recyclerView2.setAdapter(firebaseRecyclerAdapter);
+            }
+        }, 100);
 
         return view;
     }
@@ -223,12 +266,17 @@ public class Categories extends Fragment {
                             @NonNull
                             @Override
                             public itemdetails parseSnapshot(@NonNull DataSnapshot snapshot) {
-                                return new itemdetails(snapshot.child("image").getValue(String.class), snapshot.child("name").getValue(String.class), snapshot.child("rating").getValue(String.class), snapshot.child("category").getValue(String.class), snapshot.child("price").getValue(String.class), snapshot.getKey());
+                                return new itemdetails(snapshot.child("image").getValue(String.class), snapshot.child("name").getValue(String.class), snapshot.child("rating").getValue(String.class), snapshot.child("category").getValue(String.class), snapshot.child("price").getValue(String.class), snapshot.getKey(),snapshot.child("product").getValue(String.class));
                             }
                         }).build();
 
-                firebaseRecyclerAdapter.updateOptions(options);
-            }
+                final Handler handler = new Handler(Looper.getMainLooper());
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        firebaseRecyclerAdapter.updateOptions(options);
+                    }
+                }, 100);            }
 
             if (position == 0 && home.cat.equals("")) {
                 holder.name.setTextSize(18);
@@ -266,11 +314,17 @@ public class Categories extends Fragment {
                                                 @NonNull
                                                 @Override
                                                 public itemdetails parseSnapshot(@NonNull DataSnapshot snapshot) {
-                                                    return new itemdetails(snapshot.child("image").getValue(String.class), snapshot.child("name").getValue(String.class), snapshot.child("rating").getValue(String.class), snapshot.child("category").getValue(String.class), snapshot.child("price").getValue(String.class), snapshot.getKey());
+                                                    return new itemdetails(snapshot.child("image").getValue(String.class), snapshot.child("name").getValue(String.class), snapshot.child("rating").getValue(String.class), snapshot.child("category").getValue(String.class), snapshot.child("price").getValue(String.class), snapshot.getKey(),snapshot.child("product").getValue(String.class));
                                                 }
                                             }).build();
 
-                                    firebaseRecyclerAdapter.updateOptions(options);
+                                    final Handler handler = new Handler(Looper.getMainLooper());
+                                    handler.postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            firebaseRecyclerAdapter.updateOptions(options);
+                                        }
+                                    }, 100);
                                 } else {
                                     progressBar.setVisibility(View.VISIBLE);
                                     Query query = FirebaseDatabase.getInstance().getReference().child("Items").orderByChild("category").equalTo(textView.getText().toString());
@@ -281,11 +335,17 @@ public class Categories extends Fragment {
                                                 @NonNull
                                                 @Override
                                                 public itemdetails parseSnapshot(@NonNull DataSnapshot snapshot) {
-                                                    return new itemdetails(snapshot.child("image").getValue(String.class), snapshot.child("name").getValue(String.class), snapshot.child("rating").getValue(String.class), snapshot.child("category").getValue(String.class), snapshot.child("price").getValue(String.class), snapshot.getKey());
+                                                    return new itemdetails(snapshot.child("image").getValue(String.class), snapshot.child("name").getValue(String.class), snapshot.child("rating").getValue(String.class), snapshot.child("category").getValue(String.class), snapshot.child("price").getValue(String.class), snapshot.getKey(),snapshot.child("product").getValue(String.class));
                                                 }
                                             }).build();
 
-                                    firebaseRecyclerAdapter.updateOptions(options);
+                                    final Handler handler = new Handler(Looper.getMainLooper());
+                                    handler.postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            firebaseRecyclerAdapter.updateOptions(options);
+                                        }
+                                    }, 100);
                                 }
                             }
                         } else {
@@ -322,12 +382,13 @@ public class Categories extends Fragment {
 
     private class ItemViewHolder extends RecyclerView.ViewHolder {
 
-        TextView name, price;
+        TextView name, price,product;
         ImageView image;
 
         public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.name);
+            product = itemView.findViewById(R.id.product);
             price = itemView.findViewById(R.id.price);
             image = itemView.findViewById(R.id.image);
         }

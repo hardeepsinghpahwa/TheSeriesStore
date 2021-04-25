@@ -80,10 +80,10 @@
                     android:layout_marginTop="10dp"
                     android:text="Deliver To"
                     android:textColor="@color/darkgrey"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView22" />
+                    app:layout_constraintTop_toBottomOf="@+id/orderid" />
 
 
                 <TextView
@@ -91,12 +91,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="TextView"
-                    android:textSize="16sp"
+                    android:textSize="14sp"
                     app:layout_constraintStart_toStartOf="@+id/textView18"
                     app:layout_constraintTop_toBottomOf="@+id/textView18" />
 
                 <TextView
-                    android:id="@+id/textView22"
+                    android:id="@+id/orderid"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
@@ -124,7 +124,7 @@
                     android:layout_marginTop="10dp"
                     android:text="Order Info"
                     android:textColor="@color/darkgrey"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/itemsrecyview" />
@@ -194,7 +194,7 @@
                     android:layout_marginTop="20dp"
                     android:text="Order Items"
                     android:textColor="@color/darkgrey"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="@+id/address"
                     app:layout_constraintTop_toBottomOf="@+id/address" />
@@ -226,8 +226,6 @@
                     android:layout_marginTop="5dp"
                     android:includeFontPadding="false"
                     android:text="Total"
-                    android:textColor="@color/darkgrey"
-                    android:textSize="18sp"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -238,7 +236,8 @@
                     android:layout_marginTop="5dp"
                     android:includeFontPadding="false"
                     android:id="@+id/total2"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
+                    android:textColor="@color/darkgrey"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="@+id/textView21"
                     app:layout_constraintTop_toBottomOf="@+id/textView21" />

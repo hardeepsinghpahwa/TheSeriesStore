@@ -22,7 +22,7 @@
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/image"
-        app:layout_constraintTop_toBottomOf="@+id/size" />
+        app:layout_constraintTop_toBottomOf="@+id/specs" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/delete"
@@ -73,7 +73,7 @@
         app:layout_constraintTop_toTopOf="@+id/image" />
 
     <TextView
-        android:id="@+id/size"
+        android:id="@+id/specs"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Size : M"

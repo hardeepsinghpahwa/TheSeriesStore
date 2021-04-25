@@ -28,7 +28,7 @@
                android:layout_gravity="center"
                android:textSize="18sp"
                android:textColor="@color/darkgrey"
-               android:id="@+id/size"
+               android:id="@+id/specs"
                android:includeFontPadding="false"
                />
 
