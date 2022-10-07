@@ -1,232 +1,175 @@
-package com.example.login;
+package com.example.login
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.annotation.SuppressLint
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.RecyclerView
+import androidx.constraintlayout.widget.ConstraintLayout
+import com.firebase.ui.database.FirebaseRecyclerAdapter
+import androidx.core.content.ContextCompat
+import com.irozon.sneaker.Sneaker
+import com.google.firebase.auth.FirebaseAuth
+import com.google.android.gms.tasks.OnCompleteListener
+import com.baoyachi.stepview.HorizontalStepView
+import com.baoyachi.stepview.bean.StepBean
+import android.content.Intent
+import maes.tech.intentanim.CustomIntent
+import com.firebase.ui.database.FirebaseRecyclerOptions
+import dev.shreyaspatil.MaterialDialog.MaterialDialog
+import dev.shreyaspatil.MaterialDialog.AbstractDialog
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.cardview.widget.CardView
+import com.daimajia.androidanimations.library.YoYo
+import com.daimajia.androidanimations.library.Techniques
+import com.example.login.Fragments.itemdetails
+import com.bumptech.glide.Glide
+import android.os.*
+import android.view.*
+import android.widget.*
+import com.firebase.ui.database.SnapshotParser
+import com.google.android.gms.tasks.Task
+import com.google.firebase.database.*
+import dev.shreyaspatil.MaterialDialog.interfaces.DialogInterface
+import java.math.BigDecimal
+import java.text.Format
+import java.text.NumberFormat
+import java.util.*
 
-import com.baoyachi.stepview.HorizontalStepView;
-import com.baoyachi.stepview.bean.StepBean;
-import com.bumptech.glide.Glide;
-import com.daimajia.androidanimations.library.Techniques;
-import com.daimajia.androidanimations.library.YoYo;
-import com.example.login.Fragments.itemdetails;
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.firebase.ui.database.FirebaseRecyclerOptions;
-import com.firebase.ui.database.SnapshotParser;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
-import com.irozon.sneaker.Sneaker;
+class Cart : AppCompatActivity() {
+    lateinit var recyclerView: RecyclerView
+    lateinit var firebaseRecyclerAdapter: FirebaseRecyclerAdapter<cartitemdetails, CartViewHolder>
+    var t: Double = 0.0
+    var no: Int = 0
+    lateinit var total: TextView
+    lateinit var total2: TextView
+    lateinit var subtotal: TextView
+    lateinit var cartlayout: ConstraintLayout
+    lateinit var progresslayout: ConstraintLayout
+    lateinit var back: CardView
+    lateinit var emptycart: CardView
+    lateinit var itemsnumber: TextView
+    lateinit var proceed: TextView
 
-import java.math.BigDecimal;
-import java.text.Format;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.UUID;
+    private val steps: Array<String> = arrayOf("Cart", "Address", "Payment", "Placed")
 
-import dev.shreyaspatil.MaterialDialog.MaterialDialog;
-import dev.shreyaspatil.MaterialDialog.interfaces.DialogInterface;
-
-import static maes.tech.intentanim.CustomIntent.customType;
-
-public class Cart extends AppCompatActivity {
-
-    RecyclerView recyclerView;
-    FirebaseRecyclerAdapter<cartitemdetails, CartViewHolder> firebaseRecyclerAdapter;
-    double t = 0;
-    int no = 0;
-    TextView total, total2, subtotal;
-    ConstraintLayout cartlayout, progresslayout;
-    CardView back, emptycart;
-    TextView itemsnumber, proceed;
-    private final String[] steps = {"Cart", "Address", "Payment", "Placed"};
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_cart);
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_cart)
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-
-        proceed = findViewById(R.id.continuetopay);
-
-        proceed.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(Cart.this, Address.class));
-                customType(Cart.this, "left-to-right");
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+        proceed = findViewById(R.id.continuetopay)
+        proceed.setOnClickListener {
+            startActivity(Intent(this@Cart, Address::class.java))
+            CustomIntent.customType(this@Cart, "left-to-right")
+        }
+        val setpview5: HorizontalStepView = findViewById<View>(R.id.stepsView) as HorizontalStepView
+        val stepsBeanList: MutableList<StepBean> = ArrayList()
+        val stepBean0: StepBean = StepBean("Cart", -1)
+        val stepBean1: StepBean = StepBean("Address", 0)
+        val stepBean2: StepBean = StepBean("Payment", 0)
+        val stepBean3: StepBean = StepBean("Placed", 0)
+        stepsBeanList.add(stepBean0)
+        stepsBeanList.add(stepBean1)
+        stepsBeanList.add(stepBean2)
+        stepsBeanList.add(stepBean3)
+        setpview5.setStepViewTexts(stepsBeanList) //???
+                .setTextSize(12) //set textSize
+                .setStepsViewIndicatorCompletedLineColor(ContextCompat.getColor(getApplicationContext(), R.color.darkgrey)) //??StepsViewIndicator??????
+                .setStepsViewIndicatorUnCompletedLineColor(ContextCompat.getColor(getApplicationContext(), android.R.color.darker_gray)) //??StepsViewIndicator???????
+                .setStepViewComplectedTextColor(ContextCompat.getColor(getApplicationContext(), R.color.darkgrey)) //??StepsView text??????
+                .setStepViewUnComplectedTextColor(ContextCompat.getColor(getApplicationContext(), R.color.darkgrey)) //??StepsView text???????
+                .setStepsViewIndicatorCompleteIcon(ContextCompat.getDrawable(getApplicationContext(), R.drawable.checkedd)) //??StepsViewIndicator CompleteIcon
+                .setStepsViewIndicatorDefaultIcon(ContextCompat.getDrawable(getApplicationContext(), R.drawable.outline_radio_button_checked_24)) //??StepsViewIndicator DefaultIcon
+                .setStepsViewIndicatorAttentionIcon(ContextCompat.getDrawable(getApplicationContext(), R.drawable.uncheckedd))
+        recyclerView = findViewById(R.id.cartrecyview)
+        findViewById<View>(R.id.back).setOnClickListener(object : View.OnClickListener {
+            public override fun onClick(v: View) {
+                onBackPressed()
             }
-        });
-
-        HorizontalStepView setpview5 = (HorizontalStepView) findViewById(R.id.stepsView);
-        List<StepBean> stepsBeanList = new ArrayList<>();
-        StepBean stepBean0 = new StepBean("Cart", -1);
-        StepBean stepBean1 = new StepBean("Address", 0);
-        StepBean stepBean2 = new StepBean("Payment", 0);
-        StepBean stepBean3 = new StepBean("Placed", 0);
-
-        stepsBeanList.add(stepBean0);
-
-        stepsBeanList.add(stepBean1);
-        stepsBeanList.add(stepBean2);
-        stepsBeanList.add(stepBean3);
-
-        setpview5.setStepViewTexts(stepsBeanList)//???
-                .setTextSize(12)//set textSize
-                .setStepsViewIndicatorCompletedLineColor(ContextCompat.getColor(getApplicationContext(), R.color.darkgrey))//??StepsViewIndicator??????
-                .setStepsViewIndicatorUnCompletedLineColor(ContextCompat.getColor(getApplicationContext(), android.R.color.darker_gray))//??StepsViewIndicator???????
-                .setStepViewComplectedTextColor(ContextCompat.getColor(getApplicationContext(), R.color.darkgrey))//??StepsView text??????
-                .setStepViewUnComplectedTextColor(ContextCompat.getColor(getApplicationContext(), R.color.darkgrey))//??StepsView text???????
-                .setStepsViewIndicatorCompleteIcon(ContextCompat.getDrawable(getApplicationContext(), R.drawable.checkedd))//??StepsViewIndicator CompleteIcon
-                .setStepsViewIndicatorDefaultIcon(ContextCompat.getDrawable(getApplicationContext(), R.drawable.outline_radio_button_checked_24))//??StepsViewIndicator DefaultIcon
-                .setStepsViewIndicatorAttentionIcon(ContextCompat.getDrawable(getApplicationContext(), R.drawable.uncheckedd));
-
-        recyclerView = findViewById(R.id.cartrecyview);
-
-        findViewById(R.id.back).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
+        })
+        total = findViewById(R.id.total)
+        total2 = findViewById(R.id.total2)
+        subtotal = findViewById(R.id.subtotal)
+        back = findViewById(R.id.back)
+        emptycart = findViewById(R.id.emptycart)
+        cartlayout = findViewById(R.id.cartlayout)
+        itemsnumber = findViewById(R.id.itemno)
+        progresslayout = findViewById(R.id.progresslayout)
+        back.setOnClickListener(object : View.OnClickListener {
+            public override fun onClick(v: View) {
+                onBackPressed()
             }
-        });
-
-        total = findViewById(R.id.total);
-        total2 = findViewById(R.id.total2);
-        subtotal = findViewById(R.id.subtotal);
-        back = findViewById(R.id.back);
-        emptycart = findViewById(R.id.emptycart);
-        cartlayout = findViewById(R.id.cartlayout);
-        itemsnumber = findViewById(R.id.itemno);
-        progresslayout = findViewById(R.id.progresslayout);
-
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
-
-        FirebaseDatabase.getInstance().getReference().child("Profiles").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Cart").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
+        })
+        FirebaseDatabase.getInstance().getReference().child("Profiles").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Cart").addListenerForSingleValueEvent(object : ValueEventListener {
+            public override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
                     YoYo.with(Techniques.FadeInDown)
                             .duration(1000)
-                            .playOn(recyclerView);
+                            .playOn(recyclerView)
                 }
             }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
-        FirebaseDatabase.getInstance().getReference().child("Profiles").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Cart").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                t = 0;
-                no = 0;
-                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    FirebaseDatabase.getInstance().getReference().child("Items").child(dataSnapshot.child("id").getValue(String.class)).addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot2) {
-                            t = t + ((dataSnapshot.child("quantity").getValue(Integer.class))) * Integer.valueOf(snapshot2.child("price").getValue(String.class));
-                            Format format = NumberFormat.getCurrencyInstance(new Locale("en", "in"));
-                            subtotal.setText(format.format(new BigDecimal(String.valueOf(t))));
+            public override fun onCancelled(error: DatabaseError) {}
+        })
+        FirebaseDatabase.getInstance().getReference().child("Profiles").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Cart").addValueEventListener(object : ValueEventListener {
+            public override fun onDataChange(snapshot: DataSnapshot) {
+                t = 0.0
+                no = 0
+                for (dataSnapshot: DataSnapshot in snapshot.getChildren()) {
+                    FirebaseDatabase.getInstance().getReference().child("Items").child((dataSnapshot.child("id").getValue(String::class.java))!!).addListenerForSingleValueEvent(object : ValueEventListener {
+                        public override fun onDataChange(snapshot2: DataSnapshot) {
+                            t = t + ((dataSnapshot.child("quantity").getValue(Int::class.java)))!! * Integer.valueOf(snapshot2.child("price").getValue(String::class.java))
+                            val format: Format = NumberFormat.getCurrencyInstance(Locale("en", "in"))
+                            subtotal.setText(format.format(BigDecimal(t.toString())))
                         }
 
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-
-                        }
-                    });
-                    no++;
-
-                    if (no == snapshot.getChildrenCount()) {
-                        Format format = NumberFormat.getCurrencyInstance(new Locale("en", "in"));
-                        subtotal.setText(format.format(new BigDecimal(String.valueOf(t))));
+                        public override fun onCancelled(error: DatabaseError) {}
+                    })
+                    no++
+                    if (no.toLong() == snapshot.getChildrenCount()) {
+                        val format: Format = NumberFormat.getCurrencyInstance(Locale("en", "in"))
+                        subtotal.setText(format.format(BigDecimal(t.toString())))
                     }
                 }
-
             }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-        FirebaseDatabase.getInstance().getReference().child("Profiles").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Cart").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                final Handler handler = new Handler(Looper.getMainLooper());
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                        progresslayout.setVisibility(View.GONE);
+            public override fun onCancelled(error: DatabaseError) {}
+        })
+        FirebaseDatabase.getInstance().getReference().child("Profiles").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Cart").addValueEventListener(object : ValueEventListener {
+            public override fun onDataChange(snapshot: DataSnapshot) {
+                val handler: Handler = Handler(Looper.getMainLooper())
+                handler.postDelayed(object : Runnable {
+                    public override fun run() {
+                        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                        progresslayout.setVisibility(View.GONE)
                     }
-                }, 700);
+                }, 700)
                 if (!snapshot.exists()) {
-                    cartlayout.setVisibility(View.GONE);
-                    findViewById(R.id.emptycartimg).setVisibility(View.VISIBLE);
-                    findViewById(R.id.emptycarttext).setVisibility(View.VISIBLE);
+                    cartlayout.setVisibility(View.GONE)
+                    findViewById<View>(R.id.emptycartimg).setVisibility(View.VISIBLE)
+                    findViewById<View>(R.id.emptycarttext).setVisibility(View.VISIBLE)
                 } else {
-                    cartlayout.setVisibility(View.VISIBLE);
-                    findViewById(R.id.emptycartimg).setVisibility(View.GONE);
-                    findViewById(R.id.emptycarttext).setVisibility(View.GONE);
+                    cartlayout.setVisibility(View.VISIBLE)
+                    findViewById<View>(R.id.emptycartimg).setVisibility(View.GONE)
+                    findViewById<View>(R.id.emptycarttext).setVisibility(View.GONE)
                 }
             }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
-        Query query = FirebaseDatabase.getInstance().getReference().child("Profiles").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Cart");
-
-        emptycart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                MaterialDialog mDialog = new MaterialDialog.Builder(Cart.this)
+            public override fun onCancelled(error: DatabaseError) {}
+        })
+        val query: Query = FirebaseDatabase.getInstance().getReference().child("Profiles").child(FirebaseAuth.getInstance().getCurrentUser()!!.getUid()).child("Cart")
+        emptycart.setOnClickListener(object : View.OnClickListener {
+            public override fun onClick(v: View) {
+                val mDialog: MaterialDialog = MaterialDialog.Builder(this@Cart)
                         .setTitle("Empty The Cart?")
                         .setMessage("Delete All Items")
                         .setCancelable(false)
-                        .setPositiveButton("Empty", R.drawable.delete2, new MaterialDialog.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int which) {
-
-                                query.getRef().removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
+                        .setPositiveButton("Empty", R.drawable.delete2, object : AbstractDialog.OnClickListener {
+                            public override fun onClick(dialogInterface: DialogInterface, which: Int) {
+                                query.getRef().removeValue().addOnCompleteListener(object : OnCompleteListener<Void?> {
+                                    public override fun onComplete(task: Task<Void?>) {
                                         if (task.isSuccessful()) {
-                                            Sneaker.with(Cart.this)
+                                            Sneaker.with(this@Cart)
                                                     .setTitle("Cart Empty", R.color.white)
                                                     .setMessage("All Items Removed From Cart", R.color.white)
                                                     .setDuration(2000)
@@ -234,11 +177,10 @@ public class Cart extends AppCompatActivity {
                                                     .autoHide(true)
                                                     .setHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
                                                     .setCornerRadius(10, 0)
-                                                    .sneak(R.color.green);
-                                            dialogInterface.dismiss();
-
+                                                    .sneak(R.color.green)
+                                            dialogInterface.dismiss()
                                         } else {
-                                            Sneaker.with(Cart.this)
+                                            Sneaker.with(this@Cart)
                                                     .setTitle("Error Emptying Cart ", R.color.white)
                                                     .setMessage("Please Try Again", R.color.white)
                                                     .setDuration(2000)
@@ -246,207 +188,143 @@ public class Cart extends AppCompatActivity {
                                                     .autoHide(true)
                                                     .setHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
                                                     .setCornerRadius(10, 0)
-                                                    .sneak(R.color.teal_200);
+                                                    .sneak(R.color.teal_200)
                                         }
                                     }
-                                });
-
+                                })
                             }
                         })
-                        .setNegativeButton("Cancel", R.drawable.cancel, new MaterialDialog.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int which) {
-                                dialogInterface.dismiss();
+                        .setNegativeButton("Cancel", R.drawable.cancel, object : AbstractDialog.OnClickListener {
+                            public override fun onClick(dialogInterface: DialogInterface, which: Int) {
+                                dialogInterface.dismiss()
                             }
                         })
-                        .build();
-                mDialog.show();
-
+                        .build()
+                mDialog.show()
             }
-        });
-
-
-        FirebaseRecyclerOptions<cartitemdetails> options = new FirebaseRecyclerOptions.Builder<cartitemdetails>()
-                .setQuery(query, new SnapshotParser<cartitemdetails>() {
-                    @NonNull
-                    @Override
-                    public cartitemdetails parseSnapshot(@NonNull DataSnapshot snapshot) {
-                        return new cartitemdetails(snapshot.child("size").getValue(String.class), snapshot.child("sizename").getValue(String.class), snapshot.child("colorcode").getValue(String.class), snapshot.child("colorname").getValue(String.class), snapshot.child("id").getValue(String.class), snapshot.child("image").getValue(String.class), snapshot.child("quantity").getValue(Integer.class));
+        })
+        val options: FirebaseRecyclerOptions<cartitemdetails> = FirebaseRecyclerOptions.Builder<cartitemdetails>()
+                .setQuery(query, object : SnapshotParser<cartitemdetails?> {
+                    public override fun parseSnapshot(snapshot: DataSnapshot): cartitemdetails {
+                        return cartitemdetails(snapshot.child("size").getValue(String::class.java), snapshot.child("sizename").getValue(String::class.java), snapshot.child("colorcode").getValue(String::class.java), snapshot.child("colorname").getValue(String::class.java), snapshot.child("id").getValue(String::class.java), snapshot.child("image").getValue(String::class.java), snapshot.child("quantity").getValue(Int::class.java))
                     }
-                }).build();
-
-
-        firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<cartitemdetails, CartViewHolder>(options) {
-
-            @Override
-            public void onViewAttachedToWindow(@NonNull CartViewHolder holder) {
-                super.onViewAttachedToWindow(holder);
-                itemsnumber.setText(firebaseRecyclerAdapter.getItemCount() + " items");
-                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                }).build()
+        firebaseRecyclerAdapter = object : FirebaseRecyclerAdapter<cartitemdetails, CartViewHolder>(options) {
+            public override fun onViewAttachedToWindow(holder: CartViewHolder) {
+                super.onViewAttachedToWindow(holder)
+                itemsnumber.setText(firebaseRecyclerAdapter!!.getItemCount().toString() + " items")
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
             }
 
-            @Override
-            protected void onBindViewHolder(@NonNull CartViewHolder holder, int position, @NonNull cartitemdetails model) {
-
-                holder.move.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        progresslayout.setVisibility(View.VISIBLE);
-                        DatabaseReference fromPath = firebaseRecyclerAdapter.getRef(position);
-                        DatabaseReference toPath = FirebaseDatabase.getInstance().getReference().child("Profiles").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Wishlist");
-
-
-                        fromPath.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                toPath.child(UUID.randomUUID().toString()).setValue(dataSnapshot.getValue(), new DatabaseReference.CompletionListener() {
-                                            @Override
-                                            public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
-                                                progresslayout.setVisibility(View.GONE);
-                                                fromPath.removeValue();
-                                            }
-                                        }
-                                );
+            override fun onBindViewHolder(holder: CartViewHolder, @SuppressLint("RecyclerView") position: Int, model: cartitemdetails) {
+                holder.move.setOnClickListener(object : View.OnClickListener {
+                    public override fun onClick(v: View) {
+                        progresslayout.setVisibility(View.VISIBLE)
+                        val fromPath: DatabaseReference = firebaseRecyclerAdapter!!.getRef(position)
+                        val toPath: DatabaseReference = FirebaseDatabase.getInstance().getReference().child("Profiles").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Wishlist")
+                        fromPath.addListenerForSingleValueEvent(object : ValueEventListener {
+                            public override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                toPath.child(UUID.randomUUID().toString()).setValue(dataSnapshot.getValue(), object : DatabaseReference.CompletionListener {
+                                    public override fun onComplete(error: DatabaseError?, ref: DatabaseReference) {
+                                        progresslayout.setVisibility(View.GONE)
+                                        fromPath.removeValue()
+                                    }
+                                }
+                                )
                             }
 
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
-
-                            }
-                        });
-
+                            public override fun onCancelled(error: DatabaseError) {}
+                        })
                     }
-                });
-
-
-
-                FirebaseDatabase.getInstance().getReference().child("Items").child(model.getId()).addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        itemdetails itemdetails = snapshot.getValue(com.example.login.Fragments.itemdetails.class);
-
-                        holder.name.setText(itemdetails.getName());
-                        Format format = NumberFormat.getCurrencyInstance(new Locale("en", "in"));
-                        holder.price.setText(format.format(new BigDecimal(itemdetails.getPrice())));
-
-                        holder.product.setText(itemdetails.getProduct());
-
-                        holder.quantity.setText("" + model.getQuantity());
-
-
+                })
+                FirebaseDatabase.getInstance().getReference().child("Items").child(model.id!!).addValueEventListener(object : ValueEventListener {
+                    public override fun onDataChange(snapshot: DataSnapshot) {
+                        val itemdetails: itemdetails? = snapshot.getValue(itemdetails::class.java)
+                        holder.name.setText(itemdetails!!.name)
+                        val format: Format = NumberFormat.getCurrencyInstance(Locale("en", "in"))
+                        holder.price.setText(format.format(BigDecimal(itemdetails.price)))
+                        holder.product.setText(itemdetails.product)
+                        holder.quantity.setText("" + model.quantity)
                     }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
-
-                holder.size.setText("Color: " + model.getColorname() + ", " + "Size : " + model.getSize());
-
-                Glide.with(getApplicationContext()).load(model.getImage()).into(holder.image);
-
-                holder.add.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        progresslayout.setVisibility(View.VISIBLE);
+                    public override fun onCancelled(error: DatabaseError) {}
+                })
+                holder.size.setText("Color: " + model.colorname+ ", " + "Size : " + model.size)
+                Glide.with(getApplicationContext()).load(model.image).into(holder.image)
+                holder.add.setOnClickListener(object : View.OnClickListener {
+                    public override fun onClick(v: View) {
+                        progresslayout.setVisibility(View.VISIBLE)
                         getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-
-                        firebaseRecyclerAdapter.getRef(position).addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                snapshot.child("quantity").getRef().setValue(snapshot.child("quantity").getValue(Integer.class) + 1).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        final Handler handler = new Handler(Looper.getMainLooper());
-                                        handler.postDelayed(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                                                progresslayout.setVisibility(View.GONE);
+                                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                        firebaseRecyclerAdapter!!.getRef(position).addListenerForSingleValueEvent(object : ValueEventListener {
+                            public override fun onDataChange(snapshot: DataSnapshot) {
+                                snapshot.child("quantity").getRef().setValue(snapshot.child("quantity").getValue(Int::class.java)!! + 1).addOnCompleteListener(object : OnCompleteListener<Void?> {
+                                    public override fun onComplete(task: Task<Void?>) {
+                                        val handler: Handler = Handler(Looper.getMainLooper())
+                                        handler.postDelayed(object : Runnable {
+                                            public override fun run() {
+                                                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                                                progresslayout.setVisibility(View.GONE)
                                             }
-                                        }, 700);
+                                        }, 700)
                                     }
-                                });
+                                })
                             }
 
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
-
-                            }
-                        });
+                            public override fun onCancelled(error: DatabaseError) {}
+                        })
                         //holder.quantity.setText((Integer.valueOf(holder.quantity.getText().toString()) + 1) + "");
                     }
-                });
-
-                holder.minus.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-
-                        firebaseRecyclerAdapter.getRef(position).addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                if (snapshot.child("quantity").getValue(Integer.class) > 1) {
-                                    progresslayout.setVisibility(View.VISIBLE);
+                })
+                holder.minus.setOnClickListener(object : View.OnClickListener {
+                    public override fun onClick(v: View) {
+                        firebaseRecyclerAdapter!!.getRef(position).addListenerForSingleValueEvent(object : ValueEventListener {
+                            public override fun onDataChange(snapshot: DataSnapshot) {
+                                if (snapshot.child("quantity").getValue(Int::class.java)!! > 1) {
+                                    progresslayout.setVisibility(View.VISIBLE)
                                     getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                                            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-
-                                    snapshot.child("quantity").getRef().setValue(snapshot.child("quantity").getValue(Integer.class) - 1).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-
-                                            final Handler handler = new Handler(Looper.getMainLooper());
-                                            handler.postDelayed(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                                                    progresslayout.setVisibility(View.GONE);
+                                            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                                    snapshot.child("quantity").getRef().setValue(snapshot.child("quantity").getValue(Int::class.java)!! - 1).addOnCompleteListener(object : OnCompleteListener<Void?> {
+                                        public override fun onComplete(task: Task<Void?>) {
+                                            val handler: Handler = Handler(Looper.getMainLooper())
+                                            handler.postDelayed(object : Runnable {
+                                                public override fun run() {
+                                                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                                                    progresslayout.setVisibility(View.GONE)
                                                 }
-                                            }, 700);
+                                            }, 700)
                                         }
-                                    });
+                                    })
                                 }
-
                             }
 
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
-
-                            }
-                        });
-
+                            public override fun onCancelled(error: DatabaseError) {}
+                        })
                     }
-                });
-
-                holder.delete.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        MaterialDialog mDialog = new MaterialDialog.Builder(Cart.this)
+                })
+                holder.delete.setOnClickListener(object : View.OnClickListener {
+                    public override fun onClick(v: View) {
+                        val mDialog: MaterialDialog = MaterialDialog.Builder(this@Cart)
                                 .setTitle("Remove Item From Cart?")
                                 .setCancelable(false)
-                                .setPositiveButton("Delete", R.drawable.delete2, new MaterialDialog.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int which) {
-
-                                        firebaseRecyclerAdapter.getRef(position).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<Void> task) {
+                                .setPositiveButton("Delete", R.drawable.delete2, object : AbstractDialog.OnClickListener {
+                                    public override fun onClick(dialogInterface: DialogInterface, which: Int) {
+                                        firebaseRecyclerAdapter!!.getRef(position).removeValue().addOnCompleteListener(object : OnCompleteListener<Void?> {
+                                            public override fun onComplete(task: Task<Void?>) {
                                                 if (task.isSuccessful()) {
-                                                    dialogInterface.dismiss();
-                                                    firebaseRecyclerAdapter.notifyDataSetChanged();
-                                                    Sneaker.with(Cart.this)
+                                                    dialogInterface.dismiss()
+                                                    firebaseRecyclerAdapter!!.notifyDataSetChanged()
+                                                    Sneaker.with(this@Cart)
                                                             .setTitle("Item Removed From Cart", R.color.white)
-                                                            .setMessage(firebaseRecyclerAdapter.getItemCount() + " item(s) left in cart", R.color.white)
+                                                            .setMessage(firebaseRecyclerAdapter!!.getItemCount().toString() + " item(s) left in cart", R.color.white)
                                                             .setDuration(2000)
                                                             .setIcon(R.drawable.delete2, R.color.white)
                                                             .autoHide(true)
                                                             .setHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
                                                             .setCornerRadius(10, 0)
-                                                            .sneak(R.color.green);
+                                                            .sneak(R.color.green)
                                                 } else {
-                                                    Sneaker.with(Cart.this)
+                                                    Sneaker.with(this@Cart)
                                                             .setTitle("Error Removing Item ", R.color.white)
                                                             .setMessage("Please Try Again", R.color.white)
                                                             .setDuration(2000)
@@ -454,80 +332,72 @@ public class Cart extends AppCompatActivity {
                                                             .autoHide(true)
                                                             .setHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
                                                             .setCornerRadius(10, 0)
-                                                            .sneak(R.color.teal_200);
-
+                                                            .sneak(R.color.teal_200)
                                                 }
                                             }
-                                        });
-
+                                        })
                                     }
                                 })
-                                .setNegativeButton("Cancel", R.drawable.cancel, new MaterialDialog.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int which) {
-                                        dialogInterface.dismiss();
+                                .setNegativeButton("Cancel", R.drawable.cancel, object : AbstractDialog.OnClickListener {
+                                    public override fun onClick(dialogInterface: DialogInterface, which: Int) {
+                                        dialogInterface.dismiss()
                                     }
                                 })
-                                .build();
+                                .build()
 
                         // Show Dialog
-                        mDialog.show();
+                        mDialog.show()
                     }
-                });
-
-
+                })
             }
 
-            @NonNull
-            @Override
-            public CartViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.cartitem, parent, false);
-                return new CartViewHolder(view);
+            public override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CartViewHolder {
+                val view: View = LayoutInflater.from(parent.getContext()).inflate(R.layout.cartitem, parent, false)
+                return CartViewHolder(view)
             }
-        };
-
-        recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        recyclerView.setAdapter(firebaseRecyclerAdapter);
-
+        }
+        recyclerView.setLayoutManager(LinearLayoutManager(getApplicationContext()))
+        recyclerView.setAdapter(firebaseRecyclerAdapter)
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        firebaseRecyclerAdapter.startListening();
+    override fun onResume() {
+        super.onResume()
+        firebaseRecyclerAdapter!!.startListening()
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        firebaseRecyclerAdapter.stopListening();
+    override fun onDestroy() {
+        super.onDestroy()
+        firebaseRecyclerAdapter!!.stopListening()
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        customType(Cart.this, "up-to-bottom");
+    public override fun onBackPressed() {
+        super.onBackPressed()
+        CustomIntent.customType(this@Cart, "up-to-bottom")
     }
 
-    private class CartViewHolder extends RecyclerView.ViewHolder {
+    inner class CartViewHolder constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        var name: TextView
+        var size: TextView
+        var price: TextView
+        var quantity: TextView
+        var product: TextView
+        var move: TextView
+        var add: ImageView
+        var minus: ImageView
+        var image: ImageView
+        var delete: CardView
 
-        TextView name, size, price, quantity, product, move;
-        ImageView add, minus, image;
-        CardView delete;
-
-        public CartViewHolder(@NonNull View itemView) {
-            super(itemView);
-
-            name = itemView.findViewById(R.id.name);
-            image = itemView.findViewById(R.id.image);
-            size = itemView.findViewById(R.id.specs);
-            price = itemView.findViewById(R.id.price);
-            move = itemView.findViewById(R.id.movetowishlist);
-            quantity = itemView.findViewById(R.id.quantity);
-            add = itemView.findViewById(R.id.plus);
-            product = itemView.findViewById(R.id.product);
-            minus = itemView.findViewById(R.id.minus);
-            delete = itemView.findViewById(R.id.delete);
+        init {
+            name = itemView.findViewById(R.id.name)
+            image = itemView.findViewById(R.id.image)
+            size = itemView.findViewById(R.id.specs)
+            price = itemView.findViewById(R.id.price)
+            move = itemView.findViewById(R.id.movetowishlist)
+            quantity = itemView.findViewById(R.id.quantity)
+            add = itemView.findViewById(R.id.plus)
+            product = itemView.findViewById(R.id.product)
+            minus = itemView.findViewById(R.id.minus)
+            delete = itemView.findViewById(R.id.delete)
         }
     }
 }

@@ -17,49 +17,63 @@
         tools:replace="android:theme">
         <activity
             android:name=".Splash"
-            android:theme="@style/Theme.Splash">
+            android:theme="@style/Theme.Splash"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.ALTERNATIVE" />
             </intent-filter>
         </activity>
-        <activity android:name=".Wishlist">
+        <activity android:name=".Wishlist"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.ALTERNATIVE" />
             </intent-filter>
         </activity>
-        <activity android:name=".ViewOrder">
+        <activity android:name="com.razorpay.CheckoutActivity"
+            android:exported="true">
+        </activity>
+        <receiver android:name="com.razorpay.RzpTokenReceiver"
+            android:exported="true">
+        </receiver>
+
+        <activity android:name=".ViewOrder"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.ALTERNATIVE" />
             </intent-filter>
         </activity>
-        <activity android:name=".MyOrders">
+        <activity android:name=".MyOrders"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.ALTERNATIVE" />
             </intent-filter>
         </activity>
-        <activity android:name=".OrderPaymentStatus">
+        <activity android:name=".OrderPaymentStatus"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.ALTERNATIVE" />
             </intent-filter>
         </activity>
-        <activity android:name=".OrderPaymentDetails">
+        <activity android:name=".OrderPaymentDetails"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.ALTERNATIVE" />
             </intent-filter>
         </activity>
-        <activity android:name=".Address">
+        <activity android:name=".Address"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -67,14 +81,16 @@
             </intent-filter>
         </activity>
         <activity android:name=".ChangePassword" />
-        <activity android:name=".EditProfile">
+        <activity android:name=".EditProfile"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.ALTERNATIVE" />
             </intent-filter>
         </activity>
-        <activity android:name=".Cart">
+        <activity android:name=".Cart"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -83,42 +99,48 @@
         </activity>
         <activity
             android:name=".ItemDetail"
-            android:theme="@style/Theme.Details">
+            android:theme="@style/Theme.Details"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.ALTERNATIVE" />
             </intent-filter>
         </activity>
-        <activity android:name=".Login">
+        <activity android:name=".Login"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.ALTERNATIVE" />
             </intent-filter>
         </activity>
-        <activity android:name=".Home">
+        <activity android:name=".Home"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.ALTERNATIVE" />
             </intent-filter>
         </activity>
-        <activity android:name=".ProfileSetup">
+        <activity android:name=".ProfileSetup"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.ALTERNATIVE" />
             </intent-filter>
         </activity>
-        <activity android:name=".VerifyOtp">
+        <activity android:name=".VerifyOtp"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.ALTERNATIVE" />
             </intent-filter>
         </activity>
-        <activity android:name=".NewLogin">
+        <activity android:name=".NewLogin"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -127,7 +149,8 @@
         </activity>
         <activity
             android:name=".MainActivity"
-            android:theme="@style/Theme.Home">
+            android:theme="@style/Theme.Home"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

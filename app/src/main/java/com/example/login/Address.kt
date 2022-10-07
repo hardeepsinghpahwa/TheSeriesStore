@@ -1,208 +1,161 @@
-package com.example.login;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.view.animation.AnimationUtils;
-import android.view.animation.LayoutAnimationController;
-import android.widget.Adapter;
-import android.widget.CheckBox;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.baoyachi.stepview.HorizontalStepView;
-import com.baoyachi.stepview.bean.StepBean;
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.firebase.ui.database.FirebaseRecyclerOptions;
-import com.firebase.ui.database.SnapshotParser;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
-import com.irozon.sneaker.Sneaker;
-
-import net.igenius.customcheckbox.CustomCheckBox;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import dev.shreyaspatil.MaterialDialog.MaterialDialog;
-import dmax.dialog.SpotsDialog;
-
-import static maes.tech.intentanim.CustomIntent.customType;
-
-public class Address extends AppCompatActivity {
+package com.example.login
 
 
-    RecyclerView recyclerView;
-    TextView noaddresstext, addnew, continuetopay;
-    ImageView noaddress;
-    ConstraintLayout progresslayout;
-    int posi;
-    String type = "";
-    String name, phone, address;
-    FirebaseRecyclerAdapter<addressdetail, AddressViewHolder> firebaseRecyclerAdapter;
+import android.annotation.SuppressLint
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.RecyclerView
+import androidx.constraintlayout.widget.ConstraintLayout
+import com.firebase.ui.database.FirebaseRecyclerAdapter
+import android.os.Bundle
+import android.graphics.drawable.ColorDrawable
+import androidx.core.content.ContextCompat
+import android.view.View.OnTouchListener
+import com.irozon.sneaker.Sneaker
+import dmax.dialog.SpotsDialog
+import com.google.firebase.auth.FirebaseAuth
+import com.google.android.gms.tasks.OnCompleteListener
+import com.baoyachi.stepview.HorizontalStepView
+import com.baoyachi.stepview.bean.StepBean
+import android.content.Intent
+import maes.tech.intentanim.CustomIntent
+import com.firebase.ui.database.FirebaseRecyclerOptions
+import dev.shreyaspatil.MaterialDialog.MaterialDialog
+import dev.shreyaspatil.MaterialDialog.AbstractDialog
+import androidx.recyclerview.widget.LinearLayoutManager
+import net.igenius.customcheckbox.CustomCheckBox
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_address);
+import android.app.Dialog
+import android.content.DialogInterface
+import android.graphics.Color
 
+import android.util.Log
+import android.view.*
+import android.widget.*
+import androidx.appcompat.app.AlertDialog
 
-        findViewById(R.id.back).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
-        recyclerView = findViewById(R.id.addressrecyview);
-        noaddresstext = findViewById(R.id.noaddressestext);
-        addnew = findViewById(R.id.addnew);
-        continuetopay = findViewById(R.id.continuetopay);
-        noaddress = findViewById(R.id.noaddresses);
-        progresslayout = findViewById(R.id.progresslayout);
+import com.firebase.ui.database.SnapshotParser
+import com.google.android.gms.tasks.Task
+import com.google.firebase.database.*
 
-        progresslayout.bringToFront();
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+import java.util.*
 
+class Address() : AppCompatActivity() {
+    lateinit var recyclerView: RecyclerView
+    lateinit var noaddresstext: TextView
+    lateinit var addnew: TextView
+    lateinit var continuetopay: TextView
+    lateinit var noaddress: ImageView
+    lateinit var progresslayout: ConstraintLayout
+    var posi = 0
+    var type = ""
+    var name: String? = null
+    lateinit var phone: String
+    lateinit var address: String
+    lateinit var firebaseRecyclerAdapter: FirebaseRecyclerAdapter<addressdetail, AddressViewHolder>
 
-        addnew.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addnew.setEnabled(false);
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_address)
+        findViewById<View>(R.id.back).setOnClickListener(View.OnClickListener { onBackPressed() })
+        recyclerView = findViewById(R.id.addressrecyview)
+        noaddresstext = findViewById(R.id.noaddressestext)
+        addnew = findViewById(R.id.addnew)
+        continuetopay = findViewById(R.id.continuetopay)
+        noaddress = findViewById(R.id.noaddresses)
+        progresslayout = findViewById(R.id.progresslayout)
 
-                final EditText name, address, city, phone, pincode;
-                final TextView state, save, home, office;
-                ImageView cross;
+        window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
 
-                final Dialog dialog = new Dialog(Address.this);
-                dialog.setContentView(R.layout.addaddress);
-                dialog.setCanceledOnTouchOutside(false);
-                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                dialog.getWindow().getAttributes().windowAnimations = R.style.AppTheme_UpDown;
-                name = dialog.findViewById(R.id.name);
-                address = dialog.findViewById(R.id.address);
-                city = dialog.findViewById(R.id.city);
-                state = dialog.findViewById(R.id.state);
-                save = dialog.findViewById(R.id.save);
-                phone = dialog.findViewById(R.id.phone);
-                pincode = dialog.findViewById(R.id.pincode);
-                cross = dialog.findViewById(R.id.cross);
-                home = dialog.findViewById(R.id.home);
-                office = dialog.findViewById(R.id.office);
+        addnew.setOnClickListener {
 
-                dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) {
-                        addnew.setEnabled(true);
+        }
+
+        addnew.setOnClickListener(object : View.OnClickListener {
+            override fun onClick(v: View) {
+                addnew.setEnabled(false)
+                val name: EditText
+                val address: EditText
+                val city: EditText
+                val phone: EditText
+                val pincode: EditText
+                val state: TextView
+                val save: TextView
+                val home: TextView
+                val office: TextView
+                val cross: ImageView
+                val dialog = Dialog(this@Address)
+                dialog.setContentView(R.layout.addaddress)
+                dialog.setCanceledOnTouchOutside(false)
+                dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                dialog.window!!.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+                dialog.window!!.attributes.windowAnimations = R.style.AppTheme_UpDown
+                name = dialog.findViewById(R.id.name)
+                address = dialog.findViewById(R.id.address)
+                city = dialog.findViewById(R.id.city)
+                state = dialog.findViewById(R.id.state)
+                save = dialog.findViewById(R.id.save)
+                phone = dialog.findViewById(R.id.phone)
+                pincode = dialog.findViewById(R.id.pincode)
+                cross = dialog.findViewById(R.id.cross)
+                home = dialog.findViewById(R.id.home)
+                office = dialog.findViewById(R.id.office)
+                dialog.setOnDismissListener(object : DialogInterface.OnDismissListener {
+                    override fun onDismiss(dialog: DialogInterface) {
+                        addnew.setEnabled(true)
                     }
-                });
-
-                home.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (type.equals("Home")) {
-                            home.setBackgroundResource(R.drawable.stroke2);
-                            home.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.blue));
-
+                })
+                home.setOnClickListener(object : View.OnClickListener {
+                    override fun onClick(v: View) {
+                        if ((type == "Home")) {
+                            home.setBackgroundResource(R.drawable.stroke2)
+                            home.setTextColor(ContextCompat.getColor(applicationContext, R.color.blue))
                         }
-                        type = "Home";
-                        home.setTextColor(Color.WHITE);
-                        home.setBackgroundResource(R.drawable.stroke3);
-
-                        office.setBackgroundResource(R.drawable.stroke2);
-                        office.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.blue));
-
+                        type = "Home"
+                        home.setTextColor(Color.WHITE)
+                        home.setBackgroundResource(R.drawable.stroke3)
+                        office.setBackgroundResource(R.drawable.stroke2)
+                        office.setTextColor(ContextCompat.getColor(applicationContext, R.color.blue))
                     }
-                });
-
-                office.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        if (type.equals("Office")) {
-                            office.setBackgroundResource(R.drawable.stroke2);
-                            office.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.blue));
-
+                })
+                office.setOnClickListener(object : View.OnClickListener {
+                    override fun onClick(v: View) {
+                        if ((type == "Office")) {
+                            office.setBackgroundResource(R.drawable.stroke2)
+                            office.setTextColor(ContextCompat.getColor(applicationContext, R.color.blue))
                         }
-                        type = "Office";
-                        office.setTextColor(Color.WHITE);
-                        office.setBackgroundResource(R.drawable.stroke3);
-
-                        home.setBackgroundResource(R.drawable.stroke2);
-                        home.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.blue));
-
+                        type = "Office"
+                        office.setTextColor(Color.WHITE)
+                        office.setBackgroundResource(R.drawable.stroke3)
+                        home.setBackgroundResource(R.drawable.stroke2)
+                        home.setTextColor(ContextCompat.getColor(applicationContext, R.color.blue))
                     }
-                });
-
-                cross.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        dialog.dismiss();
+                })
+                cross.setOnClickListener(object : View.OnClickListener {
+                    override fun onClick(view: View) {
+                        dialog.dismiss()
                     }
-                });
-
-                state.setKeyListener(null);
-
-                final String[] listItems = {"Andaman and Nicobar Islands", "Andra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chandigarh", "Chhattisgarh", "Dadar and Nagar Haveli", "Daman and Diu", "Delhi", "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jammu and Kashmir", "Jharkhand", "Karnataka", "Kerala", "Ladakh", "Lakshadeep", "Madya Pradesh", "Maharashtra", "Manipur", "Meghalaya", "Mizoram", "Nagaland", "Orissa", "Punjab", "Pondicherry", "Rajasthan", "Sikkim", "Tamil Nadu", "Telagana", "Tripura", "Uttarakhand", "Uttar Pradesh", "West Bengal"};
-
-                androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(Address.this);
-                builder.setTitle("Your State");
-
-                builder.setItems(listItems, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        state.setText(listItems[which]);
+                })
+                state.keyListener = null
+                val listItems = arrayOf("Andaman and Nicobar Islands", "Andra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chandigarh", "Chhattisgarh", "Dadar and Nagar Haveli", "Daman and Diu", "Delhi", "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jammu and Kashmir", "Jharkhand", "Karnataka", "Kerala", "Ladakh", "Lakshadeep", "Madya Pradesh", "Maharashtra", "Manipur", "Meghalaya", "Mizoram", "Nagaland", "Orissa", "Punjab", "Pondicherry", "Rajasthan", "Sikkim", "Tamil Nadu", "Telagana", "Tripura", "Uttarakhand", "Uttar Pradesh", "West Bengal")
+                val builder = AlertDialog.Builder(this@Address)
+                builder.setTitle("Your State")
+                builder.setItems(listItems, object : DialogInterface.OnClickListener {
+                    override fun onClick(dialog: DialogInterface, which: Int) {
+                        state.text = listItems.get(which)
                     }
-                });
-
-                final androidx.appcompat.app.AlertDialog dialog1 = builder.create();
-
-                state.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View view, MotionEvent motionEvent) {
-
-                        dialog1.show();
-
-                        return false;
+                })
+                val dialog1 = builder.create()
+                state.setOnTouchListener(object : OnTouchListener {
+                    override fun onTouch(view: View, motionEvent: MotionEvent): Boolean {
+                        dialog1.show()
+                        return false
                     }
-                });
-
-
-                save.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if (name.getText().toString().equals("")) {
-                            Sneaker.with(Address.this)
+                })
+                save.setOnClickListener(object : View.OnClickListener {
+                    override fun onClick(view: View) {
+                        if ((name.text.toString() == "")) {
+                            Sneaker.with(this@Address)
                                     .setTitle("Enter Name", R.color.white)
                                     .setMessage("This field cant be empty", R.color.white)
                                     .setDuration(2000)
@@ -210,10 +163,9 @@ public class Address extends AppCompatActivity {
                                     .autoHide(true)
                                     .setHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
                                     .setCornerRadius(10, 0)
-                                    .sneak(R.color.teal_200);
-
-                        } else if (phone.getText().toString().equals("")) {
-                            Sneaker.with(Address.this)
+                                    .sneak(R.color.teal_200)
+                        } else if ((phone.text.toString() == "")) {
+                            Sneaker.with(this@Address)
                                     .setTitle("Enter Phone", R.color.white)
                                     .setMessage("This field cant be empty", R.color.white)
                                     .setDuration(2000)
@@ -221,9 +173,9 @@ public class Address extends AppCompatActivity {
                                     .autoHide(true)
                                     .setHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
                                     .setCornerRadius(10, 0)
-                                    .sneak(R.color.teal_200);
-                        } else if (phone.getText().toString().length() < 10) {
-                            Sneaker.with(Address.this)
+                                    .sneak(R.color.teal_200)
+                        } else if (phone.text.toString().length < 10) {
+                            Sneaker.with(this@Address)
                                     .setTitle("Invalid Phone", R.color.white)
                                     .setMessage("Enter a valid phone number", R.color.white)
                                     .setDuration(2000)
@@ -231,9 +183,9 @@ public class Address extends AppCompatActivity {
                                     .autoHide(true)
                                     .setHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
                                     .setCornerRadius(10, 0)
-                                    .sneak(R.color.teal_200);
-                        } else if (address.getText().toString().equals("")) {
-                            Sneaker.with(Address.this)
+                                    .sneak(R.color.teal_200)
+                        } else if ((address.text.toString() == "")) {
+                            Sneaker.with(this@Address)
                                     .setTitle("Enter House No,Street,Road,Area,Colony", R.color.white)
                                     .setMessage("This field cant be empty", R.color.white)
                                     .setDuration(2000)
@@ -241,9 +193,9 @@ public class Address extends AppCompatActivity {
                                     .autoHide(true)
                                     .setHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
                                     .setCornerRadius(10, 0)
-                                    .sneak(R.color.teal_200);
-                        } else if (city.getText().toString().equals("")) {
-                            Sneaker.with(Address.this)
+                                    .sneak(R.color.teal_200)
+                        } else if ((city.text.toString() == "")) {
+                            Sneaker.with(this@Address)
                                     .setTitle("Enter City", R.color.white)
                                     .setMessage("This field cant be empty", R.color.white)
                                     .setDuration(2000)
@@ -251,9 +203,9 @@ public class Address extends AppCompatActivity {
                                     .autoHide(true)
                                     .setHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
                                     .setCornerRadius(10, 0)
-                                    .sneak(R.color.teal_200);
-                        } else if (state.getText().toString().equals("")) {
-                            Sneaker.with(Address.this)
+                                    .sneak(R.color.teal_200)
+                        } else if ((state.text.toString() == "")) {
+                            Sneaker.with(this@Address)
                                     .setTitle("Select State", R.color.white)
                                     .setMessage("This field cant be empty", R.color.white)
                                     .setDuration(2000)
@@ -261,9 +213,9 @@ public class Address extends AppCompatActivity {
                                     .autoHide(true)
                                     .setHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
                                     .setCornerRadius(10, 0)
-                                    .sneak(R.color.teal_200);
-                        } else if (pincode.getText().toString().equals("")) {
-                            Sneaker.with(Address.this)
+                                    .sneak(R.color.teal_200)
+                        } else if ((pincode.text.toString() == "")) {
+                            Sneaker.with(this@Address)
                                     .setTitle("Enter Pincode", R.color.white)
                                     .setMessage("This field cant be empty", R.color.white)
                                     .setDuration(2000)
@@ -271,9 +223,9 @@ public class Address extends AppCompatActivity {
                                     .autoHide(true)
                                     .setHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
                                     .setCornerRadius(10, 0)
-                                    .sneak(R.color.teal_200);
-                        } else if (pincode.getText().toString().length() < 6) {
-                            Sneaker.with(Address.this)
+                                    .sneak(R.color.teal_200)
+                        } else if (pincode.text.toString().length < 6) {
+                            Sneaker.with(this@Address)
                                     .setTitle("Invalid Pincode", R.color.white)
                                     .setMessage("Enter a valid 6 digit Pincode", R.color.white)
                                     .setDuration(2000)
@@ -281,33 +233,29 @@ public class Address extends AppCompatActivity {
                                     .autoHide(true)
                                     .setHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
                                     .setCornerRadius(10, 0)
-                                    .sneak(R.color.teal_200);
+                                    .sneak(R.color.teal_200)
                         } else {
-
-                            final AlertDialog alertDialog = new SpotsDialog.Builder()
+                            val alertDialog = SpotsDialog.Builder()
                                     .setCancelable(false)
-                                    .setContext(Address.this)
+                                    .setContext(this@Address)
                                     .setTheme(R.style.ProgressDialog)
                                     .setMessage("Saving Address")
-                                    .build();
-
-                            alertDialog.show();
-
-                            Map map = new HashMap();
-                            map.put("name", name.getText().toString());
-                            map.put("phone", phone.getText().toString());
-                            map.put("address", address.getText().toString());
-                            map.put("city", city.getText().toString());
-                            map.put("state", state.getText().toString());
-                            map.put("pincode", pincode.getText().toString());
-                            map.put("type", type);
-
-                            FirebaseDatabase.getInstance().getReference().child("Profiles").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Addresses").child(UUID.randomUUID().toString()).updateChildren(map).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()) {
-                                        alertDialog.dismiss();
-                                        Sneaker.with(Address.this)
+                                    .build()
+                            alertDialog.show()
+                            val map = mutableMapOf<String?, Any?>()
+                            map["name"] = name.text.toString()
+                            map["phone"] = phone.text.toString()
+                            map["address"] = address.text.toString()
+                            map["city"] = city.text.toString()
+                            map["state"] = state.text.toString()
+                            map["pincode"] = pincode.text.toString()
+                            map["type"] = type
+                            FirebaseDatabase.getInstance().reference.child("Profiles").child(FirebaseAuth.getInstance().currentUser!!.uid).child("Addresses").child(UUID.randomUUID().toString()).updateChildren(map).addOnCompleteListener(object : OnCompleteListener<Void?> {
+                                @SuppressLint("NotifyDataSetChanged")
+                                override fun onComplete(task: Task<Void?>) {
+                                    if (task.isSuccessful) {
+                                        alertDialog.dismiss()
+                                        Sneaker.with(this@Address)
                                                 .setTitle("Address Saved", R.color.white)
                                                 .setMessage("Your details have been saved", R.color.white)
                                                 .setDuration(2000)
@@ -315,13 +263,12 @@ public class Address extends AppCompatActivity {
                                                 .autoHide(true)
                                                 .setHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
                                                 .setCornerRadius(10, 0)
-                                                .sneak(R.color.green);
-                                        dialog.dismiss();
-                                        firebaseRecyclerAdapter.notifyDataSetChanged();
-
+                                                .sneak(R.color.green)
+                                        dialog.dismiss()
+                                        firebaseRecyclerAdapter.notifyDataSetChanged()
                                     } else {
-                                        alertDialog.dismiss();
-                                        Sneaker.with(Address.this)
+                                        alertDialog.dismiss()
+                                        Sneaker.with(this@Address)
                                                 .setTitle("Error Saving Address", R.color.white)
                                                 .setMessage("Please Try Again", R.color.white)
                                                 .setDuration(2000)
@@ -329,83 +276,62 @@ public class Address extends AppCompatActivity {
                                                 .autoHide(true)
                                                 .setHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
                                                 .setCornerRadius(10, 0)
-                                                .sneak(R.color.teal_200);
+                                                .sneak(R.color.teal_200)
                                     }
                                 }
-                            });
-
+                            })
                         }
                     }
-                });
-
-
-                dialog.show();
-
+                })
+                dialog.show()
             }
-        });
-
-        HorizontalStepView setpview5 = (HorizontalStepView) findViewById(R.id.stepsView);
-        List<StepBean> stepsBeanList = new ArrayList<>();
-        StepBean stepBean0 = new StepBean("Cart", 1);
-        StepBean stepBean1 = new StepBean("Address", -1);
-        StepBean stepBean2 = new StepBean("Payment", 0);
-        StepBean stepBean3 = new StepBean("Placed", 0);
-
-        if(getIntent().getStringExtra("pro")!=null)
-        {
-            findViewById(R.id.continuecard).setVisibility(View.GONE);
-            setpview5.setVisibility(View.GONE);
+        })
+        val setpview5 = findViewById<View>(R.id.stepsView) as HorizontalStepView
+        val stepsBeanList: MutableList<StepBean> = ArrayList()
+        val stepBean0 = StepBean("Cart", 1)
+        val stepBean1 = StepBean("Address", -1)
+        val stepBean2 = StepBean("Payment", 0)
+        val stepBean3 = StepBean("Placed", 0)
+        if (intent.getStringExtra("pro") != null) {
+            findViewById<View>(R.id.continuecard).visibility = View.GONE
+            setpview5.visibility = View.GONE
         }
-
-        stepsBeanList.add(stepBean0);
-
-        stepsBeanList.add(stepBean1);
-        stepsBeanList.add(stepBean2);
-        stepsBeanList.add(stepBean3);
-
-        setpview5.setStepViewTexts(stepsBeanList)//???
-
-                .setTextSize(12)//set textSize
-                .setStepsViewIndicatorCompletedLineColor(ContextCompat.getColor(getApplicationContext(), R.color.darkgrey))//??StepsViewIndicator??????
-                .setStepsViewIndicatorUnCompletedLineColor(ContextCompat.getColor(getApplicationContext(), android.R.color.darker_gray))//??StepsViewIndicator???????
-                .setStepViewComplectedTextColor(ContextCompat.getColor(getApplicationContext(), R.color.darkgrey))//??StepsView text??????
-                .setStepViewUnComplectedTextColor(ContextCompat.getColor(getApplicationContext(), R.color.darkgrey))//??StepsView text???????
-                .setStepsViewIndicatorCompleteIcon(ContextCompat.getDrawable(getApplicationContext(), R.drawable.checkedd))//??StepsViewIndicator CompleteIcon
-                .setStepsViewIndicatorDefaultIcon(ContextCompat.getDrawable(getApplicationContext(), R.drawable.outline_radio_button_checked_24))//??StepsViewIndicator DefaultIcon
-                .setStepsViewIndicatorAttentionIcon(ContextCompat.getDrawable(getApplicationContext(), R.drawable.uncheckedd));
-
-
-        Query query = FirebaseDatabase.getInstance().getReference().child("Profiles").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Addresses");
-
-        query.getRef().addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                recyclerView.scheduleLayoutAnimation();
+        stepsBeanList.add(stepBean0)
+        stepsBeanList.add(stepBean1)
+        stepsBeanList.add(stepBean2)
+        stepsBeanList.add(stepBean3)
+        setpview5.setStepViewTexts(stepsBeanList) //???
+                .setTextSize(12) //set textSize
+                .setStepsViewIndicatorCompletedLineColor(ContextCompat.getColor(applicationContext, R.color.darkgrey)) //??StepsViewIndicator??????
+                .setStepsViewIndicatorUnCompletedLineColor(ContextCompat.getColor(applicationContext, android.R.color.darker_gray)) //??StepsViewIndicator???????
+                .setStepViewComplectedTextColor(ContextCompat.getColor(applicationContext, R.color.darkgrey)) //??StepsView text??????
+                .setStepViewUnComplectedTextColor(ContextCompat.getColor(applicationContext, R.color.darkgrey)) //??StepsView text???????
+                .setStepsViewIndicatorCompleteIcon(ContextCompat.getDrawable(applicationContext, R.drawable.checkedd)) //??StepsViewIndicator CompleteIcon
+                .setStepsViewIndicatorDefaultIcon(ContextCompat.getDrawable(applicationContext, R.drawable.outline_radio_button_checked_24)) //??StepsViewIndicator DefaultIcon
+                .setStepsViewIndicatorAttentionIcon(ContextCompat.getDrawable(applicationContext, R.drawable.uncheckedd))
+        val query: Query = FirebaseDatabase.getInstance().reference.child("Profiles").child(FirebaseAuth.getInstance().currentUser.uid).child("Addresses")
+        query.ref.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                recyclerView.scheduleLayoutAnimation()
             }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-        query.getRef().addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                progresslayout.setVisibility(View.GONE);
-                continuetopay.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+            override fun onCancelled(error: DatabaseError) {}
+        })
+        query.ref.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                progresslayout.setVisibility(View.GONE)
+                continuetopay.setOnClickListener(object : View.OnClickListener {
+                    override fun onClick(v: View) {
                         if (name != null) {
-                            Intent intent = new Intent(Address.this, OrderPaymentDetails.class);
-                            intent.putExtra("name", name);
-                            intent.putExtra("address", address);
-                            intent.putExtra("phone", phone);
-                            startActivity(intent);
-                            customType(Address.this,"left-to-right");
-                        }
-                        else {
-                            Sneaker.with(Address.this)
+                            val intent = Intent(this@Address, OrderPaymentDetails::class.java)
+                            intent.putExtra("name", name)
+                            intent.putExtra("address", address)
+                            intent.putExtra("phone", phone)
+                            startActivity(intent)
+                            CustomIntent.customType(this@Address, "left-to-right")
+                        } else {
+                            Sneaker.with(this@Address)
                                     .setTitle("Select An Address", R.color.white)
                                     .setMessage("Select existing or add a new address to continue", R.color.white)
                                     .setDuration(2000)
@@ -413,104 +339,77 @@ public class Address extends AppCompatActivity {
                                     .autoHide(true)
                                     .setHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
                                     .setCornerRadius(10, 0)
-                                    .sneak(R.color.teal_200);
-
+                                    .sneak(R.color.teal_200)
                         }
                     }
-                });
+                })
                 if (!snapshot.exists()) {
-                    noaddress.setVisibility(View.VISIBLE);
-                    noaddresstext.setVisibility(View.VISIBLE);
+                    noaddress.setVisibility(View.VISIBLE)
+                    noaddresstext.setVisibility(View.VISIBLE)
                 } else {
-                    noaddress.setVisibility(View.GONE);
-                    noaddresstext.setVisibility(View.GONE);
+                    noaddress.setVisibility(View.GONE)
+                    noaddresstext.setVisibility(View.GONE)
                 }
             }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
-        FirebaseRecyclerOptions<addressdetail> options = new FirebaseRecyclerOptions.Builder<addressdetail>()
-                .setQuery(query, new SnapshotParser<addressdetail>() {
-                    @NonNull
-                    @Override
-                    public addressdetail parseSnapshot(@NonNull DataSnapshot snapshot) {
-                        return new addressdetail(snapshot.child("name").getValue(String.class), snapshot.child("phone").getValue(String.class), snapshot.child("address").getValue(String.class), snapshot.child("city").getValue(String.class), snapshot.child("state").getValue(String.class), snapshot.child("pincode").getValue(String.class), snapshot.child("type").getValue(String.class));
+            override fun onCancelled(error: DatabaseError) {}
+        })
+        val options = FirebaseRecyclerOptions.Builder<addressdetail>()
+                .setQuery(query, object : SnapshotParser<addressdetail?> {
+                    override fun parseSnapshot(snapshot: DataSnapshot): addressdetail {
+                        return addressdetail(snapshot.child("name").getValue(String::class.java), snapshot.child("phone").getValue(String::class.java), snapshot.child("address").getValue(String::class.java), snapshot.child("city").getValue(String::class.java), snapshot.child("state").getValue(String::class.java), snapshot.child("pincode").getValue(String::class.java), snapshot.child("type").getValue(String::class.java))
                     }
-                }).build();
-
-
-        firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<addressdetail, AddressViewHolder>(options) {
-
-            @Override
-            protected void onBindViewHolder(@NonNull AddressViewHolder holder, int position, @NonNull addressdetail model) {
-
+                }).build()
+        firebaseRecyclerAdapter = object : FirebaseRecyclerAdapter<addressdetail, AddressViewHolder>(options) {
+            override fun onBindViewHolder(holder: AddressViewHolder, @SuppressLint("RecyclerView") position: Int, model: addressdetail) {
                 if (posi == position) {
-                    holder.check.setChecked(true, true);
-
-                    name = firebaseRecyclerAdapter.getItem(position).getName();
-                    phone = firebaseRecyclerAdapter.getItem(position).getPhone();
-                    address = firebaseRecyclerAdapter.getItem(position).getAddress() + ", " + firebaseRecyclerAdapter.getItem(position).getCity() + ", " + firebaseRecyclerAdapter.getItem(position).getState() + ", " + firebaseRecyclerAdapter.getItem(position).getPincode();
-
-                    Log.i("name", name);
-                    Log.i("phone", phone);
-                    Log.i("add", address);
-
+                    holder.check.setChecked(true, true)
+                    name = firebaseRecyclerAdapter.getItem(position).name.toString()
+                    phone = firebaseRecyclerAdapter.getItem(position).phone.toString()
+                    address = firebaseRecyclerAdapter.getItem(position).address + ", " + firebaseRecyclerAdapter!!.getItem(position).city + ", " + firebaseRecyclerAdapter.getItem(position).state + ", " + firebaseRecyclerAdapter!!.getItem(position).pincode
+                    Log.i("name", (name!!))
+                    Log.i("phone", (phone))
+                    Log.i("add", address)
                 } else {
-                    holder.check.setChecked(false, false);
+                    holder.check.setChecked(false, false)
                 }
-
-                if(getIntent().getStringExtra("pro")!=null)
-                {
-                    holder.check.setVisibility(View.GONE);
+                if (intent.getStringExtra("pro") != null) {
+                    holder.check.visibility = View.GONE
                 }
-
-                if (!model.getType().equals("")) {
-                    holder.type.setText(model.getType());
-                    holder.type.setVisibility(View.VISIBLE);
+                if (model.type != "") {
+                    holder.type.text = model.type
+                    holder.type.visibility = View.VISIBLE
                 } else {
-                    holder.type.setVisibility(View.GONE);
+                    holder.type.visibility = View.GONE
                 }
-                holder.name.setText(model.getName());
-                holder.phone.setText(model.getPhone());
-                holder.address.setText(model.getAddress() + " " + model.getCity() + " " + model.getState() + " " + model.getPincode());
-
-                holder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        posi = position;
-                        firebaseRecyclerAdapter.notifyDataSetChanged();
+                holder.name.text = model.name
+                holder.phone.text = model.phone
+                holder.address.text = model.address + " " + model.city + " " + model.state + " " + model.pincode
+                holder.itemView.setOnClickListener(object : View.OnClickListener {
+                    override fun onClick(view: View) {
+                        posi = position
+                        firebaseRecyclerAdapter!!.notifyDataSetChanged()
                     }
-                });
-
-                holder.check.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        posi = position;
-                        firebaseRecyclerAdapter.notifyDataSetChanged();
+                })
+                holder.check.setOnClickListener(object : View.OnClickListener {
+                    override fun onClick(view: View) {
+                        posi = position
+                        firebaseRecyclerAdapter!!.notifyDataSetChanged()
                     }
-                });
-
-                holder.delete.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        MaterialDialog mDialog = new MaterialDialog.Builder(Address.this)
+                })
+                holder.delete.setOnClickListener(object : View.OnClickListener {
+                    override fun onClick(view: View) {
+                        val mDialog = MaterialDialog.Builder(this@Address)
                                 .setTitle("Delete This Address?")
                                 .setMessage("Remove this address permanently")
                                 .setCancelable(false)
-                                .setPositiveButton("Delete", R.drawable.delete2, new MaterialDialog.OnClickListener() {
-                                    @Override
-                                    public void onClick(dev.shreyaspatil.MaterialDialog.interfaces.DialogInterface dialogInterface, int which) {
-
-                                        firebaseRecyclerAdapter.getRef(position).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<Void> task) {
-                                                if (task.isSuccessful()) {
-                                                    dialogInterface.dismiss();
-                                                    Sneaker.with(Address.this)
+                                .setPositiveButton("Delete", R.drawable.delete2, object : AbstractDialog.OnClickListener {
+                                    override fun onClick(dialogInterface: dev.shreyaspatil.MaterialDialog.interfaces.DialogInterface, which: Int) {
+                                        firebaseRecyclerAdapter!!.getRef(position).removeValue().addOnCompleteListener(object : OnCompleteListener<Void?> {
+                                            override fun onComplete(task: Task<Void?>) {
+                                                if (task.isSuccessful) {
+                                                    dialogInterface.dismiss()
+                                                    Sneaker.with(this@Address)
                                                             .setTitle("Address Deleted ", R.color.white)
                                                             .setMessage("Address Removed From The List", R.color.white)
                                                             .setDuration(2000)
@@ -518,10 +417,10 @@ public class Address extends AppCompatActivity {
                                                             .autoHide(true)
                                                             .setHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
                                                             .setCornerRadius(10, 0)
-                                                            .sneak(R.color.green);
-                                                    firebaseRecyclerAdapter.notifyDataSetChanged();
+                                                            .sneak(R.color.green)
+                                                    firebaseRecyclerAdapter!!.notifyDataSetChanged()
                                                 } else {
-                                                    Sneaker.with(Address.this)
+                                                    Sneaker.with(this@Address)
                                                             .setTitle("Error Delting Address ", R.color.white)
                                                             .setMessage("Please Try Again", R.color.white)
                                                             .setDuration(2000)
@@ -529,179 +428,145 @@ public class Address extends AppCompatActivity {
                                                             .autoHide(true)
                                                             .setHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
                                                             .setCornerRadius(10, 0)
-                                                            .sneak(R.color.teal_200);
+                                                            .sneak(R.color.teal_200)
                                                 }
                                             }
-                                        });
-
+                                        })
                                     }
                                 })
-                                .setNegativeButton("Cancel", R.drawable.cancel, new MaterialDialog.OnClickListener() {
-                                    @Override
-                                    public void onClick(dev.shreyaspatil.MaterialDialog.interfaces.DialogInterface dialogInterface, int which) {
-                                        dialogInterface.dismiss();
+                                .setNegativeButton("Cancel", R.drawable.cancel, object : AbstractDialog.OnClickListener {
+                                    override fun onClick(dialogInterface: dev.shreyaspatil.MaterialDialog.interfaces.DialogInterface, which: Int) {
+                                        dialogInterface.dismiss()
                                     }
                                 })
-                                .build();
-
-
-                        mDialog.show();
-
+                                .build()
+                        mDialog.show()
                     }
-                });
-
-                holder.edit.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-
-                        {
-
-                            final EditText name, address, city, phone, pincode;
-                            final TextView state, save, home, office;
-                            ImageView cross;
-
-                            final Dialog dialog = new Dialog(Address.this);
-                            dialog.setContentView(R.layout.addaddress);
-                            dialog.setCanceledOnTouchOutside(false);
-                            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                            dialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                            dialog.getWindow().getAttributes().windowAnimations = R.style.AppTheme_UpDown;
-                            name = dialog.findViewById(R.id.name);
-                            address = dialog.findViewById(R.id.address);
-                            city = dialog.findViewById(R.id.city);
-                            state = dialog.findViewById(R.id.state);
-                            save = dialog.findViewById(R.id.save);
-                            phone = dialog.findViewById(R.id.phone);
-                            pincode = dialog.findViewById(R.id.pincode);
-                            cross = dialog.findViewById(R.id.cross);
-                            home = dialog.findViewById(R.id.home);
-                            office = dialog.findViewById(R.id.office);
-
-                            name.setText(firebaseRecyclerAdapter.getItem(position).getName());
-                            address.setText(firebaseRecyclerAdapter.getItem(position).getAddress());
-                            if (firebaseRecyclerAdapter.getItem(position).getType() != null) {
-                                if (firebaseRecyclerAdapter.getItem(position).getType().equals("Home")) {
-                                    type = "Home";
-                                    home.setTextColor(Color.WHITE);
-                                    home.setBackgroundResource(R.drawable.stroke3);
-
-                                } else if (firebaseRecyclerAdapter.getItem(position).getType().equals("Office")) {
-                                    type = "Office";
-                                    office.setTextColor(Color.WHITE);
-                                    office.setBackgroundResource(R.drawable.stroke3);
-
+                })
+                holder.edit.setOnClickListener(object : View.OnClickListener {
+                    override fun onClick(view: View) {
+                        run {
+                            val name: EditText
+                            val address: EditText
+                            val city: EditText
+                            val phone: EditText
+                            val pincode: EditText
+                            val state: TextView
+                            val save: TextView
+                            val home: TextView
+                            val office: TextView
+                            val cross: ImageView
+                            val dialog: Dialog = Dialog(this@Address)
+                            dialog.setContentView(R.layout.addaddress)
+                            dialog.setCanceledOnTouchOutside(false)
+                            dialog.getWindow()!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                            dialog.getWindow()!!.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+                            dialog.getWindow()!!.getAttributes().windowAnimations = R.style.AppTheme_UpDown
+                            name = dialog.findViewById(R.id.name)
+                            address = dialog.findViewById(R.id.address)
+                            city = dialog.findViewById(R.id.city)
+                            state = dialog.findViewById(R.id.state)
+                            save = dialog.findViewById(R.id.save)
+                            phone = dialog.findViewById(R.id.phone)
+                            pincode = dialog.findViewById(R.id.pincode)
+                            cross = dialog.findViewById(R.id.cross)
+                            home = dialog.findViewById(R.id.home)
+                            office = dialog.findViewById(R.id.office)
+                            name.setText(firebaseRecyclerAdapter!!.getItem(position).name)
+                            address.setText(firebaseRecyclerAdapter!!.getItem(position).address)
+                            if (firebaseRecyclerAdapter!!.getItem(position).type != null) {
+                                if ((firebaseRecyclerAdapter!!.getItem(position).type == "Home")) {
+                                    type = "Home"
+                                    home.setTextColor(Color.WHITE)
+                                    home.setBackgroundResource(R.drawable.stroke3)
+                                } else if ((firebaseRecyclerAdapter!!.getItem(position).type == "Office")) {
+                                    type = "Office"
+                                    office.setTextColor(Color.WHITE)
+                                    office.setBackgroundResource(R.drawable.stroke3)
                                 }
                             }
-                            city.setText(firebaseRecyclerAdapter.getItem(position).getCity());
-                            state.setText(firebaseRecyclerAdapter.getItem(position).getState());
-                            phone.setText(firebaseRecyclerAdapter.getItem(position).getPhone());
-                            pincode.setText(firebaseRecyclerAdapter.getItem(position).getPincode());
-
-                            home.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    type = "Home";
-                                    home.setTextColor(Color.WHITE);
-                                    home.setBackgroundResource(R.drawable.stroke3);
-
-                                    office.setBackgroundResource(R.drawable.stroke2);
-                                    office.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.blue));
-
+                            city.setText(firebaseRecyclerAdapter.getItem(position).city)
+                            state.setText(firebaseRecyclerAdapter.getItem(position).state)
+                            phone.setText(firebaseRecyclerAdapter.getItem(position).phone)
+                            pincode.setText(firebaseRecyclerAdapter.getItem(position).pincode)
+                            home.setOnClickListener(object : View.OnClickListener {
+                                override fun onClick(v: View) {
+                                    type = "Home"
+                                    home.setTextColor(Color.WHITE)
+                                    home.setBackgroundResource(R.drawable.stroke3)
+                                    office.setBackgroundResource(R.drawable.stroke2)
+                                    office.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.blue))
                                 }
-                            });
-
-                            office.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    type = "Office";
-                                    office.setTextColor(Color.WHITE);
-                                    office.setBackgroundResource(R.drawable.stroke3);
-
-                                    home.setBackgroundResource(R.drawable.stroke2);
-                                    home.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.blue));
-
+                            })
+                            office.setOnClickListener(object : View.OnClickListener {
+                                override fun onClick(v: View) {
+                                    type = "Office"
+                                    office.setTextColor(Color.WHITE)
+                                    office.setBackgroundResource(R.drawable.stroke3)
+                                    home.setBackgroundResource(R.drawable.stroke2)
+                                    home.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.blue))
                                 }
-                            });
-
-                            cross.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    dialog.dismiss();
+                            })
+                            cross.setOnClickListener(object : View.OnClickListener {
+                                override fun onClick(view: View) {
+                                    dialog.dismiss()
                                 }
-                            });
-
-                            state.setKeyListener(null);
-
-                            final String[] listItems = {"Andaman and Nicobar Islands", "Andra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chandigarh", "Chhattisgarh", "Dadar and Nagar Haveli", "Daman and Diu", "Delhi", "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jammu and Kashmir", "Jharkhand", "Karnataka", "Kerala", "Ladakh", "Lakshadeep", "Madya Pradesh", "Maharashtra", "Manipur", "Meghalaya", "Mizoram", "Nagaland", "Orissa", "Punjab", "Pondicherry", "Rajasthan", "Sikkim", "Tamil Nadu", "Telagana", "Tripura", "Uttarakhand", "Uttar Pradesh", "West Bengal"};
-
-                            androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(Address.this);
-                            builder.setTitle("Your State");
-
-                            builder.setItems(listItems, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    state.setText(listItems[which]);
+                            })
+                            state.setKeyListener(null)
+                            val listItems: Array<String> = arrayOf("Andaman and Nicobar Islands", "Andra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chandigarh", "Chhattisgarh", "Dadar and Nagar Haveli", "Daman and Diu", "Delhi", "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jammu and Kashmir", "Jharkhand", "Karnataka", "Kerala", "Ladakh", "Lakshadeep", "Madya Pradesh", "Maharashtra", "Manipur", "Meghalaya", "Mizoram", "Nagaland", "Orissa", "Punjab", "Pondicherry", "Rajasthan", "Sikkim", "Tamil Nadu", "Telagana", "Tripura", "Uttarakhand", "Uttar Pradesh", "West Bengal")
+                            val builder: AlertDialog.Builder = AlertDialog.Builder(this@Address)
+                            builder.setTitle("Your State")
+                            builder.setItems(listItems, object : DialogInterface.OnClickListener {
+                                override fun onClick(dialog: DialogInterface, which: Int) {
+                                    state.setText(listItems.get(which))
                                 }
-                            });
-
-                            final androidx.appcompat.app.AlertDialog dialog1 = builder.create();
-
-                            state.setOnTouchListener(new View.OnTouchListener() {
-                                @Override
-                                public boolean onTouch(View view, MotionEvent motionEvent) {
-
-                                    dialog1.show();
-
-                                    return false;
+                            })
+                            val dialog1: AlertDialog = builder.create()
+                            state.setOnTouchListener(object : OnTouchListener {
+                                override fun onTouch(view: View, motionEvent: MotionEvent): Boolean {
+                                    dialog1.show()
+                                    return false
                                 }
-                            });
-
-
-                            save.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    if (name.getText().toString().equals("")) {
-                                        Toast.makeText(Address.this, "Enter name", Toast.LENGTH_SHORT).show();
-                                    } else if (phone.getText().toString().equals("")) {
-                                        Toast.makeText(Address.this, "Enter phone", Toast.LENGTH_SHORT).show();
-                                    } else if (phone.getText().toString().length() < 10) {
-                                        Toast.makeText(Address.this, "Invalid Phone", Toast.LENGTH_SHORT).show();
-                                    } else if (address.getText().toString().equals("")) {
-                                        Toast.makeText(Address.this, "Enter house number", Toast.LENGTH_SHORT).show();
-                                    } else if (city.getText().toString().equals("")) {
-                                        Toast.makeText(Address.this, "Select city", Toast.LENGTH_SHORT).show();
-                                    } else if (state.getText().toString().equals("")) {
-                                        Toast.makeText(Address.this, "Enter state", Toast.LENGTH_SHORT).show();
-                                    } else if (pincode.getText().toString().equals("")) {
-                                        Toast.makeText(Address.this, "Enter pincode", Toast.LENGTH_SHORT).show();
-                                    } else if (pincode.getText().toString().length() < 6) {
-                                        Toast.makeText(Address.this, "Invalid pincode", Toast.LENGTH_SHORT).show();
+                            })
+                            save.setOnClickListener(object : View.OnClickListener {
+                                override fun onClick(view: View) {
+                                    if ((name.getText().toString() == "")) {
+                                        Toast.makeText(this@Address, "Enter name", Toast.LENGTH_SHORT).show()
+                                    } else if ((phone.getText().toString() == "")) {
+                                        Toast.makeText(this@Address, "Enter phone", Toast.LENGTH_SHORT).show()
+                                    } else if (phone.getText().toString().length < 10) {
+                                        Toast.makeText(this@Address, "Invalid Phone", Toast.LENGTH_SHORT).show()
+                                    } else if ((address.getText().toString() == "")) {
+                                        Toast.makeText(this@Address, "Enter house number", Toast.LENGTH_SHORT).show()
+                                    } else if ((city.getText().toString() == "")) {
+                                        Toast.makeText(this@Address, "Select city", Toast.LENGTH_SHORT).show()
+                                    } else if ((state.getText().toString() == "")) {
+                                        Toast.makeText(this@Address, "Enter state", Toast.LENGTH_SHORT).show()
+                                    } else if ((pincode.getText().toString() == "")) {
+                                        Toast.makeText(this@Address, "Enter pincode", Toast.LENGTH_SHORT).show()
+                                    } else if (pincode.getText().toString().length < 6) {
+                                        Toast.makeText(this@Address, "Invalid pincode", Toast.LENGTH_SHORT).show()
                                     } else {
-
-                                        final AlertDialog alertDialog = new SpotsDialog.Builder()
+                                        val alertDialog: android.app.AlertDialog = SpotsDialog.Builder()
                                                 .setCancelable(false)
-                                                .setContext(Address.this)
+                                                .setContext(this@Address)
                                                 .setTheme(R.style.ProgressDialog)
                                                 .setMessage("Saving Address")
-                                                .build();
-
-                                        alertDialog.show();
-
-                                        Map map = new HashMap();
-                                        map.put("name", name.getText().toString());
-                                        map.put("phone", phone.getText().toString());
-                                        map.put("address", address.getText().toString());
-                                        map.put("city", city.getText().toString());
-                                        map.put("state", state.getText().toString());
-                                        map.put("pincode", pincode.getText().toString());
-                                        map.put("type", type);
-
-                                        firebaseRecyclerAdapter.getRef(position).updateChildren(map).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<Void> task) {
+                                                .build()
+                                        alertDialog.show()
+                                        val map = mutableMapOf<String?, Any?>()
+                                        map.put("name", name.getText().toString())
+                                        map.put("phone", phone.getText().toString())
+                                        map.put("address", address.getText().toString())
+                                        map.put("city", city.getText().toString())
+                                        map.put("state", state.getText().toString())
+                                        map.put("pincode", pincode.getText().toString())
+                                        map.put("type", type)
+                                        firebaseRecyclerAdapter!!.getRef(position).updateChildren(map).addOnCompleteListener(object : OnCompleteListener<Void?> {
+                                            override fun onComplete(task: Task<Void?>) {
                                                 if (task.isSuccessful()) {
-                                                    alertDialog.dismiss();
-                                                    Sneaker.with(Address.this)
+                                                    alertDialog.dismiss()
+                                                    Sneaker.with(this@Address)
                                                             .setTitle("Changes Done", R.color.white)
                                                             .setMessage("Your changes made are saved", R.color.white)
                                                             .setDuration(2000)
@@ -709,13 +574,12 @@ public class Address extends AppCompatActivity {
                                                             .autoHide(true)
                                                             .setHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
                                                             .setCornerRadius(10, 0)
-                                                            .sneak(R.color.green);
-                                                    dialog.dismiss();
-                                                    firebaseRecyclerAdapter.notifyDataSetChanged();
-
+                                                            .sneak(R.color.green)
+                                                    dialog.dismiss()
+                                                    firebaseRecyclerAdapter.notifyDataSetChanged()
                                                 } else {
-                                                    alertDialog.dismiss();
-                                                    Sneaker.with(Address.this)
+                                                    alertDialog.dismiss()
+                                                    Sneaker.with(this@Address)
                                                             .setTitle("Error Saving Changes", R.color.white)
                                                             .setMessage("Please Try Again", R.color.white)
                                                             .setDuration(2000)
@@ -723,70 +587,60 @@ public class Address extends AppCompatActivity {
                                                             .autoHide(true)
                                                             .setHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
                                                             .setCornerRadius(10, 0)
-                                                            .sneak(R.color.teal_200);
+                                                            .sneak(R.color.teal_200)
                                                 }
                                             }
-                                        });
-
+                                        })
                                     }
                                 }
-                            });
-
-
-                            dialog.show();
-
+                            })
+                            dialog.show()
                         }
                     }
-                });
-
-
+                })
             }
 
-            @NonNull
-            @Override
-            public AddressViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.addressitem, parent, false);
-                return new AddressViewHolder(view);
+            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AddressViewHolder {
+                val view = LayoutInflater.from(parent.context).inflate(R.layout.addressitem, parent, false)
+                return AddressViewHolder(view)
             }
-        };
-
-
-        recyclerView.setLayoutManager(new LinearLayoutManager(Address.this));
-        recyclerView.setAdapter(firebaseRecyclerAdapter);
+        }
+        recyclerView.setLayoutManager(LinearLayoutManager(this@Address))
+        recyclerView.setAdapter(firebaseRecyclerAdapter)
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        firebaseRecyclerAdapter.startListening();
+    override fun onResume() {
+        super.onResume()
+        firebaseRecyclerAdapter!!.startListening()
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        firebaseRecyclerAdapter.stopListening();
+    override fun onDestroy() {
+        super.onDestroy()
+        firebaseRecyclerAdapter!!.stopListening()
     }
 
-    private class AddressViewHolder extends RecyclerView.ViewHolder {
-        TextView name, address, phone, delete, edit, type;
-        CustomCheckBox check;
+    inner class AddressViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        var name: TextView
+        var address: TextView
+        var phone: TextView
+        var delete: TextView
+        var edit: TextView
+        var type: TextView
+        var check: CustomCheckBox
 
-        public AddressViewHolder(@NonNull View itemView) {
-            super(itemView);
-
-            name = itemView.findViewById(R.id.name);
-            address = itemView.findViewById(R.id.address);
-            phone = itemView.findViewById(R.id.phone);
-            check = itemView.findViewById(R.id.check);
-            delete = itemView.findViewById(R.id.delete);
-            edit = itemView.findViewById(R.id.edit);
-            type = itemView.findViewById(R.id.type);
+        init {
+            name = itemView.findViewById(R.id.name)
+            address = itemView.findViewById(R.id.address)
+            phone = itemView.findViewById(R.id.phone)
+            check = itemView.findViewById(R.id.check)
+            delete = itemView.findViewById(R.id.delete)
+            edit = itemView.findViewById(R.id.edit)
+            type = itemView.findViewById(R.id.type)
         }
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        customType(Address.this,"right-to-left");
+    override fun onBackPressed() {
+        super.onBackPressed()
+        CustomIntent.customType(this@Address, "right-to-left")
     }
 }

@@ -44,7 +44,7 @@
         app:layout_constraintTop_toTopOf="@+id/back" />
 
     <TextView
-        android:id="@+id/textView35"
+        android:id="@+id/orderid"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
@@ -93,7 +93,7 @@
         android:background="@color/grey"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView35" />
+        app:layout_constraintTop_toBottomOf="@+id/orderid" />
 
 
     <View

@@ -1,21 +1,10 @@
-package com.example.login;
+package com.example.login
 
-public class SliderItem {
+class SliderItem {
+    var image: String? = null
 
-    String image;
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
-
-    public SliderItem() {
-    }
-
-    public SliderItem(String image) {
-        this.image = image;
+    constructor() {}
+    constructor(image: String?) {
+        this.image = image
     }
 }

@@ -1,214 +1,149 @@
-package com.example.login;
+package com.example.login
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import androidx.core.content.ContextCompat
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import maes.tech.intentanim.CustomIntent
+import com.bumptech.glide.Glide
+import android.view.*
+import android.widget.*
+import com.opensooq.pluto.PlutoView
+import com.baoyachi.stepview.VerticalStepView
+import com.opensooq.pluto.base.PlutoAdapter
+import com.example.login.ViewOrder.YourAdapter.OrderViewHolder
+import com.opensooq.pluto.base.PlutoViewHolder
+import java.math.BigDecimal
+import java.text.Format
+import java.text.NumberFormat
+import java.text.SimpleDateFormat
+import java.util.*
 
-import android.graphics.Color;
-import android.graphics.Typeface;
-import android.os.Bundle;
-import android.view.Gravity;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-
-import com.baoyachi.stepview.HorizontalStepView;
-import com.baoyachi.stepview.VerticalStepView;
-import com.baoyachi.stepview.bean.StepBean;
-import com.bumptech.glide.Glide;
-import com.example.login.Fragments.HomeFragment;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.opensooq.pluto.PlutoIndicator;
-import com.opensooq.pluto.PlutoView;
-import com.opensooq.pluto.base.PlutoAdapter;
-import com.opensooq.pluto.base.PlutoViewHolder;
-
-import java.math.BigDecimal;
-import java.text.Format;
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-
-import static maes.tech.intentanim.CustomIntent.customType;
-
-public class ViewOrder extends AppCompatActivity {
-
-    String id;
-    ArrayList<cartitemdetails> products;
-    TextView address, total, total2, subtotal, orderidtext;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_view_order);
-        id = getIntent().getStringExtra("id");
-
-        findViewById(R.id.back).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
+class ViewOrder : AppCompatActivity() {
+    lateinit var id: String
+    lateinit var products: ArrayList<cartitemdetails?>
+    lateinit var address: TextView
+    lateinit var total: TextView
+    lateinit var subtotal: TextView
+    lateinit var orderidtext: TextView
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_view_order)
+        id = getIntent().getStringExtra("id")!!
+        findViewById<View>(R.id.back).setOnClickListener(object : View.OnClickListener {
+            public override fun onClick(v: View) {
+                onBackPressed()
             }
-        });
-        address = findViewById(R.id.address);
-        total = findViewById(R.id.total);
-        total2 = findViewById(R.id.total2);
-        subtotal = findViewById(R.id.subtotal);
-        orderidtext = findViewById(R.id.orderid);
-        products = new ArrayList<>();
-        PlutoView pluto = findViewById(R.id.slider_view);
-
-        FirebaseDatabase.getInstance().getReference().child("Orders").child(id).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-                Format format = NumberFormat.getCurrencyInstance(new Locale("en", "in"));
-                total.setText(format.format(new BigDecimal(String.valueOf(Objects.requireNonNull(snapshot).child("price").getValue(Long.class)))));
-//                subtotal.setText(format.format(new BigDecimal("")));
-                address.setText(snapshot.child("name").getValue(String.class)+"\n"+snapshot.child("phone").getValue(String.class)+"\n"+snapshot.child("address").getValue(String.class));
-
-                snapshot.child("items").getRef().addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                            cartitemdetails ite = dataSnapshot.getValue(com.example.login.cartitemdetails.class);
-                            products.add((ite));
+        })
+        address = findViewById(R.id.address)
+        total = findViewById(R.id.total)
+        subtotal = findViewById(R.id.subtotal)
+        orderidtext = findViewById(R.id.orderid)
+        products = ArrayList()
+        val pluto: PlutoView = findViewById(R.id.slider_view)
+        FirebaseDatabase.getInstance().getReference().child("Orders").child((id)!!).addListenerForSingleValueEvent(object : ValueEventListener {
+            public override fun onDataChange(snapshot: DataSnapshot) {
+                val format: Format = NumberFormat.getCurrencyInstance(Locale("en", "in"))
+                total.setText(format.format(BigDecimal(Objects.requireNonNull(snapshot).child("price").getValue(Long::class.java).toString())))
+                //                subtotal.setText(format.format(new BigDecimal("")));
+                address.setText(snapshot.child("name").getValue(String::class.java) + "\n" + snapshot.child("phone").getValue(String::class.java) + "\n" + snapshot.child("address").getValue(String::class.java))
+                snapshot.child("items").getRef().addListenerForSingleValueEvent(object : ValueEventListener {
+                    public override fun onDataChange(snapshot: DataSnapshot) {
+                        for (dataSnapshot: DataSnapshot in snapshot.getChildren()) {
+                            val ite: cartitemdetails? = dataSnapshot.getValue(cartitemdetails::class.java)
+                            products!!.add((ite))
                         }
-
-                        YourAdapter adapter = new YourAdapter(products);
-                        pluto.create(adapter,2000, getLifecycle());
-                        pluto.setCustomIndicator(findViewById(R.id.indicator));
-                        pluto.setDuration(5000);
-                        pluto.stopAutoCycle();
+                        val adapter: YourAdapter = YourAdapter(products)
+                        pluto.create(adapter, 2000, getLifecycle())
+                        pluto.setCustomIndicator(findViewById(R.id.indicator))
+                        pluto.setDuration(5000)
+                        pluto.stopAutoCycle()
                     }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
-
-                snapshot.child("tracking").getRef().addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-                        VerticalStepView setpview5 =  findViewById(R.id.step_view);
-                        List<String> stepsBeanList = new ArrayList<>();
-                        for(DataSnapshot dataSnapshot:snapshot.getChildren())
-                        {
-                            stepsBeanList.add(dataSnapshot.child("text").getValue(String.class) + ", "+getDate(dataSnapshot.child("timestamp").getValue(Long.class)));
+                    public override fun onCancelled(error: DatabaseError) {}
+                })
+                snapshot.child("tracking").getRef().addListenerForSingleValueEvent(object : ValueEventListener {
+                    public override fun onDataChange(snapshot: DataSnapshot) {
+                        val setpview5: VerticalStepView = findViewById(R.id.step_view)
+                        val stepsBeanList: MutableList<String> = ArrayList()
+                        for (dataSnapshot: DataSnapshot in snapshot.getChildren()) {
+                            stepsBeanList.add(dataSnapshot.child("text").getValue(String::class.java) + ", " + getDate((dataSnapshot.child("timestamp").getValue(Long::class.java))!!))
                         }
-
-                        setpview5.setStepsViewIndicatorComplectingPosition((int) (snapshot.getChildrenCount()-1))//设置完成的步数
+                        setpview5.setStepsViewIndicatorComplectingPosition((snapshot.getChildrenCount() - 1).toInt()) //设置完成的步数
                                 .setTextSize(12)
-                                .reverseDraw(false)//default is true
-                                .setStepViewTexts(stepsBeanList)//总步骤
-                                .setStepsViewIndicatorCompletedLineColor(ContextCompat.getColor(getApplicationContext(), R.color.darkgrey))//设置StepsViewIndicator完成线的颜色
-                                .setStepsViewIndicatorUnCompletedLineColor(ContextCompat.getColor(getApplicationContext(), R.color.grey))//设置StepsViewIndicator未完成线的颜色
-                                .setStepViewComplectedTextColor(ContextCompat.getColor(getApplicationContext(), R.color.darkgrey))//设置StepsView text完成线的颜色
-                                .setStepViewUnComplectedTextColor(ContextCompat.getColor(getApplicationContext(), R.color.grey))//设置StepsView text未完成线的颜色
-                                .setStepsViewIndicatorDefaultIcon(ContextCompat.getDrawable(getApplicationContext(), R.drawable.outline_radio_button_checked_24))//??StepsViewIndicator DefaultIcon
-                                .setStepsViewIndicatorCompleteIcon(ContextCompat.getDrawable(getApplicationContext(), R.drawable.checkedd))//设置StepsViewIndicator CompleteIcon
-                                .setStepsViewIndicatorAttentionIcon(ContextCompat.getDrawable(getApplicationContext(), R.drawable.outline_radio_button_checked_black_24));//设置StepsViewIndicator AttentionIcon
+                                .reverseDraw(false) //default is true
+                                .setStepViewTexts(stepsBeanList) //总步骤
+                                .setStepsViewIndicatorCompletedLineColor(ContextCompat.getColor(applicationContext, R.color.darkgrey)) 
+                                .setStepsViewIndicatorUnCompletedLineColor(ContextCompat.getColor(applicationContext, R.color.grey)) 
+                                .setStepViewComplectedTextColor(ContextCompat.getColor(applicationContext, R.color.darkgrey)) 
+                                .setStepViewUnComplectedTextColor(ContextCompat.getColor(applicationContext, R.color.grey)) 
+                                .setStepsViewIndicatorDefaultIcon(ContextCompat.getDrawable(applicationContext, R.drawable.outline_radio_button_checked_24)) 
+                                .setStepsViewIndicatorCompleteIcon(ContextCompat.getDrawable(applicationContext, R.drawable.checkedd))
+                                .setStepsViewIndicatorAttentionIcon(ContextCompat.getDrawable(applicationContext, R.drawable.outline_radio_button_checked_black_24))
                     }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
-
-
-
-
+                    public override fun onCancelled(error: DatabaseError) {}
+                })
             }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
-
-
+            public override fun onCancelled(error: DatabaseError) {}
+        })
     }
 
-    public class YourAdapter extends PlutoAdapter<cartitemdetails, YourAdapter.OrderViewHolder> {
-
-        public YourAdapter(ArrayList<cartitemdetails> items) {
-            super(items);
+    inner class YourAdapter constructor(items: ArrayList<cartitemdetails?>?) : PlutoAdapter<cartitemdetails?, PlutoViewHolder<cartitemdetails?>>((items)!!) {
+        override fun getViewHolder(parent: ViewGroup, viewType: Int): OrderViewHolder {
+            return OrderViewHolder(parent, R.layout.orderitem)
         }
 
-        @Override
-        public OrderViewHolder getViewHolder(ViewGroup parent, int viewType) {
-            return new OrderViewHolder(parent, R.layout.orderitem);
-        }
+        inner class OrderViewHolder constructor(parent: ViewGroup?, itemLayoutId: Int) : PlutoViewHolder<cartitemdetails?>((parent)!!, itemLayoutId) {
+            var image: ImageView
+            var name: TextView
+            var product: TextView
+            var specs: TextView
+            var price: TextView
+            var quantity: TextView
 
-        public class OrderViewHolder extends PlutoViewHolder<cartitemdetails> {
-            ImageView image;
-            TextView name, product, specs, price, quantity;
-
-            public OrderViewHolder(ViewGroup parent, int itemLayoutId) {
-                super(parent, itemLayoutId);
-                image = getView(R.id.image);
-                name = getView(R.id.name);
-                price = getView(R.id.price);
-                specs = getView(R.id.specs);
-                product = getView(R.id.product);
-                quantity = getView(R.id.quantity);
+            init {
+                image = getView(R.id.image)
+                name = getView(R.id.name)
+                price = getView(R.id.price)
+                specs = getView(R.id.specs)
+                product = getView(R.id.product)
+                quantity = getView(R.id.quantity)
             }
 
-            @Override
-            public void set(cartitemdetails item, int pos) {
-                //Glide.with(getApplicationContext()).load(item.getImage()).into(image);
-                specs.setText("Size : " + item.getSize() + ", Color : " + item.getColorname());
-                quantity.setText("Quantity : " + item.getQuantity());
-                Glide.with(getApplicationContext()).load(item.getImage()).into(image);
-
-                FirebaseDatabase.getInstance().getReference().child("Items").child(item.getId()).addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        name.setText(snapshot.child("name").getValue(String.class));
-                        Format format = NumberFormat.getCurrencyInstance(new Locale("en", "in"));
-                        price.setText(format.format(new BigDecimal(snapshot.child("price").getValue(String.class))));
-                        product.setText(snapshot.child("product").getValue(String.class));
-
+            public override fun set(item: cartitemdetails?, pos: Int) {
+                //Glide.with(applicationContext).load(item.getImage()).into(image);
+                specs.setText("Size : " + item!!.size + ", Color : " + item.colorname)
+                quantity.setText("Quantity : " + item.quantity)
+                Glide.with(applicationContext).load(item.image).into(image)
+                FirebaseDatabase.getInstance().getReference().child("Items").child(item.id!!).addListenerForSingleValueEvent(object : ValueEventListener {
+                    public override fun onDataChange(snapshot: DataSnapshot) {
+                        name.setText(snapshot.child("name").getValue(String::class.java))
+                        val format: Format = NumberFormat.getCurrencyInstance(Locale("en", "in"))
+                        price.setText(format.format(BigDecimal(snapshot.child("price").getValue(String::class.java))))
+                        product.setText(snapshot.child("product").getValue(String::class.java))
                     }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
+                    public override fun onCancelled(error: DatabaseError) {}
+                })
             }
         }
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        customType(ViewOrder.this,"right-to-left");
+    public override fun onBackPressed() {
+        super.onBackPressed()
+        CustomIntent.customType(this@ViewOrder, "right-to-left")
     }
 
-    private String getDate(long time) {
-
-        Calendar c = Calendar.getInstance();
-        c.setTimeInMillis(time);
-        Date d = c.getTime();
-        SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy hh:mm aa");
-        return sdf.format(d);
+    private fun getDate(time: Long): String {
+        val c: Calendar = Calendar.getInstance()
+        c.setTimeInMillis(time)
+        val d: Date = c.getTime()
+        val sdf: SimpleDateFormat = SimpleDateFormat("dd MMM yyyy hh:mm aa")
+        return sdf.format(d)
     }
 }

@@ -1,33 +1,24 @@
-package com.example.login;
+package com.example.login
 
-import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.view.Window;
-import android.view.WindowManager;
+import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
+import android.os.*
+import com.victor.loading.rotate.RotateLoading
+import android.view.*
 
-import com.victor.loading.rotate.RotateLoading;
-
-public class Splash extends AppCompatActivity {
-
-    RotateLoading rotateLoading;
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_splash);
-
-        rotateLoading = (RotateLoading) findViewById(R.id.rotateloading);
-        rotateLoading.start();
-        final Handler handler = new Handler(Looper.getMainLooper());
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                startActivity(new Intent(Splash.this,Home.class));
+class Splash : AppCompatActivity() {
+    var rotateLoading: RotateLoading? = null
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_splash)
+        rotateLoading = findViewById<View>(R.id.rotateloading) as RotateLoading?
+        rotateLoading!!.start()
+        val handler: Handler = Handler(Looper.getMainLooper())
+        handler.postDelayed(object : Runnable {
+            public override fun run() {
+                startActivity(Intent(this@Splash, Home::class.java))
             }
-        }, 4000);
-
+        }, 4000)
     }
 }

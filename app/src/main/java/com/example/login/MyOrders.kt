@@ -1,135 +1,75 @@
-package com.example.login;
+package com.example.login
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.annotation.SuppressLint
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.RecyclerView
+import com.firebase.ui.database.FirebaseRecyclerAdapter
+import android.os.Bundle
+import androidx.core.content.ContextCompat
+import com.google.firebase.auth.FirebaseAuth
+import android.content.Intent
+import maes.tech.intentanim.CustomIntent
+import com.firebase.ui.database.FirebaseRecyclerOptions
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.login.Fragments.itemdetails
+import com.bumptech.glide.Glide
+import android.graphics.Bitmap
+import android.view.*
+import android.widget.*
+import com.firebase.ui.database.SnapshotParser
+import com.google.firebase.database.*
+import java.text.SimpleDateFormat
+import java.util.*
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.transition.Transition;
-import com.example.login.Fragments.itemdetails;
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.firebase.ui.database.FirebaseRecyclerOptions;
-import com.firebase.ui.database.SnapshotParser;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
-import com.irozon.sneaker.Sneaker;
-import com.stfalcon.multiimageview.MultiImageView;
-
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.text.Format;
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
-
-import dev.shreyaspatil.MaterialDialog.MaterialDialog;
-import dev.shreyaspatil.MaterialDialog.interfaces.DialogInterface;
-import pereira.agnaldo.previewimgcol.ImageCollectionView;
-
-import static maes.tech.intentanim.CustomIntent.customType;
-
-public class MyOrders extends AppCompatActivity {
-
-    FirebaseRecyclerAdapter<cartitemdetails, CartViewHolder> firebaseRecyclerAdapter;
-    RecyclerView recyclerView;
-    ArrayList<Bitmap> imgs;
-    int i = 0;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_my_orders);
-
-        imgs = new ArrayList<>();
-        recyclerView = findViewById(R.id.ordersrecyview);
-
-        findViewById(R.id.back).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
+class MyOrders : AppCompatActivity() {
+    var firebaseRecyclerAdapter: FirebaseRecyclerAdapter<cartitemdetails, CartViewHolder>? = null
+    lateinit var recyclerView: RecyclerView
+    var imgs: ArrayList<Bitmap>? = null
+    var i: Int = 0
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_my_orders)
+        imgs = ArrayList()
+        recyclerView = findViewById(R.id.ordersrecyview)
+        findViewById<View>(R.id.back).setOnClickListener(object : View.OnClickListener {
+            public override fun onClick(v: View) {
+                onBackPressed()
             }
-        });
-
-
-        Query query = FirebaseDatabase.getInstance().getReference().child("Orders").orderByChild("userid").equalTo(FirebaseAuth.getInstance().getCurrentUser().getUid());
-
-        FirebaseRecyclerOptions<cartitemdetails> options = new FirebaseRecyclerOptions.Builder<cartitemdetails>()
-                .setQuery(query, new SnapshotParser<cartitemdetails>() {
-                    @NonNull
-                    @Override
-                    public cartitemdetails parseSnapshot(@NonNull DataSnapshot snapshot) {
-                        return new cartitemdetails(snapshot.child("size").getValue(String.class), snapshot.child("sizename").getValue(String.class), snapshot.child("colorcode").getValue(String.class), snapshot.child("colorname").getValue(String.class), snapshot.getKey(), snapshot.child("image").getValue(String.class), snapshot.child("quantity").getValue(Integer.class));
+        })
+        val query: Query = FirebaseDatabase.getInstance().getReference().child("Orders").orderByChild("userid").equalTo(FirebaseAuth.getInstance().getCurrentUser().getUid())
+        val options: FirebaseRecyclerOptions<cartitemdetails> = FirebaseRecyclerOptions.Builder<cartitemdetails>()
+                .setQuery(query, object : SnapshotParser<cartitemdetails?> {
+                    public override fun parseSnapshot(snapshot: DataSnapshot): cartitemdetails {
+                        return cartitemdetails(snapshot.child("size").getValue(String::class.java), snapshot.child("sizename").getValue(String::class.java), snapshot.child("colorcode").getValue(String::class.java), snapshot.child("colorname").getValue(String::class.java), snapshot.getKey(), snapshot.child("image").getValue(String::class.java), snapshot.child("quantity").getValue(Int::class.java))
                     }
-                }).build();
-
-
-        firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<cartitemdetails, CartViewHolder>(options) {
-
-            @Override
-            public void onViewAttachedToWindow(@NonNull CartViewHolder holder) {
-                super.onViewAttachedToWindow(holder);
+                }).build()
+        firebaseRecyclerAdapter = object : FirebaseRecyclerAdapter<cartitemdetails, CartViewHolder>(options) {
+            public override fun onViewAttachedToWindow(holder: CartViewHolder) {
+                super.onViewAttachedToWindow(holder)
                 // itemsnumber.setText(firebaseRecyclerAdapter.getItemCount()+" items");
                 //progresslayout.setVisibility(View.GONE);
-                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
             }
 
-            @Override
-            protected void onBindViewHolder(@NonNull CartViewHolder holder, int position, @NonNull cartitemdetails model) {
-                imgs = new ArrayList<>();
-
-                if(position%2!=0)
-                {
-                    holder.itemView.setBackgroundColor(ContextCompat.getColor(getApplicationContext(),R.color.lightgrey));
+            override fun onBindViewHolder(holder: CartViewHolder, @SuppressLint("RecyclerView") position: Int, model: cartitemdetails) {
+                imgs = ArrayList()
+                if (position % 2 != 0) {
+                    holder.itemView.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.lightgrey))
                 }
-                firebaseRecyclerAdapter.getRef(position).child("tracking").getRef().orderByChild("timestamp").addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                            holder.status.setText(dataSnapshot.child("text").getValue(String.class) + ", " + getTime(dataSnapshot.child("timestamp").getValue(Long.class)));
-                            break;
+                firebaseRecyclerAdapter!!.getRef(position).child("tracking").getRef().orderByChild("timestamp").addListenerForSingleValueEvent(object : ValueEventListener {
+                    public override fun onDataChange(snapshot: DataSnapshot) {
+                        for (dataSnapshot: DataSnapshot in snapshot.getChildren()) {
+                            holder.status.setText(dataSnapshot.child("text").getValue(String::class.java) + ", " + getTime((dataSnapshot.child("timestamp").getValue(Long::class.java))!!))
+                            break
                         }
                     }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
-
-                firebaseRecyclerAdapter.getRef(position).child("items").addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                       /* itemdetails itemdetails = snapshot.getValue(com.example.login.Fragments.itemdetails.class);
+                    public override fun onCancelled(error: DatabaseError) {}
+                })
+                firebaseRecyclerAdapter!!.getRef(position).child("items").addListenerForSingleValueEvent(object : ValueEventListener {
+                    public override fun onDataChange(snapshot: DataSnapshot) {
+                        /* itemdetails itemdetails = snapshot.getValue(com.example.login.Fragments.itemdetails.class);
 
                         holder.name.setText(itemdetails.getName());
                         Format format = NumberFormat.getCurrencyInstance(new Locale("en", "in"));
@@ -138,126 +78,86 @@ public class MyOrders extends AppCompatActivity {
                         // holder.product.setText(itemdetails.getProduct());
 
                         // holder.quantity.setText(""+model.getQuantity());
-
-                        cartitemdetails cartitemdetails=snapshot.getValue(com.example.login.cartitemdetails.class);
-
-
-                        if(snapshot.getChildrenCount()==1)
-                        {
-                            holder.itemsnum.setVisibility(View.GONE);
+                        val cartitemdetails: cartitemdetails? = snapshot.getValue(cartitemdetails::class.java)
+                        if (snapshot.getChildrenCount() == 1L) {
+                            holder.itemsnum.setVisibility(View.GONE)
+                        } else {
+                            holder.itemsnum.setText("+ " + (snapshot.getChildrenCount() - 1) + " items")
                         }
-                        else {
-                            holder.itemsnum.setText("+ "+(snapshot.getChildrenCount()-1)+" items");
-                        }
-
-
-
-
-                        snapshot.getRef().addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-
-                                    Glide.with(getApplicationContext()).load(dataSnapshot.child("image").getValue(String.class)).into(holder.image);
-
-
-                                    holder.specs.setText("Size : " + dataSnapshot.child("size").getValue(String.class) + ", " + dataSnapshot.child("colorname").getValue(String.class));
-
-
-                                    FirebaseDatabase.getInstance().getReference().child("Items").child(dataSnapshot.child("id").getValue(String.class)).addListenerForSingleValueEvent(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                            itemdetails itemdetails = snapshot.getValue(com.example.login.Fragments.itemdetails.class);
-                                            i = 0;
-                                            holder.name.setText(itemdetails.getName());
-
+                        snapshot.getRef().addListenerForSingleValueEvent(object : ValueEventListener {
+                            public override fun onDataChange(snapshot: DataSnapshot) {
+                                for (dataSnapshot: DataSnapshot in snapshot.getChildren()) {
+                                    Glide.with(getApplicationContext()).load(dataSnapshot.child("image").getValue(String::class.java)).into(holder.image)
+                                    holder.specs.setText("Size : " + dataSnapshot.child("size").getValue(String::class.java) + ", " + dataSnapshot.child("colorname").getValue(String::class.java))
+                                    FirebaseDatabase.getInstance().getReference().child("Items").child((dataSnapshot.child("id").getValue(String::class.java))!!).addListenerForSingleValueEvent(object : ValueEventListener {
+                                        public override fun onDataChange(snapshot: DataSnapshot) {
+                                            val itemdetails: itemdetails? = snapshot.getValue(itemdetails::class.java)
+                                            i = 0
+                                            holder.name.setText(itemdetails!!.name)
                                         }
 
-                                        @Override
-                                        public void onCancelled(@NonNull DatabaseError error) {
-
-                                        }
-                                    });
-                                    break;
+                                        public override fun onCancelled(error: DatabaseError) {}
+                                    })
+                                    break
                                 }
-
                             }
 
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
-
-                            }
-                        });
-
-
+                            public override fun onCancelled(error: DatabaseError) {}
+                        })
                     }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
+                    public override fun onCancelled(error: DatabaseError) {}
+                })
+                holder.itemView.setOnClickListener(object : View.OnClickListener {
+                    public override fun onClick(v: View) {
+                        val intent: Intent = Intent(this@MyOrders, ViewOrder::class.java)
+                        intent.putExtra("id", firebaseRecyclerAdapter!!.getItem(position).id)
+                        startActivity(intent)
+                        CustomIntent.customType(this@MyOrders, "left-to-right")
                     }
-                });
-
-
-                holder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent=new Intent(MyOrders.this,ViewOrder.class);
-                        intent.putExtra("id",firebaseRecyclerAdapter.getItem(position).getId());
-                        startActivity(intent);
-                        customType(MyOrders.this,"left-to-right");
-                    }
-                });
-
+                })
             }
 
-            @NonNull
-            @Override
-            public CartViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.order, parent, false);
-                return new CartViewHolder(view);
+            public override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CartViewHolder {
+                val view: View = LayoutInflater.from(parent.getContext()).inflate(R.layout.order, parent, false)
+                return CartViewHolder(view)
             }
-        };
-
-        recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        recyclerView.setAdapter(firebaseRecyclerAdapter);
+        }
+        recyclerView.setLayoutManager(LinearLayoutManager(getApplicationContext()))
+        recyclerView.setAdapter(firebaseRecyclerAdapter)
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        firebaseRecyclerAdapter.startListening();
+    override fun onResume() {
+        super.onResume()
+        firebaseRecyclerAdapter!!.startListening()
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        customType(MyOrders.this,"right-to-left");
+    public override fun onBackPressed() {
+        super.onBackPressed()
+        CustomIntent.customType(this@MyOrders, "right-to-left")
     }
 
-    private class CartViewHolder extends RecyclerView.ViewHolder {
+    inner class CartViewHolder constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        var name: TextView
+        var specs: TextView
+        var itemsnum: TextView
+        var status: TextView
+        var image: ImageView
 
-        TextView name, specs, itemsnum, status;
-        ImageView image;
-
-        public CartViewHolder(@NonNull View itemView) {
-            super(itemView);
-
-            itemsnum = itemView.findViewById(R.id.itemsno);
-            name = itemView.findViewById(R.id.name);
-            image = itemView.findViewById(R.id.images1);
-            specs = itemView.findViewById(R.id.specs);
-            status = itemView.findViewById(R.id.status);
+        init {
+            itemsnum = itemView.findViewById(R.id.itemsno)
+            name = itemView.findViewById(R.id.name)
+            image = itemView.findViewById(R.id.images1)
+            specs = itemView.findViewById(R.id.specs)
+            status = itemView.findViewById(R.id.status)
         }
     }
 
-    private String getTime(long time) {
-
-        Calendar c = Calendar.getInstance();
-        c.setTimeInMillis(time);
-        Date d = c.getTime();
-        SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy, hh:mm aa");
-        return sdf.format(d);
+    private fun getTime(time: Long): String {
+        val c: Calendar = Calendar.getInstance()
+        c.setTimeInMillis(time)
+        val d: Date = c.getTime()
+        val sdf: SimpleDateFormat = SimpleDateFormat("dd MMMM yyyy, hh:mm aa")
+        return sdf.format(d)
     }
-
 }
