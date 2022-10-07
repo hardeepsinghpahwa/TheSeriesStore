@@ -1,191 +1,197 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/white"
-    tools:context=".Address">
+    xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+
+    </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:background="@color/white"
+        tools:context=".address.Address">
 
 
-
-        <ImageView
-            android:id="@+id/noaddresses"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="100dp"
-            android:src="@drawable/address"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView14" />
-
-        <TextView
-            android:id="@+id/noaddressestext"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="NO SAVED ADDRESSES"
-            android:textColor="@color/darkgrey"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="@+id/noaddresses"
-            app:layout_constraintStart_toStartOf="@+id/noaddresses"
-            app:layout_constraintTop_toBottomOf="@+id/noaddresses" />
-
-
-        <com.baoyachi.stepview.HorizontalStepView
-
-            android:id="@+id/stepsView"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/back" />
-
-        <TextView
-            android:id="@+id/textView14"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="ADDRESS"
-            android:textColor="@color/black"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/back"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/back" />
-
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/addnewcard"
-            android:layout_width="0dp"
-            android:layout_height="60dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="20dp"
-            android:visibility="visible"
-            app:cardCornerRadius="45dp"
-            app:cardElevation="0dp"
-            app:layout_constraintBottom_toTopOf="@+id/continuecard"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            >
-
-            <TextView
-                android:id="@+id/addnew"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/stroke"
-                android:foreground="?attr/selectableItemBackground"
-                android:gravity="center"
-                android:text="Add New Address"
-                android:textColor="@color/darkgrey"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-
-        </androidx.cardview.widget.CardView>
-
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/continuecard"
-            android:layout_width="0dp"
-            android:layout_height="60dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="20dp"
-            android:visibility="visible"
-            app:cardBackgroundColor="@color/darkgrey"
-            app:cardCornerRadius="45dp"
+            android:layout_height="match_parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
-
-            <TextView
-                android:id="@+id/continuetopay"
-                style="@style/SelectableItemBackground"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:foreground="?attr/selectableItemBackground"
-                android:gravity="center"
-                android:text="Continue To Payment"
-                android:textColor="@color/white"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-
-        </androidx.cardview.widget.CardView>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/addressrecyview"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginTop="10dp"
-            android:overScrollMode="never"
-            android:layout_marginBottom="10dp"
-            android:layoutAnimation="@anim/falldown"
-            app:layout_constraintBottom_toTopOf="@+id/addnewcard"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/stepsView" />
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/back"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="15dp"
-            android:foreground="?attr/selectableItemBackground"
-            app:cardBackgroundColor="@color/white"
-            app:cardCornerRadius="20dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
+
             <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_gravity="center"
-                android:adjustViewBounds="true"
-                android:cropToPadding="false"
-                android:src="@drawable/back"
-                app:tint="@color/black" />
+                android:id="@+id/noaddresses"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="100dp"
+                android:src="@drawable/address"
+                android:visibility="gone"
+                app:layout_constraintBottom_toTopOf="@+id/addnewcard"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView14" />
 
-        </androidx.cardview.widget.CardView>
+            <TextView
+                android:id="@+id/noaddressestext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="NO SAVED ADDRESSES"
+                android:textColor="@color/darkgrey"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="@+id/noaddresses"
+                app:layout_constraintStart_toStartOf="@+id/noaddresses"
+                app:layout_constraintTop_toBottomOf="@+id/noaddresses" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <com.baoyachi.stepview.HorizontalStepView
+
+                android:id="@+id/stepsView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/back" />
+
+            <TextView
+                android:id="@+id/textView14"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ADDRESS"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/back"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/back" />
 
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/progresslayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#43000000"
-        android:visibility="visible"
-        tools:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+            <androidx.cardview.widget.CardView
+                android:id="@+id/addnewcard"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="20dp"
+                android:visibility="visible"
+                app:cardCornerRadius="45dp"
+                app:cardElevation="0dp"
+                app:layout_constraintBottom_toTopOf="@+id/continuecard"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
 
-        <ProgressBar
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:indeterminateDrawable="@drawable/progress"
+                <TextView
+                    android:id="@+id/addnew"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/stroke"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:text="Add New Address"
+                    android:textColor="@color/darkgrey"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+            </androidx.cardview.widget.CardView>
+
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/continuecard"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="20dp"
+                android:visibility="visible"
+                app:cardBackgroundColor="@color/darkgrey"
+                app:cardCornerRadius="45dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+
+                <TextView
+                    android:id="@+id/continuetopay"
+                    style="@style/SelectableItemBackground"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:text="Continue To Payment"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/addressrecyview"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="10dp"
+                android:overScrollMode="never"
+                android:layout_marginBottom="10dp"
+                android:layoutAnimation="@anim/falldown"
+                app:layout_constraintBottom_toTopOf="@+id/addnewcard"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/stepsView" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/back"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="15dp"
+                android:foreground="?attr/selectableItemBackground"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="20dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:cropToPadding="false"
+                    android:src="@drawable/back"
+                    app:tint="@color/black" />
+
+            </androidx.cardview.widget.CardView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/progresslayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#43000000"
+            android:visibility="visible"
+            tools:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ProgressBar
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:indeterminateDrawable="@drawable/progress"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

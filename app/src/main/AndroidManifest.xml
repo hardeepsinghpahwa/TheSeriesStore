@@ -16,7 +16,7 @@
         android:theme="@style/Theme.Default"
         tools:replace="android:theme">
         <activity
-            android:name=".Splash"
+            android:name=".splash.Splash"
             android:theme="@style/Theme.Splash"
             android:exported="true">
             <intent-filter>
@@ -72,7 +72,7 @@
                 <category android:name="android.intent.category.ALTERNATIVE" />
             </intent-filter>
         </activity>
-        <activity android:name=".Address"
+        <activity android:name=".address.Address"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

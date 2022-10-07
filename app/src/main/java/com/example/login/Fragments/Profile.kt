@@ -17,6 +17,7 @@ import android.widget.ImageView
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import com.example.login.*
+import com.example.login.address.Address
 
 class Profile : Fragment() {
     lateinit var profile: CardView

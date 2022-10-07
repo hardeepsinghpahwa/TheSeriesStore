@@ -1,211 +1,219 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    app:cardCornerRadius="20dp"
-    android:background="@color/white">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:overScrollMode="never"
-        android:layout_height="match_parent">
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:paddingBottom="20dp"
-        android:layout_height="wrap_content">
-    <EditText
-        android:id="@+id/name"
+    <data>
+
+    </data>
+
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:background="@null"
-        android:hint="Name"
-        android:inputType="textPersonName"
-        android:padding="15dp"
-        android:maxLines="1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView12" />
+        app:cardCornerRadius="20dp"
+        android:background="@color/white">
 
-    <EditText
-        android:id="@+id/address"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@null"
-        android:hint="House No, Street, Road, Area, Colony"
-        android:inputType="textPersonName"
-        android:padding="15dp"
-        android:maxLines="3"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/phone" />
-
-    <EditText
-        android:id="@+id/city"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@null"
-        android:hint="City"
-        android:maxLines="1"
-        android:inputType="textPersonName"
-        android:padding="15dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/address" />
-
-
-    <TextView
-        android:id="@+id/state"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@null"
-        android:hint="State"
-        android:inputType="textPersonName"
-        android:padding="15dp"
-        android:maxLines="1"
-        android:textSize="18sp"
-        android:textColor="@color/black"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/city" />
-
-
-        <EditText
-            android:id="@+id/pincode"
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@null"
-            android:hint="Pincode"
-            android:inputType="number"
-            android:maxLength="6"
-            android:maxLines="1"
-            android:padding="15dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/state" />
+            android:overScrollMode="never"
+            android:layout_height="match_parent">
 
-    <EditText
-        android:id="@+id/phone"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@null"
-        android:hint="Phone"
-        android:inputType="number"
-        android:maxLength="10"
-        android:maxLines="1"
-        android:padding="15dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/name" />
-
-    <TextView
-        android:id="@+id/textView12"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="NEW ADDRESS"
-        android:textStyle="bold"
-        android:textSize="20sp"
-        android:textColor="@color/black"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/savecard"
-            android:layout_width="0dp"
-            android:layout_height="60dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="30dp"
-            android:layout_marginEnd="10dp"
-            android:visibility="visible"
-            app:cardBackgroundColor="@color/darkgrey"
-            app:cardCornerRadius="45dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/home">
-
-            <TextView
-                android:id="@+id/save"
-                style="@style/SelectableItemBackground"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:foreground="?attr/selectableItemBackground"
-                android:gravity="center"
-                android:text="Save"
-                android:textColor="@color/white"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                android:paddingBottom="20dp"
+                android:layout_height="wrap_content">
 
-        </androidx.cardview.widget.CardView>
+                <EditText
+                    android:id="@+id/name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp"
+                    android:background="@null"
+                    android:hint="Name"
+                    android:inputType="textPersonName"
+                    android:padding="15dp"
+                    android:maxLines="1"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView12" />
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/crosscard"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginTop="15dp"
-            android:layout_marginEnd="10dp"
-            android:foreground="?attr/selectableItemBackground"
-            app:cardBackgroundColor="@color/white"
-            app:cardCornerRadius="20dp"
-            app:layout_constraintBottom_toBottomOf="@+id/textView12"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+                <EditText
+                    android:id="@+id/address"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:hint="House No, Street, Road, Area, Colony"
+                    android:inputType="textPersonName"
+                    android:padding="15dp"
+                    android:maxLines="3"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/phone" />
 
-            <ImageView
-                android:id="@+id/cross"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:adjustViewBounds="true"
-                android:cropToPadding="false"
-                android:foreground="?attr/selectableItemBackground"
-                android:padding="8dp"
-                android:src="@drawable/cross"
-                app:tint="@color/darkgrey" />
+                <EditText
+                    android:id="@+id/city"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:hint="City"
+                    android:maxLines="1"
+                    android:inputType="textPersonName"
+                    android:padding="15dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/address" />
 
-        </androidx.cardview.widget.CardView>
 
-        <TextView
-            android:id="@+id/home"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/stroke2"
-            android:paddingLeft="10dp"
-            android:paddingEnd="10dp"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:includeFontPadding="false"
-            android:text="Home"
-            android:textColor="#42A5F5"
-            android:textSize="16sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/pincode" />
+                <TextView
+                    android:id="@+id/state"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:hint="State"
+                    android:inputType="textPersonName"
+                    android:padding="15dp"
+                    android:maxLines="1"
+                    android:textSize="18sp"
+                    android:textColor="@color/black"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/city" />
 
-        <TextView
-            android:id="@+id/office"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:background="@drawable/stroke2"
-            android:paddingLeft="10dp"
-            android:paddingTop="5dp"
-            android:includeFontPadding="false"
-            android:paddingEnd="10dp"
-            android:paddingBottom="5dp"
-            android:text="Office"
-            android:textColor="#42A5F5"
-            android:textSize="16sp"
-            app:layout_constraintStart_toEndOf="@+id/home"
-            app:layout_constraintTop_toTopOf="@+id/home" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+                <EditText
+                    android:id="@+id/pincode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:hint="Pincode"
+                    android:inputType="number"
+                    android:maxLength="6"
+                    android:maxLines="1"
+                    android:padding="15dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/state" />
 
-    </androidx.core.widget.NestedScrollView>
-</androidx.cardview.widget.CardView>
+                <EditText
+                    android:id="@+id/phone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:hint="Phone"
+                    android:inputType="number"
+                    android:maxLength="10"
+                    android:maxLines="1"
+                    android:padding="15dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/name" />
+
+                <TextView
+                    android:id="@+id/textView12"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="NEW ADDRESS"
+                    android:textStyle="bold"
+                    android:textSize="20sp"
+                    android:textColor="@color/black"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/savecard"
+                    android:layout_width="0dp"
+                    android:layout_height="60dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="30dp"
+                    android:layout_marginEnd="10dp"
+                    android:visibility="visible"
+                    app:cardBackgroundColor="@color/darkgrey"
+                    app:cardCornerRadius="45dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/home">
+
+                    <TextView
+                        android:id="@+id/save"
+                        style="@style/SelectableItemBackground"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:foreground="?attr/selectableItemBackground"
+                        android:gravity="center"
+                        android:text="Save"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/crosscard"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginEnd="10dp"
+                    android:foreground="?attr/selectableItemBackground"
+                    app:cardBackgroundColor="@color/white"
+                    app:cardCornerRadius="20dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/textView12"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <ImageView
+                        android:id="@+id/cross"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:adjustViewBounds="true"
+                        android:cropToPadding="false"
+                        android:foreground="?attr/selectableItemBackground"
+                        android:padding="8dp"
+                        android:src="@drawable/cross"
+                        app:tint="@color/darkgrey" />
+
+                </androidx.cardview.widget.CardView>
+
+                <TextView
+                    android:id="@+id/home"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/stroke2"
+                    android:paddingLeft="10dp"
+                    android:paddingEnd="10dp"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+                    android:includeFontPadding="false"
+                    android:text="Home"
+                    android:textColor="#42A5F5"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/pincode" />
+
+                <TextView
+                    android:id="@+id/office"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:background="@drawable/stroke2"
+                    android:paddingLeft="10dp"
+                    android:paddingTop="5dp"
+                    android:includeFontPadding="false"
+                    android:paddingEnd="10dp"
+                    android:paddingBottom="5dp"
+                    android:text="Office"
+                    android:textColor="#42A5F5"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toEndOf="@+id/home"
+                    app:layout_constraintTop_toTopOf="@+id/home" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.core.widget.NestedScrollView>
+    </androidx.cardview.widget.CardView>
+</layout>
