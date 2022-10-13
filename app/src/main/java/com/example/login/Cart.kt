@@ -4,13 +4,11 @@ package com.example.login
 import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
-import androidx.constraintlayout.widget.ConstraintLayout
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import androidx.core.content.ContextCompat
 import com.irozon.sneaker.Sneaker
 import com.google.firebase.auth.FirebaseAuth
 import com.google.android.gms.tasks.OnCompleteListener
-import com.baoyachi.stepview.HorizontalStepView
 import com.baoyachi.stepview.bean.StepBean
 import android.content.Intent
 import maes.tech.intentanim.CustomIntent
@@ -26,7 +24,10 @@ import com.bumptech.glide.Glide
 import android.os.*
 import android.view.*
 import android.widget.*
+import androidx.databinding.DataBindingUtil
 import com.example.login.address.Address
+import com.example.login.databinding.ActivityCartBinding
+import com.example.login.dataclass.cartitemdetails
 import com.firebase.ui.database.SnapshotParser
 import com.google.android.gms.tasks.Task
 import com.google.firebase.database.*
@@ -37,33 +38,27 @@ import java.text.NumberFormat
 import java.util.*
 
 class Cart : AppCompatActivity() {
-    lateinit var recyclerView: RecyclerView
     lateinit var firebaseRecyclerAdapter: FirebaseRecyclerAdapter<cartitemdetails, CartViewHolder>
     var t: Double = 0.0
     var no: Int = 0
-    lateinit var total: TextView
-    lateinit var total2: TextView
-    lateinit var subtotal: TextView
-    lateinit var cartlayout: ConstraintLayout
-    lateinit var progresslayout: ConstraintLayout
-    lateinit var back: CardView
-    lateinit var emptycart: CardView
-    lateinit var itemsnumber: TextView
-    lateinit var proceed: TextView
+
+    lateinit var binding: ActivityCartBinding
 
     private val steps: Array<String> = arrayOf("Cart", "Address", "Payment", "Placed")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_cart)
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_cart)
+        binding.executePendingBindings()
+
+        window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-        proceed = findViewById(R.id.continuetopay)
-        proceed.setOnClickListener {
+
+        binding.continuetopay.setOnClickListener {
             startActivity(Intent(this@Cart, Address::class.java))
             CustomIntent.customType(this@Cart, "left-to-right")
         }
-        val setpview5: HorizontalStepView = findViewById<View>(R.id.stepsView) as HorizontalStepView
         val stepsBeanList: MutableList<StepBean> = ArrayList()
         val stepBean0: StepBean = StepBean("Cart", -1)
         val stepBean1: StepBean = StepBean("Address", 0)
@@ -73,7 +68,7 @@ class Cart : AppCompatActivity() {
         stepsBeanList.add(stepBean1)
         stepsBeanList.add(stepBean2)
         stepsBeanList.add(stepBean3)
-        setpview5.setStepViewTexts(stepsBeanList) //???
+        binding.stepsView.setStepViewTexts(stepsBeanList) //???
                 .setTextSize(12) //set textSize
                 .setStepsViewIndicatorCompletedLineColor(ContextCompat.getColor(getApplicationContext(), R.color.darkgrey)) //??StepsViewIndicator??????
                 .setStepsViewIndicatorUnCompletedLineColor(ContextCompat.getColor(getApplicationContext(), android.R.color.darker_gray)) //??StepsViewIndicator???????
@@ -82,21 +77,8 @@ class Cart : AppCompatActivity() {
                 .setStepsViewIndicatorCompleteIcon(ContextCompat.getDrawable(getApplicationContext(), R.drawable.checkedd)) //??StepsViewIndicator CompleteIcon
                 .setStepsViewIndicatorDefaultIcon(ContextCompat.getDrawable(getApplicationContext(), R.drawable.outline_radio_button_checked_24)) //??StepsViewIndicator DefaultIcon
                 .setStepsViewIndicatorAttentionIcon(ContextCompat.getDrawable(getApplicationContext(), R.drawable.uncheckedd))
-        recyclerView = findViewById(R.id.cartrecyview)
-        findViewById<View>(R.id.back).setOnClickListener(object : View.OnClickListener {
-            public override fun onClick(v: View) {
-                onBackPressed()
-            }
-        })
-        total = findViewById(R.id.total)
-        total2 = findViewById(R.id.total2)
-        subtotal = findViewById(R.id.subtotal)
-        back = findViewById(R.id.back)
-        emptycart = findViewById(R.id.emptycart)
-        cartlayout = findViewById(R.id.cartlayout)
-        itemsnumber = findViewById(R.id.itemno)
-        progresslayout = findViewById(R.id.progresslayout)
-        back.setOnClickListener(object : View.OnClickListener {
+
+        binding.back.setOnClickListener(object : View.OnClickListener {
             public override fun onClick(v: View) {
                 onBackPressed()
             }
@@ -106,7 +88,7 @@ class Cart : AppCompatActivity() {
                 if (snapshot.exists()) {
                     YoYo.with(Techniques.FadeInDown)
                             .duration(1000)
-                            .playOn(recyclerView)
+                            .playOn(binding.cartrecyview)
                 }
             }
 
@@ -121,7 +103,7 @@ class Cart : AppCompatActivity() {
                         public override fun onDataChange(snapshot2: DataSnapshot) {
                             t = t + ((dataSnapshot.child("quantity").getValue(Int::class.java)))!! * Integer.valueOf(snapshot2.child("price").getValue(String::class.java))
                             val format: Format = NumberFormat.getCurrencyInstance(Locale("en", "in"))
-                            subtotal.setText(format.format(BigDecimal(t.toString())))
+                            binding.subtotal.setText(format.format(BigDecimal(t.toString())))
                         }
 
                         public override fun onCancelled(error: DatabaseError) {}
@@ -129,7 +111,7 @@ class Cart : AppCompatActivity() {
                     no++
                     if (no.toLong() == snapshot.getChildrenCount()) {
                         val format: Format = NumberFormat.getCurrencyInstance(Locale("en", "in"))
-                        subtotal.setText(format.format(BigDecimal(t.toString())))
+                        binding.subtotal.setText(format.format(BigDecimal(t.toString())))
                     }
                 }
             }
@@ -142,15 +124,15 @@ class Cart : AppCompatActivity() {
                 handler.postDelayed(object : Runnable {
                     public override fun run() {
                         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-                        progresslayout.setVisibility(View.GONE)
+                        binding.progresslayout.setVisibility(View.GONE)
                     }
                 }, 700)
                 if (!snapshot.exists()) {
-                    cartlayout.setVisibility(View.GONE)
+                    binding.cartlayout.setVisibility(View.GONE)
                     findViewById<View>(R.id.emptycartimg).setVisibility(View.VISIBLE)
                     findViewById<View>(R.id.emptycarttext).setVisibility(View.VISIBLE)
                 } else {
-                    cartlayout.setVisibility(View.VISIBLE)
+                    binding.cartlayout.setVisibility(View.VISIBLE)
                     findViewById<View>(R.id.emptycartimg).setVisibility(View.GONE)
                     findViewById<View>(R.id.emptycarttext).setVisibility(View.GONE)
                 }
@@ -159,7 +141,7 @@ class Cart : AppCompatActivity() {
             public override fun onCancelled(error: DatabaseError) {}
         })
         val query: Query = FirebaseDatabase.getInstance().getReference().child("Profiles").child(FirebaseAuth.getInstance().getCurrentUser()!!.getUid()).child("Cart")
-        emptycart.setOnClickListener(object : View.OnClickListener {
+        binding.emptycart.setOnClickListener(object : View.OnClickListener {
             public override fun onClick(v: View) {
                 val mDialog: MaterialDialog = MaterialDialog.Builder(this@Cart)
                         .setTitle("Empty The Cart?")
@@ -213,21 +195,21 @@ class Cart : AppCompatActivity() {
         firebaseRecyclerAdapter = object : FirebaseRecyclerAdapter<cartitemdetails, CartViewHolder>(options) {
             public override fun onViewAttachedToWindow(holder: CartViewHolder) {
                 super.onViewAttachedToWindow(holder)
-                itemsnumber.setText(firebaseRecyclerAdapter!!.getItemCount().toString() + " items")
+                binding.itemno.setText(firebaseRecyclerAdapter!!.getItemCount().toString() + " items")
                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
             }
 
             override fun onBindViewHolder(holder: CartViewHolder, @SuppressLint("RecyclerView") position: Int, model: cartitemdetails) {
                 holder.move.setOnClickListener(object : View.OnClickListener {
                     public override fun onClick(v: View) {
-                        progresslayout.setVisibility(View.VISIBLE)
+                        binding.progresslayout.setVisibility(View.VISIBLE)
                         val fromPath: DatabaseReference = firebaseRecyclerAdapter!!.getRef(position)
                         val toPath: DatabaseReference = FirebaseDatabase.getInstance().getReference().child("Profiles").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Wishlist")
                         fromPath.addListenerForSingleValueEvent(object : ValueEventListener {
                             public override fun onDataChange(dataSnapshot: DataSnapshot) {
                                 toPath.child(UUID.randomUUID().toString()).setValue(dataSnapshot.getValue(), object : DatabaseReference.CompletionListener {
                                     public override fun onComplete(error: DatabaseError?, ref: DatabaseReference) {
-                                        progresslayout.setVisibility(View.GONE)
+                                        binding.progresslayout.setVisibility(View.GONE)
                                         fromPath.removeValue()
                                     }
                                 }
@@ -250,11 +232,11 @@ class Cart : AppCompatActivity() {
 
                     public override fun onCancelled(error: DatabaseError) {}
                 })
-                holder.size.setText("Color: " + model.colorname+ ", " + "Size : " + model.size)
+                holder.size.setText("Color: " + model.colorname + ", " + "Size : " + model.size)
                 Glide.with(getApplicationContext()).load(model.image).into(holder.image)
                 holder.add.setOnClickListener(object : View.OnClickListener {
                     public override fun onClick(v: View) {
-                        progresslayout.setVisibility(View.VISIBLE)
+                        binding.progresslayout.setVisibility(View.VISIBLE)
                         getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
                         firebaseRecyclerAdapter!!.getRef(position).addListenerForSingleValueEvent(object : ValueEventListener {
@@ -265,7 +247,7 @@ class Cart : AppCompatActivity() {
                                         handler.postDelayed(object : Runnable {
                                             public override fun run() {
                                                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-                                                progresslayout.setVisibility(View.GONE)
+                                                binding.progresslayout.setVisibility(View.GONE)
                                             }
                                         }, 700)
                                     }
@@ -282,7 +264,7 @@ class Cart : AppCompatActivity() {
                         firebaseRecyclerAdapter!!.getRef(position).addListenerForSingleValueEvent(object : ValueEventListener {
                             public override fun onDataChange(snapshot: DataSnapshot) {
                                 if (snapshot.child("quantity").getValue(Int::class.java)!! > 1) {
-                                    progresslayout.setVisibility(View.VISIBLE)
+                                    binding.progresslayout.setVisibility(View.VISIBLE)
                                     getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                                             WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
                                     snapshot.child("quantity").getRef().setValue(snapshot.child("quantity").getValue(Int::class.java)!! - 1).addOnCompleteListener(object : OnCompleteListener<Void?> {
@@ -291,7 +273,7 @@ class Cart : AppCompatActivity() {
                                             handler.postDelayed(object : Runnable {
                                                 public override fun run() {
                                                     getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-                                                    progresslayout.setVisibility(View.GONE)
+                                                    binding.progresslayout.setVisibility(View.GONE)
                                                 }
                                             }, 700)
                                         }
@@ -357,8 +339,8 @@ class Cart : AppCompatActivity() {
                 return CartViewHolder(view)
             }
         }
-        recyclerView.setLayoutManager(LinearLayoutManager(getApplicationContext()))
-        recyclerView.setAdapter(firebaseRecyclerAdapter)
+        binding.cartrecyview.setLayoutManager(LinearLayoutManager(getApplicationContext()))
+        binding.cartrecyview.setAdapter(firebaseRecyclerAdapter)
     }
 
     override fun onResume() {

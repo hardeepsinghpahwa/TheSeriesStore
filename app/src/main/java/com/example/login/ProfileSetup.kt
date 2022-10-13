@@ -23,33 +23,27 @@ import com.google.firebase.auth.EmailAuthProvider
 import android.util.Log
 import android.util.Patterns
 import android.view.*
+import androidx.databinding.DataBindingUtil
+import com.example.login.databinding.ActivityProfileSetupBinding
 import com.google.android.gms.tasks.Task
 import java.util.*
 
-class ProfileSetup: AppCompatActivity() {
-    lateinit var name: TextInputEditText
-    lateinit var email: TextInputEditText
-    lateinit var phone: TextInputEditText
-    lateinit var password: TextInputEditText
-    lateinit var confirmpassword: TextInputEditText
-    lateinit var createaccount: TextView
-    lateinit var login: TextView
+class ProfileSetup : AppCompatActivity() {
+
+    lateinit var binding: ActivityProfileSetupBinding
     var i: Int = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_profile_setup)
-        name = findViewById(R.id.name)
-        email = findViewById(R.id.email)
-        phone = findViewById(R.id.phone)
-        password = findViewById(R.id.password)
-        confirmpassword = findViewById(R.id.repeatpassword)
-        createaccount = findViewById(R.id.createaccount)
-        login = findViewById(R.id.login)
-        phone.setKeyListener(null)
-        phone.setText(getIntent().getStringExtra("phone"))
-        createaccount.setOnClickListener(object : View.OnClickListener {
+
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_profile_setup)
+        binding.executePendingBindings()
+
+        binding.phone.setKeyListener(null)
+        binding.phone.setText(getIntent().getStringExtra("phone"))
+
+        binding.createaccount.setOnClickListener(object : View.OnClickListener {
             public override fun onClick(v: View) {
-                if ((name.getText().toString() == "")) {
+                if ((binding.name.getText().toString() == "")) {
                     Sneaker.with(this@ProfileSetup)
                             .setTitle("Enter you name", R.color.white)
                             .setMessage("Name cant be empty", R.color.white)
@@ -59,7 +53,7 @@ class ProfileSetup: AppCompatActivity() {
                             .setHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
                             .setCornerRadius(10, 0)
                             .sneak(R.color.teal_200)
-                } else if ((email.getText().toString() == "")) {
+                } else if ((binding.email.getText().toString() == "")) {
                     Sneaker.with(this@ProfileSetup)
                             .setTitle("Enter you email", R.color.white)
                             .setMessage("Email cant be empty", R.color.white)
@@ -69,7 +63,7 @@ class ProfileSetup: AppCompatActivity() {
                             .setHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
                             .setCornerRadius(10, 0)
                             .sneak(R.color.teal_200)
-                } else if (!isValidEmail(email.getText().toString())) {
+                } else if (!isValidEmail(binding.email.getText().toString())) {
                     Sneaker.with(this@ProfileSetup)
                             .setTitle("Invalid Email", R.color.white)
                             .setMessage("Enter a valid email", R.color.white)
@@ -79,7 +73,7 @@ class ProfileSetup: AppCompatActivity() {
                             .setHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
                             .setCornerRadius(10, 0)
                             .sneak(R.color.teal_200)
-                } else if ((password.getText().toString() == "")) {
+                } else if ((binding.password.getText().toString() == "")) {
                     Sneaker.with(this@ProfileSetup)
                             .setTitle("Enter you password", R.color.white)
                             .setMessage("Password cant be empty", R.color.white)
@@ -89,7 +83,7 @@ class ProfileSetup: AppCompatActivity() {
                             .setHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
                             .setCornerRadius(10, 0)
                             .sneak(R.color.teal_200)
-                } else if (password.getText().toString().length < 8) {
+                } else if (binding.password.getText().toString().length < 8) {
                     Sneaker.with(this@ProfileSetup)
                             .setTitle("Short Password", R.color.white)
                             .setMessage("Password must be minimum of 8 length", R.color.white)
@@ -99,7 +93,7 @@ class ProfileSetup: AppCompatActivity() {
                             .setHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
                             .setCornerRadius(10, 0)
                             .sneak(R.color.teal_200)
-                } else if (!containsdigit(password.getText().toString())) {
+                } else if (!containsdigit(binding.password.getText().toString())) {
                     Sneaker.with(this@ProfileSetup)
                             .setTitle("Invalid Password", R.color.white)
                             .setMessage("Password must contain a number", R.color.white)
@@ -109,7 +103,7 @@ class ProfileSetup: AppCompatActivity() {
                             .setHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
                             .setCornerRadius(10, 0)
                             .sneak(R.color.teal_200)
-                } else if (!(confirmpassword.getText().toString() == password.getText().toString())) {
+                } else if (!(binding.repeatpassword.getText().toString() == binding.password.getText().toString())) {
                     Sneaker.with(this@ProfileSetup)
                             .setTitle("Passwords Do Not Match", R.color.white)
                             .setMessage("Try Again Please!", R.color.white)
@@ -124,7 +118,7 @@ class ProfileSetup: AppCompatActivity() {
                         public override fun onDataChange(snapshot: DataSnapshot) {
                             i = 0
                             for (dataSnapshot: DataSnapshot in snapshot.getChildren()) {
-                                if (Objects.equals(dataSnapshot.child("email").getValue(String::class.java), email.getText().toString())) {
+                                if (Objects.equals(dataSnapshot.child("email").getValue(String::class.java), binding.email.getText().toString())) {
                                     i++
                                 }
                             }
@@ -138,20 +132,14 @@ class ProfileSetup: AppCompatActivity() {
                                         .setHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
                                         .setCornerRadius(10, 0)
                                         .sneak(R.color.teal_200)
-                                /*final Handler handler = new Handler(Looper.getMainLooper());
-                                handler.postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        finish();
-                                    }
-                                }, 2000);*/
+
                             } else {
-                                val credential: AuthCredential = EmailAuthProvider.getCredential(email.getText().toString(), password.getText().toString())
-                                val map=mutableMapOf<String?, Any?>()
-                                map.put("name", name.getText().toString())
-                                map.put("email", email.getText().toString())
-                                map.put("phone", phone.getText().toString())
-                                map.put("password", password.getText().toString())
+                                val credential: AuthCredential = EmailAuthProvider.getCredential(binding.email.getText().toString(), binding.password.getText().toString())
+                                val map = mutableMapOf<String?, Any?>()
+                                map.put("name", binding.name.getText().toString())
+                                map.put("email", binding.email.getText().toString())
+                                map.put("phone", binding.phone.getText().toString())
+                                map.put("password", binding.password.getText().toString())
                                 val alertDialog: AlertDialog = SpotsDialog.Builder()
                                         .setCancelable(false)
                                         .setContext(this@ProfileSetup)

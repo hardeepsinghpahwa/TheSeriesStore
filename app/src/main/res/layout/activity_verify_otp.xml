@@ -1,260 +1,267 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/cons2"
-    android:background="@color/white"
-    tools:context=".VerifyOtp">
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/cons2"
+        android:background="@color/white"
+        tools:context=".VerifyOtp">
 
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/back"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="15dp"
-        app:cardBackgroundColor="@color/white"
-        app:cardCornerRadius="20dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        <androidx.cardview.widget.CardView
+            android:id="@+id/back"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="15dp"
+            app:cardBackgroundColor="@color/white"
+            app:cardCornerRadius="20dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:adjustViewBounds="true"
+                android:cropToPadding="false"
+                app:tint="@color/black"
+                android:src="@drawable/back" />
+
+        </androidx.cardview.widget.CardView>
 
         <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_gravity="center"
-            android:adjustViewBounds="true"
-            android:cropToPadding="false"
-            app:tint="@color/black"
-            android:src="@drawable/back" />
+            android:id="@+id/imageView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            app:layout_constraintBottom_toTopOf="@+id/sendingcodetext"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:srcCompat="@drawable/verifyphone" />
 
-    </androidx.cardview.widget.CardView>
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottie"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="@+id/imageView4"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/celebrate" />
 
-    <ImageView
-        android:id="@+id/imageView4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        app:layout_constraintBottom_toTopOf="@+id/sendingcodetext"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/verifyphone" />
+        <androidx.cardview.widget.CardView
+            android:id="@+id/proceedcard"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginLeft="20dp"
+            android:visibility="gone"
+            android:layout_marginEnd="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="30dp"
+            app:cardBackgroundColor="@color/darkgrey"
+            app:cardCornerRadius="45dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
 
-    <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/lottie"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:layout_constraintTop_toTopOf="@+id/imageView4"
-        app:lottie_loop="true"
-        app:lottie_rawRes="@raw/celebrate" />
+            <ProgressBar
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center_vertical"
+                android:id="@+id/progressbar2"
+                android:indeterminateDrawable="@drawable/progress"
+                android:visibility="gone"
+                android:layout_marginStart="20dp" />
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/proceedcard"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginLeft="20dp"
-        android:visibility="gone"
-        android:layout_marginEnd="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginBottom="30dp"
-        app:cardBackgroundColor="@color/darkgrey"
-        app:cardCornerRadius="45dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+            <TextView
+                android:id="@+id/proceed"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                style="@style/SelectableItemBackground"
+                android:text="Proceed"
+                android:textColor="@color/white"
+                android:foreground="?attr/selectableItemBackground"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+        </androidx.cardview.widget.CardView>
+
+        <LinearLayout
+            android:id="@+id/linearLayout2"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginRight="20dp"
+            android:weightSum="6"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <EditText
+                android:id="@+id/code1"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/codeedittext"
+                android:enabled="false"
+                android:textCursorDrawable="@null"
+                android:gravity="center"
+                android:inputType="number"
+                android:maxLength="1"
+                android:textColor="@color/white"
+                android:textSize="25sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/code2"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/codeedittext"
+                android:textCursorDrawable="@null"
+                android:enabled="false"
+                android:gravity="center"
+                android:inputType="number"
+                android:maxLength="1"
+                android:textColor="@color/white"
+                android:textSize="25sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/code3"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/codeedittext"
+                android:enabled="false"
+                android:gravity="center"
+                android:textCursorDrawable="@null"
+                android:inputType="number"
+                android:maxLength="1"
+                android:textColor="@color/white"
+                android:textSize="25sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/code4"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/codeedittext"
+                android:enabled="false"
+                android:gravity="center"
+                android:inputType="number"
+                android:textCursorDrawable="@null"
+                android:maxLength="1"
+                android:textColor="@color/white"
+                android:textSize="25sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/code5"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/codeedittext"
+                android:enabled="false"
+                android:gravity="center"
+                android:inputType="number"
+                android:textCursorDrawable="@null"
+                android:maxLength="1"
+                android:textColor="@color/white"
+                android:textSize="25sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/code6"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/codeedittext"
+                android:enabled="false"
+                android:textCursorDrawable="@null"
+                android:gravity="center"
+                android:inputType="number"
+                android:maxLength="1"
+                android:textColor="@color/white"
+                android:textSize="25sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
 
         <ProgressBar
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_gravity="center_vertical"
-            android:id="@+id/progressbar2"
-            android:indeterminateDrawable="@drawable/progress"
-            android:visibility="gone"
-            android:layout_marginStart="20dp"
-            />
-        <TextView
-            android:id="@+id/proceed"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            style="@style/SelectableItemBackground"
-            android:text="Proceed"
-            android:textColor="@color/white"
-            android:foreground="?attr/selectableItemBackground"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-
-    </androidx.cardview.widget.CardView>
-
-    <LinearLayout
-        android:id="@+id/linearLayout2"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginRight="20dp"
-        android:weightSum="6"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <EditText
-            android:id="@+id/code1"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_margin="5dp"
-            android:layout_weight="1"
-            android:background="@drawable/codeedittext"
-            android:enabled="false"
-            android:textCursorDrawable="@null"
-            android:gravity="center"
-            android:inputType="number"
-            android:maxLength="1"
-            android:textColor="@color/white"
-            android:textSize="25sp"
-            android:textStyle="bold" />
-
-        <EditText
-            android:id="@+id/code2"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_margin="5dp"
-            android:layout_weight="1"
-            android:background="@drawable/codeedittext"
-            android:textCursorDrawable="@null"
-            android:enabled="false"
-            android:gravity="center"
-            android:inputType="number"
-            android:maxLength="1"
-            android:textColor="@color/white"
-            android:textSize="25sp"
-            android:textStyle="bold" />
-
-        <EditText
-            android:id="@+id/code3"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_margin="5dp"
-            android:layout_weight="1"
-            android:background="@drawable/codeedittext"
-            android:enabled="false"
-            android:gravity="center"
-            android:textCursorDrawable="@null"
-            android:inputType="number"
-            android:maxLength="1"
-            android:textColor="@color/white"
-            android:textSize="25sp"
-            android:textStyle="bold" />
-
-        <EditText
-            android:id="@+id/code4"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_margin="5dp"
-            android:layout_weight="1"
-            android:background="@drawable/codeedittext"
-            android:enabled="false"
-            android:gravity="center"
-            android:inputType="number"
-            android:textCursorDrawable="@null"
-            android:maxLength="1"
-            android:textColor="@color/white"
-            android:textSize="25sp"
-            android:textStyle="bold" />
-
-        <EditText
-            android:id="@+id/code5"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_margin="5dp"
-            android:layout_weight="1"
-            android:background="@drawable/codeedittext"
-            android:enabled="false"
-            android:gravity="center"
-            android:inputType="number"
-            android:textCursorDrawable="@null"
-            android:maxLength="1"
-            android:textColor="@color/white"
-            android:textSize="25sp"
-            android:textStyle="bold" />
-
-        <EditText
-            android:id="@+id/code6"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_margin="5dp"
-            android:layout_weight="1"
-            android:background="@drawable/codeedittext"
-            android:enabled="false"
-            android:textCursorDrawable="@null"
-            android:gravity="center"
-            android:inputType="number"
-            android:maxLength="1"
-            android:textColor="@color/white"
-            android:textSize="25sp"
-            android:textStyle="bold" />
-
-    </LinearLayout>
-
-
-    <ProgressBar
-        android:id="@+id/progressbar"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:padding="2dp"
-        android:indeterminateDrawable="@drawable/customprogressbar"
-        app:layout_constraintBottom_toBottomOf="@+id/sendingcodetext"
-        app:layout_constraintEnd_toStartOf="@+id/sendingcodetext"
-        app:layout_constraintTop_toTopOf="@+id/sendingcodetext" />
-
-    <TextView
-        android:id="@+id/sendingcodetext"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="50dp"
-        android:text="Sending Verification Code"
-        android:textColor="@color/darkgrey"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
-        app:layout_constraintEnd_toEndOf="@+id/imageView4"
-        app:layout_constraintStart_toStartOf="@+id/imageView4" />
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="10dp"
-        app:layout_constraintEnd_toEndOf="@+id/linearLayout2"
-        app:layout_constraintStart_toStartOf="@+id/linearLayout2"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
+            android:id="@+id/progressbar"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:padding="2dp"
+            android:indeterminateDrawable="@drawable/customprogressbar"
+            app:layout_constraintBottom_toBottomOf="@+id/sendingcodetext"
+            app:layout_constraintEnd_toStartOf="@+id/sendingcodetext"
+            app:layout_constraintTop_toTopOf="@+id/sendingcodetext" />
 
         <TextView
-            android:id="@+id/didnotgettext"
+            android:id="@+id/sendingcodetext"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Didn't Get The Code?"
-            android:textSize="18sp"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
-            tools:layout_editor_absoluteX="48dp" />
-
-        <TextView
-            android:id="@+id/sendcodeagain"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Send Code Again"
-            android:layout_marginStart="10dp"
-            android:textSize="18sp"
+            android:layout_marginBottom="50dp"
+            android:text="Sending Verification Code"
             android:textColor="@color/darkgrey"
+            android:textSize="18sp"
             android:textStyle="bold"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
-            tools:layout_editor_absoluteX="48dp" />
+            app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
+            app:layout_constraintEnd_toEndOf="@+id/imageView4"
+            app:layout_constraintStart_toStartOf="@+id/imageView4" />
 
-    </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp"
+            app:layout_constraintEnd_toEndOf="@+id/linearLayout2"
+            app:layout_constraintStart_toStartOf="@+id/linearLayout2"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:id="@+id/didnotgettext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Didn't Get The Code?"
+                android:textSize="18sp"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
+                tools:layout_editor_absoluteX="48dp" />
+
+            <TextView
+                android:id="@+id/sendcodeagain"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Send Code Again"
+                android:layout_marginStart="10dp"
+                android:textSize="18sp"
+                android:textColor="@color/darkgrey"
+                android:textStyle="bold"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
+                tools:layout_editor_absoluteX="48dp" />
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

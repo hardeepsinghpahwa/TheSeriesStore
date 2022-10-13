@@ -9,17 +9,20 @@ import com.baoyachi.stepview.bean.StepBean
 import android.content.Intent
 import maes.tech.intentanim.CustomIntent
 import android.view.*
+import androidx.databinding.DataBindingUtil
+import com.example.login.databinding.ActivityOrderPaymentDetailsBinding
+import com.example.login.databinding.ActivityOrderPaymentStatusBinding
 import java.util.ArrayList
 
 class OrderPaymentStatus : AppCompatActivity() {
-    lateinit var vieworder: TextView
-    lateinit var continueshopping: TextView
+
+    lateinit var binding:ActivityOrderPaymentStatusBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_order_payment_status)
-        continueshopping = findViewById(R.id.continueshopping)
-        vieworder = findViewById(R.id.vieworder)
-        val setpview5: HorizontalStepView = findViewById<View>(R.id.stepsView) as HorizontalStepView
+
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_order_payment_status)
+        binding.executePendingBindings()
+
         val stepsBeanList: MutableList<StepBean> = ArrayList()
         val stepBean0: StepBean = StepBean("Cart", 1)
         val stepBean1: StepBean = StepBean("Address", 1)
@@ -29,7 +32,7 @@ class OrderPaymentStatus : AppCompatActivity() {
         stepsBeanList.add(stepBean1)
         stepsBeanList.add(stepBean2)
         stepsBeanList.add(stepBean3)
-        setpview5.setStepViewTexts(stepsBeanList) //???
+        binding.stepsView.setStepViewTexts(stepsBeanList) //???
                 .setTextSize(12) //set textSize
                 .setStepsViewIndicatorCompletedLineColor(ContextCompat.getColor(getApplicationContext(), R.color.darkgrey)) //??StepsViewIndicator??????
                 .setStepsViewIndicatorUnCompletedLineColor(ContextCompat.getColor(getApplicationContext(), android.R.color.darker_gray)) //??StepsViewIndicator???????
@@ -38,13 +41,13 @@ class OrderPaymentStatus : AppCompatActivity() {
                 .setStepsViewIndicatorCompleteIcon(ContextCompat.getDrawable(getApplicationContext(), R.drawable.checkedd)) //??StepsViewIndicator CompleteIcon
                 .setStepsViewIndicatorDefaultIcon(ContextCompat.getDrawable(getApplicationContext(), R.drawable.outline_radio_button_checked_24)) //??StepsViewIndicator DefaultIcon
                 .setStepsViewIndicatorAttentionIcon(ContextCompat.getDrawable(getApplicationContext(), R.drawable.uncheckedd))
-        continueshopping.setOnClickListener(object : View.OnClickListener {
+        binding.continueshopping.setOnClickListener(object : View.OnClickListener {
             public override fun onClick(v: View) {
                 startActivity(Intent(this@OrderPaymentStatus, Home::class.java))
                 CustomIntent.customType(this@OrderPaymentStatus, "bottom-to-up")
             }
         })
-        vieworder.setOnClickListener(object : View.OnClickListener {
+        binding.vieworder.setOnClickListener(object : View.OnClickListener {
             public override fun onClick(v: View) {}
         })
     }

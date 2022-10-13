@@ -1,6 +1,5 @@
 package com.example.login.Fragments
 
-import androidx.recyclerview.widget.RecyclerView
 import android.widget.ProgressBar
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import android.view.LayoutInflater
@@ -16,7 +15,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.bumptech.glide.Glide
 import com.example.login.ItemDetail
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.os.Looper
 import com.example.login.Home
 import android.graphics.Typeface
@@ -25,7 +23,11 @@ import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.login.databinding.FragmentCategoriesBinding
 import com.google.firebase.database.*
 import java.math.BigDecimal
 import java.text.Format
@@ -34,30 +36,29 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 class Categories : Fragment() {
-    lateinit var recyclerView: RecyclerView
-    lateinit var recyclerView2: RecyclerView
+
     lateinit var its: ArrayList<String>
-    lateinit var progressBar: ProgressBar
+
+    lateinit var binding: FragmentCategoriesBinding
     lateinit var firebaseRecyclerAdapter: FirebaseRecyclerAdapter<itemdetails, ItemViewHolder>
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
+
+        binding = DataBindingUtil.inflate(layoutInflater, R.layout.fragment_categories, container, false)
+        binding.executePendingBindings()
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_categories, container, false)
-        recyclerView = view.findViewById(R.id.listrecyview)
-        recyclerView2 = view.findViewById(R.id.productsrecyview)
-        progressBar = view.findViewById(R.id.progressbar)
-        view.findViewById<View>(R.id.cart).setOnClickListener {
+
+        binding.cart.setOnClickListener {
             startActivity(Intent(activity, Cart::class.java))
             CustomIntent.customType(activity, "bottom-to-up")
         }
-        val cartcount: TextView
-        cartcount = view.findViewById(R.id.cartcount)
+
         FirebaseDatabase.getInstance().reference.child("Profiles").child(FirebaseAuth.getInstance().currentUser.uid).child("Cart").addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
-                    cartcount.text = "" + snapshot.childrenCount
+                    binding.cartcount.text = "" + snapshot.childrenCount
                 } else {
-                    cartcount.text = "0"
+                    binding.cartcount.text = "0"
                 }
             }
 
@@ -88,9 +89,9 @@ class Categories : Fragment() {
 
             override fun onViewAttachedToWindow(holder: ItemViewHolder) {
                 super.onViewAttachedToWindow(holder)
-                progressBar.setVisibility(View.GONE)
+                binding.progressbar.setVisibility(View.GONE)
                 val animation = AnimationUtils.loadLayoutAnimation(activity, R.anim.layoutanim)
-                recyclerView2.setLayoutAnimation(animation)
+                binding.productsrecyview.setLayoutAnimation(animation)
             }
 
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
@@ -98,8 +99,8 @@ class Categories : Fragment() {
                 return ItemViewHolder(view1)
             }
         }
-        recyclerView2.setLayoutManager(LinearLayoutManager(activity))
-        recyclerView.setLayoutManager(LinearLayoutManager(activity, RecyclerView.HORIZONTAL, false))
+        binding.productsrecyview.setLayoutManager(LinearLayoutManager(activity))
+        binding.listrecyview.setLayoutManager(LinearLayoutManager(activity, RecyclerView.HORIZONTAL, false))
         FirebaseDatabase.getInstance().reference.child("Categories").addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 its = ArrayList()
@@ -109,14 +110,14 @@ class Categories : Fragment() {
                         its.add(dataSnapshot.child("name").getValue(String::class.java)!!)
                     }
                 }
-                recyclerView.setAdapter(SubAdapter((its)))
+                binding.listrecyview.setAdapter(SubAdapter((its)))
             }
 
             override fun onCancelled(error: DatabaseError) {}
         })
         val handler = Handler(Looper.getMainLooper())
-        handler.postDelayed({ recyclerView2.setAdapter(firebaseRecyclerAdapter) }, 100)
-        return view
+        handler.postDelayed({ binding.productsrecyview.setAdapter(firebaseRecyclerAdapter) }, 100)
+        return binding.root
     }
 
     override fun onResume() {
@@ -148,9 +149,9 @@ class Categories : Fragment() {
             /*  Home home=(Home)getActivity();
             if(home.posi!=0)
             {
-                    Long itemId = recyclerView.getAdapter().getItemId(home.posi);
+                    Long itemId = binding.listrecyview.getAdapter().getItemId(home.posi);
 
-                    View itemView = recyclerView.findViewHolderForItemId(itemId).itemView;
+                    View itemView = binding.listrecyview.findViewHolderForItemId(itemId).itemView;
                     Log.i("pos", String.valueOf(itemId));
 
                     itemView.performClick();
@@ -180,7 +181,7 @@ class Categories : Fragment() {
                 for (i in items.indices) {
                     if (position == i) {
                         lateinit var textView: TextView
-                        val view = recyclerView!!.layoutManager!!.findViewByPosition(i)
+                        val view = binding.listrecyview!!.layoutManager!!.findViewByPosition(i)
                         if (view != null)
                             textView = view.findViewById(R.id.listitem)
                         if (textView != null) {
@@ -188,14 +189,14 @@ class Categories : Fragment() {
                             textView.setTypeface(textView.typeface, Typeface.BOLD)
                             textView.setTextColor(ContextCompat.getColor(activity!!, R.color.black))
                             if (textView.text.toString() == "All") {
-                                progressBar!!.visibility = View.VISIBLE
+                                binding.progressbar.visibility = View.VISIBLE
                                 val query: Query = FirebaseDatabase.getInstance().reference.child("Items")
                                 val options = FirebaseRecyclerOptions.Builder<itemdetails>()
                                         .setQuery(query) { snapshot -> itemdetails(snapshot.child("image").getValue(String::class.java), snapshot.child("name").getValue(String::class.java), snapshot.child("rating").getValue(String::class.java), snapshot.child("category").getValue(String::class.java), snapshot.child("price").getValue(String::class.java), snapshot.key, snapshot.child("product").getValue(String::class.java)) }.build()
                                 val handler = Handler(Looper.getMainLooper())
                                 handler.postDelayed({ firebaseRecyclerAdapter!!.updateOptions(options) }, 100)
                             } else {
-                                progressBar!!.visibility = View.VISIBLE
+                                binding.progressbar.visibility = View.VISIBLE
                                 val query = FirebaseDatabase.getInstance().reference.child("Items").orderByChild("category").equalTo(textView.text.toString())
                                 val options = FirebaseRecyclerOptions.Builder<itemdetails>()
                                         .setQuery(query) { snapshot -> itemdetails(snapshot.child("image").getValue(String::class.java), snapshot.child("name").getValue(String::class.java), snapshot.child("rating").getValue(String::class.java), snapshot.child("category").getValue(String::class.java), snapshot.child("price").getValue(String::class.java), snapshot.key, snapshot.child("product").getValue(String::class.java)) }.build()
@@ -205,7 +206,7 @@ class Categories : Fragment() {
                         }
                     } else {
                         lateinit var textView: TextView
-                        val view = recyclerView!!.layoutManager!!.findViewByPosition(i)
+                        val view = binding.listrecyview!!.layoutManager!!.findViewByPosition(i)
                         if (view != null) textView = view.findViewById(R.id.listitem)
                         if (textView != null) {
                             textView.textSize = 14f

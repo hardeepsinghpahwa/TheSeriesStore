@@ -15,30 +15,28 @@ import maes.tech.intentanim.CustomIntent
 import com.google.android.material.textfield.TextInputEditText
 import com.valdesekamdem.library.mdtoast.MDToast
 import android.view.*
+import androidx.databinding.DataBindingUtil
+import com.example.login.databinding.ActivityChangePasswordBinding
 import com.google.android.gms.tasks.Task
 
 class ChangePassword constructor() : AppCompatActivity() {
-    lateinit var oldpassword: TextInputEditText
-    lateinit var newpassword: TextInputEditText
-    lateinit var confirmpassword: TextInputEditText
-    lateinit var changepassword: TextView
+
+    lateinit var binding:ActivityChangePasswordBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_change_password)
-        oldpassword = findViewById(R.id.oldpassword)
-        newpassword = findViewById(R.id.newpassword)
-        confirmpassword = findViewById(R.id.repeatpassword)
-        changepassword = findViewById(R.id.changepassword)
-        findViewById<View>(R.id.back).setOnClickListener(object : View.OnClickListener {
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_change_password)
+        binding.executePendingBindings()
+
+        binding.back.setOnClickListener(object : View.OnClickListener {
             public override fun onClick(v: View) {
                 onBackPressed()
             }
         })
-        changepassword.setOnClickListener(object : View.OnClickListener {
+        binding.changepassword.setOnClickListener(object : View.OnClickListener {
             public override fun onClick(v: View) {
                 FirebaseDatabase.getInstance().getReference().child("Profiles").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).addListenerForSingleValueEvent(object : ValueEventListener {
                     public override fun onDataChange(snapshot: DataSnapshot) {
-                        if ((oldpassword.getText().toString() == "")) {
+                        if ((binding.oldpassword.getText().toString() == "")) {
                             Sneaker.with(this@ChangePassword)
                                     .setTitle("Enter your old password", R.color.white)
                                     .setMessage("It cant be empty", R.color.white)
@@ -48,7 +46,7 @@ class ChangePassword constructor() : AppCompatActivity() {
                                     .setHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
                                     .setCornerRadius(10, 0)
                                     .sneak(R.color.teal_200)
-                        } else if (!(oldpassword.getText().toString() == snapshot.child("password").getValue(String::class.java))) {
+                        } else if (!(binding.oldpassword.getText().toString() == snapshot.child("password").getValue(String::class.java))) {
                             Sneaker.with(this@ChangePassword)
                                     .setTitle("Wrong old password", R.color.white)
                                     .setMessage("Old password does not match", R.color.white)
@@ -58,7 +56,7 @@ class ChangePassword constructor() : AppCompatActivity() {
                                     .setHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
                                     .setCornerRadius(10, 0)
                                     .sneak(R.color.teal_200)
-                        } else if ((newpassword.getText().toString() == "")) {
+                        } else if ((binding.newpassword.getText().toString() == "")) {
                             Sneaker.with(this@ChangePassword)
                                     .setTitle("Enter your new password", R.color.white)
                                     .setMessage("It cant be empty", R.color.white)
@@ -68,7 +66,7 @@ class ChangePassword constructor() : AppCompatActivity() {
                                     .setHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
                                     .setCornerRadius(10, 0)
                                     .sneak(R.color.teal_200)
-                        } else if (newpassword.getText().toString().length < 8) {
+                        } else if (binding.newpassword.getText().toString().length < 8) {
                             Sneaker.with(this@ChangePassword)
                                     .setTitle("Short Password", R.color.white)
                                     .setMessage("New Password should be minimum of 8 length", R.color.white)
@@ -78,7 +76,7 @@ class ChangePassword constructor() : AppCompatActivity() {
                                     .setHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
                                     .setCornerRadius(10, 0)
                                     .sneak(R.color.teal_200)
-                        } else if ((confirmpassword.getText().toString() == "")) {
+                        } else if ((binding.repeatpassword.getText().toString() == "")) {
                             Sneaker.with(this@ChangePassword)
                                     .setTitle("Confirm password", R.color.white)
                                     .setMessage("It cant be empty", R.color.white)
@@ -88,7 +86,7 @@ class ChangePassword constructor() : AppCompatActivity() {
                                     .setHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
                                     .setCornerRadius(10, 0)
                                     .sneak(R.color.teal_200)
-                        } else if (!(confirmpassword.getText().toString() == newpassword.getText().toString())) {
+                        } else if (!(binding.repeatpassword.getText().toString() == binding.newpassword.getText().toString())) {
                             Sneaker.with(this@ChangePassword)
                                     .setTitle("Passwords Do Not Match", R.color.white)
                                     .setMessage("Try Again Please!", R.color.white)
@@ -99,7 +97,7 @@ class ChangePassword constructor() : AppCompatActivity() {
                                     .setCornerRadius(10, 0)
                                     .sneak(R.color.teal_200)
                         } else {
-                            FirebaseDatabase.getInstance().getReference().child("Profiles").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("password").setValue(newpassword.getText().toString()).addOnCompleteListener(object : OnCompleteListener<Void?> {
+                            FirebaseDatabase.getInstance().getReference().child("Profiles").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("password").setValue(binding.repeatpassword.getText().toString()).addOnCompleteListener(object : OnCompleteListener<Void?> {
                                 public override fun onComplete(task: Task<Void?>) {
                                     if (task.isSuccessful()) {
                                         MDToast.makeText(getApplicationContext(), "Password Changed Successfully", MDToast.TYPE_SUCCESS, MDToast.LENGTH_SHORT).show()

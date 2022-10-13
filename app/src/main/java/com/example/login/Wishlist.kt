@@ -3,7 +3,6 @@ package com.example.login
 import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
-import androidx.constraintlayout.widget.ConstraintLayout
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.irozon.sneaker.Sneaker
 import com.google.firebase.auth.FirebaseAuth
@@ -20,6 +19,9 @@ import com.bumptech.glide.Glide
 import android.os.*
 import android.view.*
 import android.widget.*
+import androidx.databinding.DataBindingUtil
+import com.example.login.databinding.ActivityWishlistBinding
+import com.example.login.dataclass.cartitemdetails
 import com.firebase.ui.database.SnapshotParser
 import com.google.android.gms.tasks.Task
 import com.google.firebase.database.*
@@ -30,14 +32,14 @@ import java.text.NumberFormat
 import java.util.*
 
 class Wishlist : AppCompatActivity() {
-    lateinit var recyclerView: RecyclerView
     lateinit var firebaseRecyclerAdapter: FirebaseRecyclerAdapter<cartitemdetails, CartViewHolder>
-    lateinit var progresslayout: ConstraintLayout
+    lateinit var binding:ActivityWishlistBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_wishlist)
-        recyclerView = findViewById(R.id.wishlistrecyview)
-        progresslayout = findViewById(R.id.progresslayout)
+
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_wishlist)
+        binding.executePendingBindings()
+
         findViewById<View>(R.id.back).setOnClickListener(object : View.OnClickListener {
             public override fun onClick(v: View) {
                 onBackPressed()
@@ -55,7 +57,7 @@ class Wishlist : AppCompatActivity() {
                 handler.postDelayed(object : Runnable {
                     public override fun run() {
                         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-                        progresslayout.setVisibility(View.GONE)
+                        binding.progresslayout.setVisibility(View.GONE)
                     }
                 }, 700)
                 if (!snapshot.exists()) {
@@ -79,21 +81,21 @@ class Wishlist : AppCompatActivity() {
         firebaseRecyclerAdapter = object : FirebaseRecyclerAdapter<cartitemdetails, CartViewHolder>(options) {
             public override fun onViewAttachedToWindow(holder: CartViewHolder) {
                 super.onViewAttachedToWindow(holder)
-                progresslayout.setVisibility(View.GONE)
+                binding.progresslayout.setVisibility(View.GONE)
                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
             }
 
             override fun onBindViewHolder(holder: CartViewHolder, @SuppressLint("RecyclerView") position: Int, model: cartitemdetails) {
                 holder.move.setOnClickListener(object : View.OnClickListener {
                     public override fun onClick(v: View) {
-                        progresslayout.setVisibility(View.VISIBLE)
+                        binding.progresslayout.setVisibility(View.VISIBLE)
                         val fromPath: DatabaseReference = firebaseRecyclerAdapter!!.getRef(position)
                         val toPath: DatabaseReference = FirebaseDatabase.getInstance().getReference().child("Profiles").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Cart")
                         fromPath.addListenerForSingleValueEvent(object : ValueEventListener {
                             public override fun onDataChange(dataSnapshot: DataSnapshot) {
                                 toPath.child(UUID.randomUUID().toString()).setValue(dataSnapshot.getValue(), object : DatabaseReference.CompletionListener {
                                     public override fun onComplete(error: DatabaseError?, ref: DatabaseReference) {
-                                        progresslayout.setVisibility(View.GONE)
+                                        binding.progresslayout.setVisibility(View.GONE)
                                         fromPath.removeValue()
                                     }
                                 }
@@ -124,7 +126,7 @@ class Wishlist : AppCompatActivity() {
                                 .setCancelable(false)
                                 .setPositiveButton("Delete", R.drawable.delete2, object : AbstractDialog.OnClickListener {
                                     public override fun onClick(dialogInterface: DialogInterface, which: Int) {
-                                        firebaseRecyclerAdapter!!.getRef(position).removeValue().addOnCompleteListener(object : OnCompleteListener<Void?> {
+                                        firebaseRecyclerAdapter.getRef(position).removeValue().addOnCompleteListener(object : OnCompleteListener<Void?> {
                                             public override fun onComplete(task: Task<Void?>) {
                                                 if (task.isSuccessful()) {
                                                     dialogInterface.dismiss()
@@ -171,8 +173,8 @@ class Wishlist : AppCompatActivity() {
                 return CartViewHolder(view)
             }
         }
-        recyclerView.setLayoutManager(LinearLayoutManager(this@Wishlist))
-        recyclerView.setAdapter(firebaseRecyclerAdapter)
+        binding.wishlistrecyview.setLayoutManager(LinearLayoutManager(this@Wishlist))
+        binding.wishlistrecyview.setAdapter(firebaseRecyclerAdapter)
     }
 
     override fun onResume() {

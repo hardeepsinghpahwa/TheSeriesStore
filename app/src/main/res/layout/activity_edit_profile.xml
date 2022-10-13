@@ -1,335 +1,341 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:overScrollMode="never"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/white"
-    tools:context=".ProfileSetup">
+    xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    </data>
+
+    <androidx.core.widget.NestedScrollView
+        android:overScrollMode="never"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="10dp">
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/back"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="15dp"
-            android:foreground="?attr/selectableItemBackground"
-            app:cardBackgroundColor="@color/white"
-            app:cardCornerRadius="20dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:adjustViewBounds="true"
-                android:cropToPadding="false"
-                android:src="@drawable/back"
-                app:tint="@color/black" />
-
-        </androidx.cardview.widget.CardView>
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        tools:context=".ProfileSetup">
 
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/textField"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="10dp"
-            android:hint="Email"
-            app:boxCornerRadiusBottomEnd="30dp"
-            app:boxCornerRadiusBottomStart="30dp"
-            app:boxCornerRadiusTopEnd="30dp"
-            app:boxCornerRadiusTopStart="30dp"
-            app:boxStrokeColor="@color/darkgrey"
-            app:layout_constraintBottom_toTopOf="@+id/proceedcard"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textField2"
-            app:startIconDrawable="@drawable/email"
-            app:startIconTint="@color/darkgrey">
+            android:paddingBottom="10dp">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/email"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:inputType="textEmailAddress"
-                android:padding="15dp" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-
-        <androidx.cardview.widget.CardView
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_marginEnd="20dp"
-            app:cardCornerRadius="40dp"
-            app:layout_constraintBottom_toBottomOf="@+id/textView4"
-            app:layout_constraintEnd_toEndOf="parent">
-
-            <ImageView
-                android:id="@+id/profilepic"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/lightgrey"
+            <androidx.cardview.widget.CardView
+                android:id="@+id/back"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="15dp"
                 android:foreground="?attr/selectableItemBackground"
-                android:src="@drawable/profilepic" />
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="20dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-        </androidx.cardview.widget.CardView>
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:cropToPadding="false"
+                    android:src="@drawable/back"
+                    app:tint="@color/black" />
 
-        <TextView
-            android:id="@+id/textView4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="10dp"
-            android:text="Edit Profile"
-            android:textColor="@color/darkgrey"
-            android:textSize="30sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="@+id/back"
-            app:layout_constraintTop_toBottomOf="@+id/back" />
+            </androidx.cardview.widget.CardView>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/textField2"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="10dp"
-            android:hint="Name"
-            app:boxCornerRadiusBottomEnd="30dp"
-            app:boxCornerRadiusBottomStart="30dp"
-            app:boxCornerRadiusTopEnd="30dp"
-            app:boxCornerRadiusTopStart="30dp"
-            app:boxStrokeColor="@color/darkgrey"
-            app:layout_constraintBottom_toTopOf="@+id/proceedcard"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView4"
-            app:startIconDrawable="@drawable/name"
-            app:startIconTint="@color/darkgrey">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/name"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textField"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:inputType="textPersonName"
-                android:padding="15dp" />
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:hint="Email"
+                app:boxCornerRadiusBottomEnd="30dp"
+                app:boxCornerRadiusBottomStart="30dp"
+                app:boxCornerRadiusTopEnd="30dp"
+                app:boxCornerRadiusTopStart="30dp"
+                app:boxStrokeColor="@color/darkgrey"
+                app:layout_constraintBottom_toTopOf="@+id/proceedcard"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textField2"
+                app:startIconDrawable="@drawable/email"
+                app:startIconTint="@color/darkgrey">
 
-        </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/email"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:inputType="textEmailAddress"
+                    android:padding="15dp" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/textField3"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="10dp"
-            android:hint="Phone"
-            app:boxCornerRadiusBottomEnd="30dp"
-            app:boxCornerRadiusBottomStart="30dp"
-            app:boxCornerRadiusTopEnd="30dp"
-            app:boxCornerRadiusTopStart="30dp"
-            app:boxStrokeColor="@color/darkgrey"
-            app:layout_constraintBottom_toTopOf="@+id/proceedcard"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textField"
-            app:startIconDrawable="@drawable/phone"
-            app:startIconTint="@color/darkgrey">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/phone"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:inputType="phone"
-                android:drawableEnd="@drawable/checkgreen"
-                android:padding="15dp" />
-
-        </com.google.android.material.textfield.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cardView6"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="15dp"
-            android:layout_marginEnd="10dp"
-            app:cardCornerRadius="30dp"
-            app:cardElevation="0dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textField3">
+            <androidx.cardview.widget.CardView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_marginEnd="20dp"
+                app:cardCornerRadius="40dp"
+                app:layout_constraintBottom_toBottomOf="@+id/textView4"
+                app:layout_constraintEnd_toEndOf="parent">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:background="@drawable/stroke"
-                android:weightSum="3"
-                >
-
-                <RadioGroup
+                <ImageView
+                    android:id="@+id/profilepic"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:weightSum="3"
-                    android:id="@+id/genderradiogrp"
-                    android:orientation="horizontal">
+                    android:background="@color/lightgrey"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:src="@drawable/profilepic" />
 
-                    <RadioButton
-                        android:id="@+id/male"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:background="@drawable/radioselector"
-                        android:button="@android:color/transparent"
-                        android:foreground="?attr/selectableItemBackground"
-                        android:gravity="center"
-                        android:text="Male"
-                        android:textColor="@color/darkgrey"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                    <RadioButton
-                        android:id="@+id/female"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:background="@drawable/radioselector"
-                        android:button="@android:color/transparent"
-                        android:foreground="?attr/selectableItemBackground"
-                        android:gravity="center"
-                        android:text="Female"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                    <RadioButton
-                        android:id="@+id/others"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:background="@drawable/radioselector"
-                        android:button="@android:color/transparent"
-                        android:foreground="?attr/selectableItemBackground"
-                        android:gravity="center"
-                        android:text="Others"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                </RadioGroup>
-            </LinearLayout>
-
-        </androidx.cardview.widget.CardView>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/textField4"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="10dp"
-            android:hint="Birthday"
-            app:boxCornerRadiusBottomEnd="30dp"
-            app:boxCornerRadiusBottomStart="30dp"
-            app:boxCornerRadiusTopEnd="30dp"
-            app:boxCornerRadiusTopStart="30dp"
-            app:boxStrokeColor="@color/darkgrey"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cardView6"
-            app:startIconDrawable="@drawable/birthday"
-            app:startIconTint="@color/darkgrey">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/birthday"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:padding="15dp" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/changepasswordcard"
-            android:layout_width="0dp"
-            android:layout_height="60dp"
-            android:layout_marginTop="20dp"
-            android:visibility="visible"
-            app:cardCornerRadius="45dp"
-            app:cardElevation="0dp"
-            app:layout_constraintEnd_toEndOf="@+id/textField4"
-            app:layout_constraintStart_toStartOf="@+id/textField4"
-            app:layout_constraintTop_toBottomOf="@+id/textField4">
+            </androidx.cardview.widget.CardView>
 
             <TextView
-                android:id="@+id/changepassword"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:foreground="?attr/selectableItemBackground"
-                android:gravity="center"
-                android:background="@drawable/stroke"
-                android:text="Change Password"
+                android:id="@+id/textView4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="10dp"
+                android:text="Edit Profile"
                 android:textColor="@color/darkgrey"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textSize="30sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@+id/back"
+                app:layout_constraintTop_toBottomOf="@+id/back" />
 
-        </androidx.cardview.widget.CardView>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textField2"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:hint="Name"
+                app:boxCornerRadiusBottomEnd="30dp"
+                app:boxCornerRadiusBottomStart="30dp"
+                app:boxCornerRadiusTopEnd="30dp"
+                app:boxCornerRadiusTopStart="30dp"
+                app:boxStrokeColor="@color/darkgrey"
+                app:layout_constraintBottom_toTopOf="@+id/proceedcard"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView4"
+                app:startIconDrawable="@drawable/name"
+                app:startIconTint="@color/darkgrey">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/name"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:inputType="textPersonName"
+                    android:padding="15dp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textField3"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:hint="Phone"
+                app:boxCornerRadiusBottomEnd="30dp"
+                app:boxCornerRadiusBottomStart="30dp"
+                app:boxCornerRadiusTopEnd="30dp"
+                app:boxCornerRadiusTopStart="30dp"
+                app:boxStrokeColor="@color/darkgrey"
+                app:layout_constraintBottom_toTopOf="@+id/proceedcard"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textField"
+                app:startIconDrawable="@drawable/phone"
+                app:startIconTint="@color/darkgrey">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/phone"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:inputType="phone"
+                    android:drawableEnd="@drawable/checkgreen"
+                    android:padding="15dp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
 
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/createcard"
-            android:layout_width="0dp"
-            android:layout_height="60dp"
-            android:layout_marginTop="20dp"
-            android:visibility="visible"
-            app:cardBackgroundColor="@color/darkgrey"
-            app:cardCornerRadius="45dp"
-            app:layout_constraintEnd_toEndOf="@+id/textField4"
-            app:layout_constraintStart_toStartOf="@+id/textField4"
-            app:layout_constraintTop_toBottomOf="@+id/changepasswordcard">
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardView6"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="10dp"
+                app:cardCornerRadius="30dp"
+                app:cardElevation="0dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textField3">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:background="@drawable/stroke"
+                    android:weightSum="3">
+
+                    <RadioGroup
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:weightSum="3"
+                        android:id="@+id/genderradiogrp"
+                        android:orientation="horizontal">
+
+                        <RadioButton
+                            android:id="@+id/male"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/radioselector"
+                            android:button="@android:color/transparent"
+                            android:foreground="?attr/selectableItemBackground"
+                            android:gravity="center"
+                            android:text="Male"
+                            android:textColor="@color/darkgrey"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <RadioButton
+                            android:id="@+id/female"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/radioselector"
+                            android:button="@android:color/transparent"
+                            android:foreground="?attr/selectableItemBackground"
+                            android:gravity="center"
+                            android:text="Female"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <RadioButton
+                            android:id="@+id/others"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@drawable/radioselector"
+                            android:button="@android:color/transparent"
+                            android:foreground="?attr/selectableItemBackground"
+                            android:gravity="center"
+                            android:text="Others"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                    </RadioGroup>
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textField4"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:hint="Birthday"
+                app:boxCornerRadiusBottomEnd="30dp"
+                app:boxCornerRadiusBottomStart="30dp"
+                app:boxCornerRadiusTopEnd="30dp"
+                app:boxCornerRadiusTopStart="30dp"
+                app:boxStrokeColor="@color/darkgrey"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/cardView6"
+                app:startIconDrawable="@drawable/birthday"
+                app:startIconTint="@color/darkgrey">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/birthday"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:padding="15dp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/changepasswordcard"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="20dp"
+                android:visibility="visible"
+                app:cardCornerRadius="45dp"
+                app:cardElevation="0dp"
+                app:layout_constraintEnd_toEndOf="@+id/textField4"
+                app:layout_constraintStart_toStartOf="@+id/textField4"
+                app:layout_constraintTop_toBottomOf="@+id/textField4">
+
+                <TextView
+                    android:id="@+id/changepassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:background="@drawable/stroke"
+                    android:text="Change Password"
+                    android:textColor="@color/darkgrey"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+            </androidx.cardview.widget.CardView>
+
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/createcard"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="20dp"
+                android:visibility="visible"
+                app:cardBackgroundColor="@color/darkgrey"
+                app:cardCornerRadius="45dp"
+                app:layout_constraintEnd_toEndOf="@+id/textField4"
+                app:layout_constraintStart_toStartOf="@+id/textField4"
+                app:layout_constraintTop_toBottomOf="@+id/changepasswordcard">
+
+                <TextView
+                    android:id="@+id/save"
+                    style="@style/SelectableItemBackground"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:text="Save Changes"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+            </androidx.cardview.widget.CardView>
 
             <TextView
-                android:id="@+id/save"
-                style="@style/SelectableItemBackground"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:foreground="?attr/selectableItemBackground"
-                android:gravity="center"
-                android:text="Save Changes"
-                android:textColor="@color/white"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-
-        </androidx.cardview.widget.CardView>
-
-        <TextView
-            android:id="@+id/tt"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="@+id/textField4"
-            app:layout_constraintEnd_toEndOf="@+id/textField4"
-            app:layout_constraintStart_toStartOf="@+id/textField4"
-            app:layout_constraintTop_toTopOf="@+id/textField4" />
+                android:id="@+id/tt"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="@+id/textField4"
+                app:layout_constraintEnd_toEndOf="@+id/textField4"
+                app:layout_constraintStart_toStartOf="@+id/textField4"
+                app:layout_constraintTop_toTopOf="@+id/textField4" />
 
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-</androidx.core.widget.NestedScrollView>
+    </androidx.core.widget.NestedScrollView>
+</layout>

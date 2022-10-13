@@ -2,12 +2,13 @@ package com.example.login
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.smarteist.autoimageslider.SliderView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import android.view.*
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import com.example.login.Fragments.*
+import com.example.login.databinding.ActivityHomeBinding
+import com.example.login.dataclass.SliderItem
 import java.util.ArrayList
 
 class Home : AppCompatActivity() {
@@ -15,29 +16,29 @@ class Home : AppCompatActivity() {
 
     @kotlin.jvm.JvmField
     var cat: String = ""
+
     @kotlin.jvm.JvmField
     var posi: Int = 0
     lateinit var items: ArrayList<SliderItem>
-    lateinit var sliderView: SliderView
-    lateinit var bottomNavigationView: BottomNavigationView
+    lateinit var binding: ActivityHomeBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_home)
-        bottomNavigationView = findViewById(R.id.bottom_navigation)
+
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_home)
+        binding.executePendingBindings()
+
         val fragment: Fragment = HomeFragment()
-        val fragmentManager: FragmentManager = getSupportFragmentManager()
-        fragmentManager.beginTransaction()
+        supportFragmentManager.beginTransaction()
                 .setCustomAnimations(R.anim.fui_slide_in_right, R.anim.fui_slide_out_left)
                 .replace(R.id.cons, fragment, "Home")
                 .commit()
-        bottomNavigationView.setOnNavigationItemSelectedListener(object : BottomNavigationView.OnNavigationItemSelectedListener {
+        binding.bottomNavigation.setOnNavigationItemSelectedListener(object : BottomNavigationView.OnNavigationItemSelectedListener {
             public override fun onNavigationItemSelected(item: MenuItem): Boolean {
                 when (item.getItemId()) {
                     R.id.page_1 -> {
                         val fragment: Fragment = HomeFragment()
-                        val fragmentManager: FragmentManager = getSupportFragmentManager()
-                        fragmentManager.beginTransaction()
+                        supportFragmentManager.beginTransaction()
                                 .setCustomAnimations(R.anim.fui_slide_in_right, R.anim.fui_slide_out_left)
                                 .replace(R.id.cons, fragment, "Home")
                                 .commit()
@@ -45,8 +46,7 @@ class Home : AppCompatActivity() {
                     }
                     R.id.page_2 -> {
                         val fragment: Fragment = Categories()
-                        val fragmentManager: FragmentManager = getSupportFragmentManager()
-                        fragmentManager.beginTransaction()
+                        supportFragmentManager.beginTransaction()
                                 .setCustomAnimations(R.anim.fui_slide_in_right, R.anim.fui_slide_out_left)
                                 .replace(R.id.cons, fragment, "Categories")
                                 .commit()
@@ -54,8 +54,7 @@ class Home : AppCompatActivity() {
                     }
                     R.id.page_3 -> {
                         val fragment: Fragment = SubCategories()
-                        val fragmentManager: FragmentManager = getSupportFragmentManager()
-                        fragmentManager.beginTransaction()
+                        supportFragmentManager.beginTransaction()
                                 .setCustomAnimations(R.anim.fui_slide_in_right, R.anim.fui_slide_out_left)
                                 .replace(R.id.cons, fragment, "SubCategories")
                                 .commit()
@@ -63,8 +62,7 @@ class Home : AppCompatActivity() {
                     }
                     R.id.page_4 -> {
                         val fragment: Fragment = Profile()
-                        val fragmentManager: FragmentManager = getSupportFragmentManager()
-                        fragmentManager.beginTransaction()
+                        supportFragmentManager.beginTransaction()
                                 .setCustomAnimations(R.anim.fui_slide_in_right, R.anim.fui_slide_out_left)
                                 .replace(R.id.cons, fragment, "Profile")
                                 .commit()

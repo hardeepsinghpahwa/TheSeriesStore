@@ -11,10 +11,11 @@ import maes.tech.intentanim.CustomIntent
 import com.bumptech.glide.Glide
 import android.view.*
 import android.widget.*
+import androidx.databinding.DataBindingUtil
 import com.opensooq.pluto.PlutoView
-import com.baoyachi.stepview.VerticalStepView
 import com.opensooq.pluto.base.PlutoAdapter
-import com.example.login.ViewOrder.YourAdapter.OrderViewHolder
+import com.example.login.databinding.ActivityViewOrderBinding
+import com.example.login.dataclass.cartitemdetails
 import com.opensooq.pluto.base.PlutoViewHolder
 import java.math.BigDecimal
 import java.text.Format
@@ -25,36 +26,33 @@ import java.util.*
 class ViewOrder : AppCompatActivity() {
     lateinit var id: String
     lateinit var products: ArrayList<cartitemdetails?>
-    lateinit var address: TextView
-    lateinit var total: TextView
-    lateinit var subtotal: TextView
-    lateinit var orderidtext: TextView
+    lateinit var binding: ActivityViewOrderBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_view_order)
+
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_view_order)
+        binding.executePendingBindings()
+
         id = getIntent().getStringExtra("id")!!
-        findViewById<View>(R.id.back).setOnClickListener(object : View.OnClickListener {
+        binding.back.setOnClickListener(object : View.OnClickListener {
             public override fun onClick(v: View) {
                 onBackPressed()
             }
         })
-        address = findViewById(R.id.address)
-        total = findViewById(R.id.total)
-        subtotal = findViewById(R.id.subtotal)
-        orderidtext = findViewById(R.id.orderid)
+
         products = ArrayList()
         val pluto: PlutoView = findViewById(R.id.slider_view)
         FirebaseDatabase.getInstance().getReference().child("Orders").child((id)!!).addListenerForSingleValueEvent(object : ValueEventListener {
             public override fun onDataChange(snapshot: DataSnapshot) {
                 val format: Format = NumberFormat.getCurrencyInstance(Locale("en", "in"))
-                total.setText(format.format(BigDecimal(Objects.requireNonNull(snapshot).child("price").getValue(Long::class.java).toString())))
+                binding.total.setText(format.format(BigDecimal(Objects.requireNonNull(snapshot).child("price").getValue(Long::class.java).toString())))
                 //                subtotal.setText(format.format(new BigDecimal("")));
-                address.setText(snapshot.child("name").getValue(String::class.java) + "\n" + snapshot.child("phone").getValue(String::class.java) + "\n" + snapshot.child("address").getValue(String::class.java))
+                binding.address.setText(snapshot.child("name").getValue(String::class.java) + "\n" + snapshot.child("phone").getValue(String::class.java) + "\n" + snapshot.child("address").getValue(String::class.java))
                 snapshot.child("items").getRef().addListenerForSingleValueEvent(object : ValueEventListener {
                     public override fun onDataChange(snapshot: DataSnapshot) {
                         for (dataSnapshot: DataSnapshot in snapshot.getChildren()) {
                             val ite: cartitemdetails? = dataSnapshot.getValue(cartitemdetails::class.java)
-                            products!!.add((ite))
+                            products.add((ite))
                         }
                         val adapter: YourAdapter = YourAdapter(products)
                         pluto.create(adapter, 2000, getLifecycle())
@@ -67,20 +65,20 @@ class ViewOrder : AppCompatActivity() {
                 })
                 snapshot.child("tracking").getRef().addListenerForSingleValueEvent(object : ValueEventListener {
                     public override fun onDataChange(snapshot: DataSnapshot) {
-                        val setpview5: VerticalStepView = findViewById(R.id.step_view)
+
                         val stepsBeanList: MutableList<String> = ArrayList()
                         for (dataSnapshot: DataSnapshot in snapshot.getChildren()) {
                             stepsBeanList.add(dataSnapshot.child("text").getValue(String::class.java) + ", " + getDate((dataSnapshot.child("timestamp").getValue(Long::class.java))!!))
                         }
-                        setpview5.setStepsViewIndicatorComplectingPosition((snapshot.getChildrenCount() - 1).toInt()) //设置完成的步数
+                        binding.stepView.setStepsViewIndicatorComplectingPosition((snapshot.getChildrenCount() - 1).toInt()) //设置完成的步数
                                 .setTextSize(12)
                                 .reverseDraw(false) //default is true
                                 .setStepViewTexts(stepsBeanList) //总步骤
-                                .setStepsViewIndicatorCompletedLineColor(ContextCompat.getColor(applicationContext, R.color.darkgrey)) 
-                                .setStepsViewIndicatorUnCompletedLineColor(ContextCompat.getColor(applicationContext, R.color.grey)) 
-                                .setStepViewComplectedTextColor(ContextCompat.getColor(applicationContext, R.color.darkgrey)) 
-                                .setStepViewUnComplectedTextColor(ContextCompat.getColor(applicationContext, R.color.grey)) 
-                                .setStepsViewIndicatorDefaultIcon(ContextCompat.getDrawable(applicationContext, R.drawable.outline_radio_button_checked_24)) 
+                                .setStepsViewIndicatorCompletedLineColor(ContextCompat.getColor(applicationContext, R.color.darkgrey))
+                                .setStepsViewIndicatorUnCompletedLineColor(ContextCompat.getColor(applicationContext, R.color.grey))
+                                .setStepViewComplectedTextColor(ContextCompat.getColor(applicationContext, R.color.darkgrey))
+                                .setStepViewUnComplectedTextColor(ContextCompat.getColor(applicationContext, R.color.grey))
+                                .setStepsViewIndicatorDefaultIcon(ContextCompat.getDrawable(applicationContext, R.drawable.outline_radio_button_checked_24))
                                 .setStepsViewIndicatorCompleteIcon(ContextCompat.getDrawable(applicationContext, R.drawable.checkedd))
                                 .setStepsViewIndicatorAttentionIcon(ContextCompat.getDrawable(applicationContext, R.drawable.outline_radio_button_checked_black_24))
                     }

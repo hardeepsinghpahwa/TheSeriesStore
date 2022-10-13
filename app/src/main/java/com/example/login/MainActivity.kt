@@ -14,24 +14,27 @@ import maes.tech.intentanim.CustomIntent
 
 import android.os.Build
 import android.view.*
+import androidx.databinding.DataBindingUtil
+import com.example.login.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
-    lateinit var login: TextView
-    lateinit var newlogin: TextView
+
+    lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        login = findViewById(R.id.login)
-        newlogin = findViewById(R.id.newlogin)
-        login.setOnClickListener(object : View.OnClickListener {
-            public override fun onClick(v: View) {
+
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        binding.executePendingBindings()
+        binding.login.setOnClickListener(object : View.OnClickListener {
+            override fun onClick(v: View) {
                 startActivity(Intent(this@MainActivity, Login::class.java))
                 CustomIntent.customType(this@MainActivity, "fadein-to-fadeout")
             }
         })
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             FirebaseDatabase.getInstance().getReference().child("Profiles").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).addListenerForSingleValueEvent(object : ValueEventListener {
-                public override fun onDataChange(snapshot: DataSnapshot) {
+                override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {
                         if (snapshot.child("name").exists()) {
                             startActivity(Intent(this@MainActivity, Home::class.java))
@@ -63,7 +66,7 @@ class MainActivity : AppCompatActivity() {
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
                     WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         }
-        newlogin.setOnClickListener(object : View.OnClickListener {
+        binding.newlogin.setOnClickListener(object : View.OnClickListener {
             public override fun onClick(v: View) {
                 startActivity(Intent(this@MainActivity, NewLogin::class.java))
                 CustomIntent.customType(this@MainActivity, "fadein-to-fadeout")

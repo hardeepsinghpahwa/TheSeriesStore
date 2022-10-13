@@ -1,4 +1,4 @@
-package com.example.login
+package com.example.login.dataclass
 
 class colordetails {
     var colorcode: String? = null

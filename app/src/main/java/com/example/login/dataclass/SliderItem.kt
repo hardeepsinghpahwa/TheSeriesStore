@@ -1,4 +1,4 @@
-package com.example.login
+package com.example.login.dataclass
 
 class SliderItem {
     var image: String? = null

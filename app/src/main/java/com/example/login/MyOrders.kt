@@ -17,6 +17,9 @@ import com.bumptech.glide.Glide
 import android.graphics.Bitmap
 import android.view.*
 import android.widget.*
+import androidx.databinding.DataBindingUtil
+import com.example.login.databinding.ActivityMyOrdersBinding
+import com.example.login.dataclass.cartitemdetails
 import com.firebase.ui.database.SnapshotParser
 import com.google.firebase.database.*
 import java.text.SimpleDateFormat
@@ -24,15 +27,17 @@ import java.util.*
 
 class MyOrders : AppCompatActivity() {
     var firebaseRecyclerAdapter: FirebaseRecyclerAdapter<cartitemdetails, CartViewHolder>? = null
-    lateinit var recyclerView: RecyclerView
     var imgs: ArrayList<Bitmap>? = null
     var i: Int = 0
+    lateinit var binding:ActivityMyOrdersBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_my_orders)
+
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_my_orders)
+        binding.executePendingBindings()
+
         imgs = ArrayList()
-        recyclerView = findViewById(R.id.ordersrecyview)
-        findViewById<View>(R.id.back).setOnClickListener(object : View.OnClickListener {
+        binding.back.setOnClickListener(object : View.OnClickListener {
             public override fun onClick(v: View) {
                 onBackPressed()
             }
@@ -123,8 +128,8 @@ class MyOrders : AppCompatActivity() {
                 return CartViewHolder(view)
             }
         }
-        recyclerView.setLayoutManager(LinearLayoutManager(getApplicationContext()))
-        recyclerView.setAdapter(firebaseRecyclerAdapter)
+        binding.ordersrecyview.setLayoutManager(LinearLayoutManager(getApplicationContext()))
+        binding.ordersrecyview.setAdapter(firebaseRecyclerAdapter)
     }
 
     override fun onResume() {

@@ -35,6 +35,8 @@ import android.os.CountDownTimer
 import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
+import androidx.databinding.DataBindingUtil
+import com.example.login.databinding.ActivityVerifyOtpBinding
 import com.google.firebase.auth.PhoneAuthProvider
 import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.FirebaseUser
@@ -43,66 +45,39 @@ import com.google.android.gms.tasks.Task
 import java.util.concurrent.TimeUnit
 
 class VerifyOtp : AppCompatActivity() {
-    lateinit var code1: EditText
-    lateinit var code2: EditText
-    lateinit var code3: EditText
-    lateinit var code4: EditText
-    lateinit var code5: EditText
-    lateinit var code6: EditText
-    lateinit var sendingverifcationtext: TextView
-    lateinit var resend: TextView
-    lateinit var codesentto: TextView
+
     lateinit var code: String
     lateinit var phone: String
     lateinit var p: String
     lateinit var v_id: String
     var counter: Int = 30
     var a: Int = 0
-    lateinit var lottieAnimationView: LottieAnimationView
-    lateinit var proceed: TextView
-    lateinit var didnotget: TextView
-    lateinit var constraintLayout: ConstraintLayout
-    lateinit var back: CardView
-    lateinit var proceedcard: CardView
-    lateinit var progressBar: ProgressBar
-    lateinit var progressBar2: ProgressBar
+    lateinit var binding:ActivityVerifyOtpBinding
     lateinit var resendotp: ForceResendingToken
     lateinit var mCallBacks: OnVerificationStateChangedCallbacks
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_verify_otp)
+
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_verify_otp)
+        binding.executePendingBindings()
+
         phone = getIntent().getStringExtra("phone")!!
         p = phone!!.replace("\\s".toRegex(), "")
         Log.i("phone", p!!)
         findViewById<View>(R.id.imageView4).bringToFront()
-        lottieAnimationView = findViewById(R.id.lottie)
-        code1 = findViewById(R.id.code1)
-        code2 = findViewById(R.id.code2)
-        code3 = findViewById(R.id.code3)
-        code4 = findViewById(R.id.code4)
-        code5 = findViewById(R.id.code5)
-        code6 = findViewById(R.id.code6)
-        proceed = findViewById(R.id.proceed)
-        codesentto = findViewById(R.id.sendingcodetext)
-        resend = findViewById(R.id.sendcodeagain)
-        didnotget = findViewById(R.id.didnotgettext)
-        proceedcard = findViewById(R.id.proceedcard)
-        sendingverifcationtext = findViewById(R.id.sendingcodetext)
-        constraintLayout = findViewById(R.id.cons2)
-        progressBar = findViewById(R.id.progressbar)
-        back = findViewById(R.id.back)
-        progressBar2 = findViewById(R.id.progressbar2)
-        constraintLayout.setOnTouchListener(object : OnTouchListener {
+
+
+        binding.cons2.setOnTouchListener(object : OnTouchListener {
             public override fun onTouch(view: View, motionEvent: MotionEvent): Boolean {
                 val inputMethodManager: InputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
                 inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0)
                 return false
             }
         })
-        proceed.setOnClickListener(object : View.OnClickListener {
+        binding.proceed.setOnClickListener(object : View.OnClickListener {
             public override fun onClick(v: View) {
-                progressBar2.setVisibility(View.VISIBLE)
-                proceed.setEnabled(false)
+                binding.progressbar2.setVisibility(View.VISIBLE)
+                binding.proceed.setEnabled(false)
                 FirebaseDatabase.getInstance().getReference().child("Profiles").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).addListenerForSingleValueEvent(object : ValueEventListener {
                     public override fun onDataChange(snapshot: DataSnapshot) {
                         if (snapshot.exists()) {
@@ -144,13 +119,13 @@ class VerifyOtp : AppCompatActivity() {
             public override fun onVerificationCompleted(phoneAuthCredential: PhoneAuthCredential) {
                 code = phoneAuthCredential.getSmsCode()
                 if (code != null) {
-                    code1.setText(code!!.get(0).toString())
-                    code2.setText(code!!.get(1).toString())
-                    code3.setText(code!!.get(2).toString())
-                    code4.setText(code!!.get(3).toString())
-                    code5.setText(code!!.get(4).toString())
-                    code6.setText(code!!.get(5).toString())
-                    code6.clearFocus()
+                    binding.code1.setText(code!!.get(0).toString())
+                    binding.code2.setText(code!!.get(1).toString())
+                    binding.code3.setText(code!!.get(2).toString())
+                    binding.code4.setText(code!!.get(3).toString())
+                    binding.code5.setText(code!!.get(4).toString())
+                    binding.code6.setText(code!!.get(5).toString())
+                    binding.code6.clearFocus()
                 }
             }
 
@@ -172,31 +147,31 @@ class VerifyOtp : AppCompatActivity() {
                 Log.i("token", forceResendingToken.toString())
                 v_id = s
                 resendotp = forceResendingToken
-                sendingverifcationtext.setText("Verification Code Sent")
-                codesentto.setText("Code sent to " + phone)
+                binding.sendingcodetext.setText("Verification Code Sent")
+                binding.sendingcodetext.setText("Code sent to " + phone)
                 YoYo.with(Techniques.FadeIn)
                         .duration(800)
-                        .playOn(sendingverifcationtext)
-                progressBar.setVisibility(View.GONE)
-                code1.setEnabled(true)
-                code2.setEnabled(true)
-                code3.setEnabled(true)
-                code4.setEnabled(true)
-                code5.setEnabled(true)
-                code6.setEnabled(true)
+                        .playOn(binding.sendingcodetext)
+                binding.progressbar2.setVisibility(View.GONE)
+                binding.code1.setEnabled(true)
+                binding.code2.setEnabled(true)
+                binding.code3.setEnabled(true)
+                binding.code4.setEnabled(true)
+                binding.code5.setEnabled(true)
+                binding.code6.setEnabled(true)
                 if (a == 0) {
                     object : CountDownTimer(30000, 1000) {
                         public override fun onTick(millisUntilFinished: Long) {
-                            resend.setText("Send Again In " + counter)
+                            binding.sendcodeagain.setText("Send Again In " + counter)
                             counter--
                         }
 
                         public override fun onFinish() {
-                            resend.setText("Send Again")
-                            resend.setOnClickListener(object : View.OnClickListener {
+                            binding.sendcodeagain.setText("Send Again")
+                            binding.sendcodeagain.setOnClickListener(object : View.OnClickListener {
                                 public override fun onClick(v: View) {
                                     a = 1
-                                    resend.setText("Code Sent")
+                                    binding.sendcodeagain.setText("Code Sent")
                                     PhoneAuthProvider.getInstance().verifyPhoneNumber(
                                             "+91" + p,  // Phone number to verify
                                             1,  // Timeout duration
@@ -211,133 +186,133 @@ class VerifyOtp : AppCompatActivity() {
                 }
             }
         }
-        code1.addTextChangedListener(object : TextWatcher {
+        binding.code1.addTextChangedListener(object : TextWatcher {
             public override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             public override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 if (s.toString().length == 1) {
-                    code1.clearFocus()
-                    code2.requestFocus()
+                    binding.code1.clearFocus()
+                    binding.code2.requestFocus()
                 }
-                if (!(code1.getText().toString() == "") && !(code2.getText().toString() == "") && !(code3.getText().toString() == "") && !(code4.getText().toString() == "") && !(code5.getText().toString() == "") && !(code6.getText().toString() == "")) {
-                    signInWithPhoneAuthCredential(v_id, code1.getText().toString() + code2.getText().toString() + code3.getText().toString() + code4.getText().toString() + code5.getText().toString() + code6.getText().toString())
+                if (!(binding.code1.getText().toString() == "") && !(binding.code2.getText().toString() == "") && !(binding.code3.getText().toString() == "") && !(binding.code4.getText().toString() == "") && !(binding.code5.getText().toString() == "") && !(binding.code6.getText().toString() == "")) {
+                    signInWithPhoneAuthCredential(v_id, binding.code1.getText().toString() + binding.code2.getText().toString() + binding.code3.getText().toString() + binding.code4.getText().toString() + binding.code5.getText().toString() + binding.code6.getText().toString())
                 }
             }
 
             public override fun afterTextChanged(s: Editable) {}
         })
-        code2.addTextChangedListener(object : TextWatcher {
+        binding.code2.addTextChangedListener(object : TextWatcher {
             public override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             public override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 if (s.toString().length == 1) {
-                    code2.clearFocus()
-                    code3.requestFocus()
+                    binding.code2.clearFocus()
+                    binding.code3.requestFocus()
                 } else {
-                    code2.setOnKeyListener(object : View.OnKeyListener {
+                    binding.code2.setOnKeyListener(object : View.OnKeyListener {
                         public override fun onKey(v: View, keyCode: Int, event: KeyEvent): Boolean {
                             //You can identify which key pressed buy checking keyCode value with KeyEvent.KEYCODE_
                             if (keyCode == KeyEvent.KEYCODE_DEL && s.toString().length == 0) {
-                                code2.clearFocus()
-                                code1.requestFocus()
+                                binding.code2.clearFocus()
+                                binding.code1.requestFocus()
                             }
                             return false
                         }
                     })
                 }
-                if (!(code1.getText().toString() == "") && !(code2.getText().toString() == "") && !(code3.getText().toString() == "") && !(code4.getText().toString() == "") && !(code5.getText().toString() == "") && !(code6.getText().toString() == "")) {
-                    signInWithPhoneAuthCredential(v_id, code1.getText().toString() + code2.getText().toString() + code3.getText().toString() + code4.getText().toString() + code5.getText().toString() + code6.getText().toString())
+                if (!(binding.code1.getText().toString() == "") && !(binding.code2.getText().toString() == "") && !(binding.code3.getText().toString() == "") && !(binding.code4.getText().toString() == "") && !(binding.code5.getText().toString() == "") && !(binding.code6.getText().toString() == "")) {
+                    signInWithPhoneAuthCredential(v_id, binding.code1.getText().toString() + binding.code2.getText().toString() + binding.code3.getText().toString() + binding.code4.getText().toString() + binding.code5.getText().toString() + binding.code6.getText().toString())
                 }
             }
 
             public override fun afterTextChanged(s: Editable) {}
         })
-        code3.addTextChangedListener(object : TextWatcher {
+        binding.code3.addTextChangedListener(object : TextWatcher {
             public override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             public override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 if (s.toString().length == 1) {
-                    code3.clearFocus()
-                    code4.requestFocus()
+                    binding.code3.clearFocus()
+                    binding.code4.requestFocus()
                 } else {
-                    code3.setOnKeyListener(object : View.OnKeyListener {
+                    binding.code3.setOnKeyListener(object : View.OnKeyListener {
                         public override fun onKey(v: View, keyCode: Int, event: KeyEvent): Boolean {
                             //You can identify which key pressed buy checking keyCode value with KeyEvent.KEYCODE_
                             if (keyCode == KeyEvent.KEYCODE_DEL && s.toString().length == 0) {
-                                code3.clearFocus()
-                                code2.requestFocus()
+                                binding.code3.clearFocus()
+                                binding.code2.requestFocus()
                             }
                             return false
                         }
                     })
                 }
-                if (!(code1.getText().toString() == "") && !(code2.getText().toString() == "") && !(code3.getText().toString() == "") && !(code4.getText().toString() == "") && !(code5.getText().toString() == "") && !(code6.getText().toString() == "")) {
-                    signInWithPhoneAuthCredential(v_id, code1.getText().toString() + code2.getText().toString() + code3.getText().toString() + code4.getText().toString() + code5.getText().toString() + code6.getText().toString())
+                if (!(binding.code1.getText().toString() == "") && !(binding.code2.getText().toString() == "") && !(binding.code3.getText().toString() == "") && !(binding.code4.getText().toString() == "") && !(binding.code5.getText().toString() == "") && !(binding.code6.getText().toString() == "")) {
+                    signInWithPhoneAuthCredential(v_id, binding.code1.getText().toString() + binding.code2.getText().toString() + binding.code3.getText().toString() + binding.code4.getText().toString() + binding.code5.getText().toString() + binding.code6.getText().toString())
                 }
             }
 
             public override fun afterTextChanged(s: Editable) {}
         })
-        code4.addTextChangedListener(object : TextWatcher {
+        binding.code4.addTextChangedListener(object : TextWatcher {
             public override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             public override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 if (s.toString().length == 1) {
-                    code4.clearFocus()
-                    code5.requestFocus()
+                    binding.code4.clearFocus()
+                    binding.code5.requestFocus()
                 } else {
-                    code4.setOnKeyListener(object : View.OnKeyListener {
+                    binding.code4.setOnKeyListener(object : View.OnKeyListener {
                         public override fun onKey(v: View, keyCode: Int, event: KeyEvent): Boolean {
                             //You can identify which key pressed buy checking keyCode value with KeyEvent.KEYCODE_
                             if (keyCode == KeyEvent.KEYCODE_DEL && s.toString().length == 0) {
-                                code4.clearFocus()
-                                code3.requestFocus()
+                                binding.code4.clearFocus()
+                                binding.code3.requestFocus()
                             }
                             return false
                         }
                     })
                 }
-                if (!(code1.getText().toString() == "") && !(code2.getText().toString() == "") && !(code3.getText().toString() == "") && !(code4.getText().toString() == "") && !(code5.getText().toString() == "") && !(code6.getText().toString() == "")) {
-                    signInWithPhoneAuthCredential(v_id, code1.getText().toString() + code2.getText().toString() + code3.getText().toString() + code4.getText().toString() + code5.getText().toString() + code6.getText().toString())
+                if (!(binding.code1.getText().toString() == "") && !(binding.code2.getText().toString() == "") && !(binding.code3.getText().toString() == "") && !(binding.code4.getText().toString() == "") && !(binding.code5.getText().toString() == "") && !(binding.code6.getText().toString() == "")) {
+                    signInWithPhoneAuthCredential(v_id, binding.code1.getText().toString() + binding.code2.getText().toString() + binding.code3.getText().toString() + binding.code4.getText().toString() + binding.code5.getText().toString() + binding.code6.getText().toString())
                 }
             }
 
             public override fun afterTextChanged(s: Editable) {}
         })
-        code5.addTextChangedListener(object : TextWatcher {
+        binding.code5.addTextChangedListener(object : TextWatcher {
             public override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             public override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 if (s.toString().length == 1) {
-                    code5.clearFocus()
-                    code6.requestFocus()
+                    binding.code5.clearFocus()
+                    binding.code6.requestFocus()
                 } else {
-                    code5.setOnKeyListener(object : View.OnKeyListener {
+                    binding.code5.setOnKeyListener(object : View.OnKeyListener {
                         public override fun onKey(v: View, keyCode: Int, event: KeyEvent): Boolean {
                             //You can identify which key pressed buy checking keyCode value with KeyEvent.KEYCODE_
                             if (keyCode == KeyEvent.KEYCODE_DEL && s.toString().length == 0) {
-                                code5.clearFocus()
-                                code4.requestFocus()
+                                binding.code5.clearFocus()
+                                binding.code4.requestFocus()
                             }
                             return false
                         }
                     })
                 }
-                if (!(code1.getText().toString() == "") && !(code2.getText().toString() == "") && !(code3.getText().toString() == "") && !(code4.getText().toString() == "") && !(code5.getText().toString() == "") && !(code6.getText().toString() == "")) {
-                    signInWithPhoneAuthCredential(v_id, code1.getText().toString() + code2.getText().toString() + code3.getText().toString() + code4.getText().toString() + code5.getText().toString() + code6.getText().toString())
+                if (!(binding.code1.getText().toString() == "") && !(binding.code2.getText().toString() == "") && !(binding.code3.getText().toString() == "") && !(binding.code4.getText().toString() == "") && !(binding.code5.getText().toString() == "") && !(binding.code6.getText().toString() == "")) {
+                    signInWithPhoneAuthCredential(v_id, binding.code1.getText().toString() + binding.code2.getText().toString() + binding.code3.getText().toString() + binding.code4.getText().toString() + binding.code5.getText().toString() + binding.code6.getText().toString())
                 }
             }
 
             public override fun afterTextChanged(s: Editable) {}
         })
-        code6.addTextChangedListener(object : TextWatcher {
+        binding.code6.addTextChangedListener(object : TextWatcher {
             public override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             public override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                if (!(code1.getText().toString() == "") && !(code2.getText().toString() == "") && !(code3.getText().toString() == "") && !(code4.getText().toString() == "") && !(code5.getText().toString() == "") && !(code6.getText().toString() == "")) {
-                    signInWithPhoneAuthCredential(v_id, code1.getText().toString() + code2.getText().toString() + code3.getText().toString() + code4.getText().toString() + code5.getText().toString() + code6.getText().toString())
+                if (!(binding.code1.getText().toString() == "") && !(binding.code2.getText().toString() == "") && !(binding.code3.getText().toString() == "") && !(binding.code4.getText().toString() == "") && !(binding.code5.getText().toString() == "") && !(binding.code6.getText().toString() == "")) {
+                    signInWithPhoneAuthCredential(v_id, binding.code1.getText().toString() + binding.code2.getText().toString() + binding.code3.getText().toString() + binding.code4.getText().toString() + binding.code5.getText().toString() + binding.code6.getText().toString())
                 }
-                if ((code6.getText().toString() == "")) {
-                    code6.setOnKeyListener(object : View.OnKeyListener {
+                if ((binding.code6.getText().toString() == "")) {
+                    binding.code6.setOnKeyListener(object : View.OnKeyListener {
                         public override fun onKey(v: View, keyCode: Int, event: KeyEvent): Boolean {
                             //You can identify which key pressed buy checking keyCode value with KeyEvent.KEYCODE_
                             if (keyCode == KeyEvent.KEYCODE_DEL && s.toString().length == 0) {
-                                code6.clearFocus()
-                                code5.requestFocus()
+                                binding.code6.clearFocus()
+                                binding.code5.requestFocus()
                             }
                             return false
                         }
@@ -381,32 +356,32 @@ class VerifyOtp : AppCompatActivity() {
 
                                 public override fun onCancelled(error: DatabaseError) {}
                             })
-                            codesentto!!.setText("OTP VERIFIED")
-                            codesentto!!.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.verified, 0, 0, 0)
-                            codesentto!!.setCompoundDrawablePadding(10)
-                            codesentto!!.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.darkgrey))
-                            didnotget!!.setVisibility(View.GONE)
-                            lottieAnimationView!!.setVisibility(View.VISIBLE)
-                            lottieAnimationView!!.playAnimation()
-                            resend!!.setVisibility(View.GONE)
-                            proceedcard!!.setVisibility(View.VISIBLE)
+                            binding.sendingcodetext!!.setText("OTP VERIFIED")
+                            binding.sendingcodetext!!.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.verified, 0, 0, 0)
+                            binding.sendingcodetext!!.setCompoundDrawablePadding(10)
+                            binding.sendingcodetext!!.setTextColor(ContextCompat.getColor(getApplicationContext(), R.color.darkgrey))
+                            binding.didnotgettext!!.setVisibility(View.GONE)
+                            binding.lottie!!.setVisibility(View.VISIBLE)
+                            binding.lottie!!.playAnimation()
+                            binding.sendcodeagain!!.setVisibility(View.GONE)
+                            binding.proceedcard.setVisibility(View.VISIBLE)
                             YoYo.with(Techniques.SlideInUp)
                                     .duration(300)
-                                    .playOn(proceedcard)
-                            code1!!.setKeyListener(null)
-                            code2!!.setKeyListener(null)
-                            code3!!.setKeyListener(null)
-                            code4!!.setKeyListener(null)
-                            code5!!.setKeyListener(null)
-                            code6!!.setKeyListener(null)
-                            code1!!.clearFocus()
-                            code2!!.clearFocus()
-                            code3!!.clearFocus()
-                            code4!!.clearFocus()
-                            code5!!.clearFocus()
-                            code6!!.clearFocus()
+                                    .playOn(binding.proceedcard)
+                            binding.code1.setKeyListener(null)
+                            binding.code2.setKeyListener(null)
+                            binding.code3.setKeyListener(null)
+                            binding.code4.setKeyListener(null)
+                            binding.code5.setKeyListener(null)
+                            binding.code6.setKeyListener(null)
+                            binding.code1.clearFocus()
+                            binding.code2.clearFocus()
+                            binding.code3.clearFocus()
+                            binding.code4.clearFocus()
+                            binding.code5.clearFocus()
+                            binding.code6.clearFocus()
                             val inputMethodManager: InputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-                            inputMethodManager.hideSoftInputFromWindow(constraintLayout!!.getWindowToken(), 0)
+                            inputMethodManager.hideSoftInputFromWindow(binding.cons2!!.getWindowToken(), 0)
 
                             // ...
                         } else {
@@ -420,17 +395,17 @@ class VerifyOtp : AppCompatActivity() {
                                     .setIcon(R.drawable.info, R.color.white)
                                     .setCornerRadius(10, 0)
                                     .sneak(R.color.teal_200)
-                            codesentto!!.setText("WRONG OTP")
-                            codesentto!!.setTextColor(Color.RED)
-                            code1!!.setText("")
-                            code2!!.setText("")
-                            code3!!.setText("")
-                            code4!!.setText("")
-                            code5!!.setText("")
-                            code6!!.setText("")
-                            code6!!.clearFocus()
+                            binding.sendingcodetext.setText("WRONG OTP")
+                            binding.sendingcodetext.setTextColor(Color.RED)
+                            binding.code1.setText("")
+                            binding.code2.setText("")
+                            binding.code3.setText("")
+                            binding.code4.setText("")
+                            binding.code5.setText("")
+                            binding.code6.setText("")
+                            binding.code6.clearFocus()
                             val inputMethodManager: InputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-                            inputMethodManager.hideSoftInputFromWindow(constraintLayout!!.getWindowToken(), 0)
+                            inputMethodManager.hideSoftInputFromWindow(binding.cons2!!.getWindowToken(), 0)
                             if (task.getException() is FirebaseAuthInvalidCredentialsException) {
                                 // The verification code entered was invalid
                             }

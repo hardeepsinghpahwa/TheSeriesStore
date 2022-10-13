@@ -26,7 +26,9 @@ import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import com.example.login.databinding.FragmentSubCategoriesBinding
 import com.google.firebase.database.*
 import java.math.BigDecimal
 import java.text.Format
@@ -34,33 +36,29 @@ import java.text.NumberFormat
 import java.util.*
 
 class SubCategories : Fragment() {
-    lateinit var recyclerView: RecyclerView
-    lateinit var recyclerView2: RecyclerView
+
     lateinit var its: ArrayList<String>
     lateinit var firebaseRecyclerAdapter: FirebaseRecyclerAdapter<itemdetails, ItemViewHolder>
-    lateinit var progressBar: ProgressBar
+    lateinit var binding:FragmentSubCategoriesBinding
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_sub_categories, container, false)
-        recyclerView = view.findViewById(R.id.listrecyview)
-        recyclerView2 = view.findViewById(R.id.productsrecyview)
-        progressBar = view.findViewById(R.id.progressbar)
-        val cartcount: TextView
-        cartcount = view.findViewById(R.id.cartcount)
+        binding = DataBindingUtil.inflate(layoutInflater, R.layout.fragment_sub_categories, container, false)
+        binding.executePendingBindings()
+
         FirebaseDatabase.getInstance().reference.child("Profiles").child(FirebaseAuth.getInstance().currentUser.uid).child("Cart").addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
-                    cartcount.text = "" + snapshot.childrenCount
+                    binding.cartcount.text = "" + snapshot.childrenCount
                 } else {
-                    cartcount.text = "0"
+                    binding.cartcount.text = "0"
                 }
             }
 
             override fun onCancelled(error: DatabaseError) {}
         })
         val query: Query = FirebaseDatabase.getInstance().reference.child("Items")
-        view.findViewById<View>(R.id.cart).setOnClickListener {
+        binding.cart.setOnClickListener {
             startActivity(Intent(activity, Cart::class.java))
             CustomIntent.customType(activity, "bottom-to-up")
         }
@@ -87,8 +85,8 @@ class SubCategories : Fragment() {
             override fun onViewAttachedToWindow(holder: ItemViewHolder) {
                 super.onViewAttachedToWindow(holder)
                 val animation = AnimationUtils.loadLayoutAnimation(activity, R.anim.layoutanim)
-                recyclerView2.setLayoutAnimation(animation)
-                progressBar.setVisibility(View.GONE)
+                binding.productsrecyview.setLayoutAnimation(animation)
+                binding.progressbar.setVisibility(View.GONE)
             }
 
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
@@ -96,8 +94,8 @@ class SubCategories : Fragment() {
                 return ItemViewHolder(view1)
             }
         }
-        recyclerView2.setLayoutManager(LinearLayoutManager(activity))
-        recyclerView.setLayoutManager(LinearLayoutManager(activity, RecyclerView.HORIZONTAL, false))
+        binding.productsrecyview.setLayoutManager(LinearLayoutManager(activity))
+        binding.listrecyview.setLayoutManager(LinearLayoutManager(activity, RecyclerView.HORIZONTAL, false))
         FirebaseDatabase.getInstance().reference.child("Items").addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 its = ArrayList()
@@ -107,14 +105,14 @@ class SubCategories : Fragment() {
                         its!!.add(dataSnapshot.child("subcategory").getValue(String::class.java)!!)
                     }
                 }
-                recyclerView.setAdapter(SubAdapter(its))
+                binding.listrecyview.setAdapter(SubAdapter(its))
             }
 
             override fun onCancelled(error: DatabaseError) {}
         })
         val handler = Handler(Looper.getMainLooper())
-        handler.postDelayed({ recyclerView2.setAdapter(firebaseRecyclerAdapter) }, 100)
-        return view
+        handler.postDelayed({ binding.productsrecyview.setAdapter(firebaseRecyclerAdapter) }, 100)
+        return binding.root
     }
 
     override fun onResume() {
@@ -162,11 +160,11 @@ class SubCategories : Fragment() {
                 holder.name.setTextColor(Color.BLACK)
             }
             holder.itemView.setOnClickListener {
-                progressBar!!.visibility = View.VISIBLE
+                binding.progressbar.visibility = View.VISIBLE
                 for (i in items.indices) {
                     if (position == i) {
                         lateinit var textView: TextView
-                        val view = recyclerView!!.layoutManager!!.findViewByPosition(i)
+                        val view = binding.listrecyview.layoutManager!!.findViewByPosition(i)
                         if (view != null) textView = view.findViewById(R.id.listitem)
                         if (textView != null) {
                             textView.textSize = 18f
@@ -188,7 +186,7 @@ class SubCategories : Fragment() {
                         }
                     } else {
                         lateinit var textView: TextView
-                        val view = recyclerView!!.layoutManager!!.findViewByPosition(i)
+                        val view = binding.listrecyview.layoutManager!!.findViewByPosition(i)
                         if (view != null) textView = view.findViewById(R.id.listitem)
                         if (textView != null) {
                             textView.textSize = 14f

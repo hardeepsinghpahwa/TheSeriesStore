@@ -1,4 +1,4 @@
-package com.example.login
+package com.example.login.dataclass
 
 class cartitemdetails {
     var size: String? = null

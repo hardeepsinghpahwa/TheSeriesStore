@@ -21,10 +21,8 @@ import com.example.login.Home
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
-import com.example.login.SliderItem
-import com.smarteist.autoimageslider.SliderView
+import com.example.login.dataclass.SliderItem
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.facebook.shimmer.ShimmerFrameLayout
 import com.smarteist.autoimageslider.SliderAnimations
 import com.daimajia.androidanimations.library.YoYo
 import com.daimajia.androidanimations.library.Techniques
@@ -33,7 +31,9 @@ import com.example.login.Fragments.HomeFragment.SliderAdapterExample.SliderAdapt
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import com.example.login.databinding.FragmentHomeBinding
 import com.google.firebase.database.*
 import java.math.BigDecimal
 import java.text.Format
@@ -42,61 +42,45 @@ import java.util.*
 
 class HomeFragment : Fragment() {
     lateinit var items: ArrayList<SliderItem>
-    lateinit var sliderView: SliderView
-    lateinit var tshirts: RecyclerView
-    lateinit var contentplatforms: RecyclerView
-    lateinit var shopbycat: RecyclerView
     lateinit var firebaseRecyclerAdapter: FirebaseRecyclerAdapter<itemdetails, ItemViewHolder>
-    lateinit var firebaseRecyclerAdapter3: FirebaseRecyclerAdapter<itemdetails, ItemViewHolder>
+    var firebaseRecyclerAdapter3: FirebaseRecyclerAdapter<itemdetails, ItemViewHolder>?=null
     lateinit var firebaseRecyclerAdapter2: FirebaseRecyclerAdapter<itemdetails, CategoryViewHolder>
     lateinit var names: ArrayList<String>
     lateinit var images: ArrayList<String>
-    lateinit var tshirtsseeall: TextView
-    lateinit var shopbycontentplatformsseeall: TextView
-    lateinit var shopbyseriesseeall: TextView
     lateinit var bottomNavigationView: BottomNavigationView
-    lateinit var tshirtsshimmer: ShimmerFrameLayout
-    lateinit var slideviewshimmer: ShimmerFrameLayout
-    lateinit var contentplatformsshimmer: ShimmerFrameLayout
+    lateinit var binding: FragmentHomeBinding
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_home, container, false)
-        sliderView = view.findViewById(R.id.imageSlider)
+        binding = DataBindingUtil.inflate(layoutInflater, R.layout.fragment_home, container, false)
+        binding.executePendingBindings()
+
         bottomNavigationView = activity!!.findViewById(R.id.bottom_navigation)
-        sliderView.setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION)
-        sliderView.setScrollTimeInSec(2)
-        sliderView.setAutoCycle(true)
-        sliderView.startAutoCycle()
-        tshirtsshimmer = view.findViewById(R.id.tshirtsshimmer)
-        contentplatformsshimmer = view.findViewById(R.id.contentplatformsshimmer)
-        slideviewshimmer = view.findViewById(R.id.imageslidershimmer)
-        tshirtsshimmer.startShimmer()
-        contentplatformsshimmer.startShimmer()
-        slideviewshimmer.startShimmer()
-        tshirts = view.findViewById(R.id.tshirtsrecyview)
-        contentplatforms = view.findViewById(R.id.contentplatformsrecyview)
-        shopbycat = view.findViewById(R.id.shopbyseriesrecyview)
-        tshirtsseeall = view.findViewById(R.id.tshirtsseeall)
-        shopbycontentplatformsseeall = view.findViewById(R.id.shopbycontentplatformsseeall)
-        shopbyseriesseeall = view.findViewById(R.id.shopbyseriesseeall)
-        val cartcount: TextView
-        cartcount = view.findViewById(R.id.cartcount)
+
+        binding.sliderView.setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION)
+        binding.sliderView.setScrollTimeInSec(2)
+        binding.sliderView.setAutoCycle(true)
+        binding.sliderView.startAutoCycle()
+        binding.tshirtsshimmer.startShimmer()
+        binding.contentplatformsshimmer.startShimmer()
+        binding.imageslidershimmer.startShimmer()
+
+
         FirebaseDatabase.getInstance().reference.child("Profiles").child(FirebaseAuth.getInstance().currentUser.uid).child("Cart").addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
-                    cartcount.text = "" + snapshot.childrenCount
+                    binding.cartcount.text = "" + snapshot.childrenCount
                 } else {
-                    cartcount.text = "0"
+                    binding.cartcount.text = "0"
                 }
             }
 
             override fun onCancelled(error: DatabaseError) {}
         })
-        tshirtsseeall.setOnClickListener(View.OnClickListener { })
-        shopbyseriesseeall.setOnClickListener(View.OnClickListener { bottomNavigationView.setSelectedItemId(R.id.page_3) })
-        shopbycontentplatformsseeall.setOnClickListener(View.OnClickListener { bottomNavigationView.setSelectedItemId(R.id.page_2) })
-        view.findViewById<View>(R.id.cart).setOnClickListener {
+        binding.tshirtsseeall.setOnClickListener(View.OnClickListener { })
+        binding.shopbyseriesseeall.setOnClickListener(View.OnClickListener { bottomNavigationView.setSelectedItemId(R.id.page_3) })
+        binding.shopbycontentplatformsseeall.setOnClickListener(View.OnClickListener { bottomNavigationView.setSelectedItemId(R.id.page_2) })
+        binding.cart.setOnClickListener {
             startActivity(Intent(activity, Cart::class.java))
             CustomIntent.customType(activity, "bottom-to-up")
         }
@@ -106,17 +90,17 @@ class HomeFragment : Fragment() {
                 for (snapshot1 in snapshot.children) {
                     items!!.add(SliderItem(snapshot1.child("image").getValue(String::class.java)))
                 }
-                sliderView.setSliderAdapter(SliderAdapterExample(activity, items!!))
-                sliderView.setSliderTransformAnimation(SliderAnimations.FADETRANSFORMATION)
-                sliderView.setIndicatorVisibility(false)
-                sliderView.setScrollTimeInSec(5)
-                sliderView.startAutoCycle()
+                binding.sliderView.setSliderAdapter(SliderAdapterExample(activity, items!!))
+                binding.sliderView.setSliderTransformAnimation(SliderAnimations.FADETRANSFORMATION)
+                binding.sliderView.setIndicatorVisibility(false)
+                binding.sliderView.setScrollTimeInSec(5)
+                binding.sliderView.startAutoCycle()
                 YoYo.with(Techniques.FadeInDown)
                         .duration(1000)
-                        .playOn(sliderView)
-                tshirtsshimmer.setVisibility(View.GONE)
-                slideviewshimmer.setVisibility(View.GONE)
-                contentplatformsshimmer.setVisibility(View.GONE)
+                        .playOn(binding.sliderView)
+                binding.tshirtsshimmer.setVisibility(View.GONE)
+                binding.imageslidershimmer.setVisibility(View.GONE)
+                binding.contentplatformsshimmer.setVisibility(View.GONE)
             }
 
             override fun onCancelled(error: DatabaseError) {}
@@ -148,7 +132,7 @@ class HomeFragment : Fragment() {
                         .duration(1000)
                         .playOn(tshirts);*/
                 val animation = AnimationUtils.loadLayoutAnimation(activity, R.anim.layoutanimltor)
-                tshirts.setLayoutAnimation(animation)
+                binding.tshirtsrecyview.setLayoutAnimation(animation)
             }
 
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
@@ -176,7 +160,7 @@ class HomeFragment : Fragment() {
                         .duration(1000)
                         .playOn(contentplatforms);*/
                 val animation = AnimationUtils.loadLayoutAnimation(activity, R.anim.layoutanim)
-                contentplatforms.setLayoutAnimation(animation)
+                binding.contentplatformsrecyview.setLayoutAnimation(animation)
             }
 
             override fun getItemViewType(position: Int): Int {
@@ -194,13 +178,13 @@ class HomeFragment : Fragment() {
                 return CategoryViewHolder(view1)
             }
         }
-        tshirts.setLayoutManager(LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false))
-        tshirts.setAdapter(firebaseRecyclerAdapter)
+        binding.tshirtsrecyview.setLayoutManager(LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false))
+        binding.tshirtsrecyview.setAdapter(firebaseRecyclerAdapter)
         YoYo.with(Techniques.FadeInDown)
                 .duration(1000)
-                .playOn(tshirts)
-        contentplatforms.setLayoutManager(LinearLayoutManager(activity))
-        contentplatforms.setAdapter(firebaseRecyclerAdapter2)
+                .playOn(binding.tshirtsrecyview)
+        binding.contentplatformsrecyview.setLayoutManager(LinearLayoutManager(activity))
+        binding.contentplatformsrecyview.setAdapter(firebaseRecyclerAdapter2)
         FirebaseDatabase.getInstance().reference.child("SubCategories").addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 names = ArrayList()
@@ -211,13 +195,13 @@ class HomeFragment : Fragment() {
                     }
                     images.add(dataSnapshot.child("image").getValue(String::class.java)!!)
                 }
-                shopbycat.setLayoutManager(LinearLayoutManager(activity))
-                shopbycat.setAdapter(SubAdapter(names, images))
+                binding.shopbyseriesrecyview.setLayoutManager(LinearLayoutManager(activity))
+                binding.shopbyseriesrecyview.setAdapter(SubAdapter(names, images))
             }
 
             override fun onCancelled(error: DatabaseError) {}
         })
-        return view
+        return binding.root
     }
 
     override fun onResume() {
@@ -261,7 +245,7 @@ class HomeFragment : Fragment() {
                     Glide.with(activity!!).load(model.image).into(holder.image)
                     holder.itemView.setOnClickListener {
                         val intent = Intent(activity, ItemDetail::class.java)
-                        intent.putExtra("id", firebaseRecyclerAdapter!!.getItem(position).id)
+                        intent.putExtra("id", firebaseRecyclerAdapter.getItem(position).id)
                         startActivity(intent)
                         CustomIntent.customType(activity, "left-to-right")
                     }
@@ -274,7 +258,7 @@ class HomeFragment : Fragment() {
             }
             holder.recyclerView.layoutManager = LinearLayoutManager(activity, RecyclerView.HORIZONTAL, false)
             holder.recyclerView.adapter = firebaseRecyclerAdapter3
-            firebaseRecyclerAdapter3.startListening()
+            firebaseRecyclerAdapter3?.startListening()
         }
 
         override fun getItemCount(): Int {

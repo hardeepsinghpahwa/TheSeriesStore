@@ -4,7 +4,6 @@ package com.example.login.address
 import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
-import androidx.constraintlayout.widget.ConstraintLayout
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import android.os.Bundle
 import android.graphics.drawable.ColorDrawable
@@ -35,7 +34,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import com.example.login.OrderPaymentDetails
 import com.example.login.R
-import com.example.login.addressdetail
+import com.example.login.dataclass.addressdetail
 import com.example.login.databinding.ActivityAddressBinding
 import com.example.login.databinding.AddaddressBinding
 import com.example.login.helpers.CommonUtils
