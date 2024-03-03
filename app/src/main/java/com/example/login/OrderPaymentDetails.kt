@@ -13,7 +13,7 @@ import android.content.Intent
 import maes.tech.intentanim.CustomIntent
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.login.Fragments.itemdetails
+import com.example.login.fragments.itemdetails
 import com.bumptech.glide.Glide
 import android.graphics.Color
 import com.razorpay.PaymentResultWithDataListener
@@ -58,41 +58,41 @@ class OrderPaymentDetails : AppCompatActivity(), PaymentResultWithDataListener {
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
         checkOrder()
         binding.back.setOnClickListener(object : View.OnClickListener {
-            public override fun onClick(v: View) {
+            override fun onClick(v: View) {
                 onBackPressed()
             }
         })
-        name = getIntent().getStringExtra("name")!!
-        addresstext = getIntent().getStringExtra("address")!!
-        phone = getIntent().getStringExtra("phone")!!
+        name = intent.getStringExtra("name")!!
+        addresstext = intent.getStringExtra("address")!!
+        phone = intent.getStringExtra("phone")!!
 
-        FirebaseDatabase.getInstance().getReference().child("Profiles").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Cart").addValueEventListener(object : ValueEventListener {
-            public override fun onDataChange(snapshot: DataSnapshot) {
+        FirebaseDatabase.getInstance().reference.child("Profiles").child(FirebaseAuth.getInstance().currentUser.uid).child("Cart").addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
                 t = 0
                 no = 0
-                for (dataSnapshot: DataSnapshot in snapshot.getChildren()) {
-                    FirebaseDatabase.getInstance().getReference().child("Items").child((dataSnapshot.child("id").getValue(String::class.java))!!).addListenerForSingleValueEvent(object : ValueEventListener {
-                        public override fun onDataChange(snapshot2: DataSnapshot) {
+                for (dataSnapshot: DataSnapshot in snapshot.children) {
+                    FirebaseDatabase.getInstance().reference.child("Items").child((dataSnapshot.child("id").getValue(String::class.java))!!).addListenerForSingleValueEvent(object : ValueEventListener {
+                        override fun onDataChange(snapshot2: DataSnapshot) {
                             t = t + ((dataSnapshot.child("quantity").getValue(Int::class.java)))!! * Integer.valueOf(snapshot2.child("price").getValue(String::class.java))
                             val format: Format = NumberFormat.getCurrencyInstance(Locale("en", "in"))
-                            binding.total.setText(format.format(BigDecimal(t.toString())))
-                            binding.total2.setText(format.format(BigDecimal(t.toString())))
-                            binding.subtotal.setText(format.format(BigDecimal(t.toString())))
+                            binding.total.text = format.format(BigDecimal(t.toString()))
+                            binding.total2.text = format.format(BigDecimal(t.toString()))
+                            binding.subtotal.text = format.format(BigDecimal(t.toString()))
                         }
 
-                        public override fun onCancelled(error: DatabaseError) {}
+                        override fun onCancelled(error: DatabaseError) {}
                     })
                     no++
-                    if (no.toLong() == snapshot.getChildrenCount()) {
+                    if (no.toLong() == snapshot.childrenCount) {
                         val format: Format = NumberFormat.getCurrencyInstance(Locale("en", "in"))
-                        binding.total.setText(format.format(BigDecimal(t.toString())))
-                        binding.total2.setText(format.format(BigDecimal(t.toString())))
-                        binding.subtotal.setText(format.format(BigDecimal(t.toString())))
+                        binding.total.text = format.format(BigDecimal(t.toString()))
+                        binding.total2.text = format.format(BigDecimal(t.toString()))
+                        binding.subtotal.text = format.format(BigDecimal(t.toString()))
                     }
                 }
             }
 
-            public override fun onCancelled(error: DatabaseError) {}
+            override fun onCancelled(error: DatabaseError) {}
         })
         val stepsBeanList: MutableList<StepBean> = ArrayList()
         val stepBean0 = StepBean("Cart", 1)
@@ -105,60 +105,60 @@ class OrderPaymentDetails : AppCompatActivity(), PaymentResultWithDataListener {
         stepsBeanList.add(stepBean3)
         binding.stepsView.setStepViewTexts(stepsBeanList) //???
                 .setTextSize(12) //set textSize
-                .setStepsViewIndicatorCompletedLineColor(ContextCompat.getColor(getApplicationContext(), R.color.darkgrey)) //??StepsViewIndicator??????
-                .setStepsViewIndicatorUnCompletedLineColor(ContextCompat.getColor(getApplicationContext(), android.R.color.darker_gray)) //??StepsViewIndicator???????
-                .setStepViewComplectedTextColor(ContextCompat.getColor(getApplicationContext(), R.color.darkgrey)) //??StepsView text??????
-                .setStepViewUnComplectedTextColor(ContextCompat.getColor(getApplicationContext(), R.color.darkgrey)) //??StepsView text???????
-                .setStepsViewIndicatorCompleteIcon(ContextCompat.getDrawable(getApplicationContext(), R.drawable.checkedd)) //??StepsViewIndicator CompleteIcon
-                .setStepsViewIndicatorDefaultIcon(ContextCompat.getDrawable(getApplicationContext(), R.drawable.outline_radio_button_checked_24)) //??StepsViewIndicator DefaultIcon
-                .setStepsViewIndicatorAttentionIcon(ContextCompat.getDrawable(getApplicationContext(), R.drawable.uncheckedd))
-        val query: Query = FirebaseDatabase.getInstance().getReference().child("Profiles").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Cart")
+                .setStepsViewIndicatorCompletedLineColor(ContextCompat.getColor(applicationContext, R.color.darkgrey)) //??StepsViewIndicator??????
+                .setStepsViewIndicatorUnCompletedLineColor(ContextCompat.getColor(applicationContext, android.R.color.darker_gray)) //??StepsViewIndicator???????
+                .setStepViewComplectedTextColor(ContextCompat.getColor(applicationContext, R.color.darkgrey)) //??StepsView text??????
+                .setStepViewUnComplectedTextColor(ContextCompat.getColor(applicationContext, R.color.darkgrey)) //??StepsView text???????
+                .setStepsViewIndicatorCompleteIcon(ContextCompat.getDrawable(applicationContext, R.drawable.checkedd)) //??StepsViewIndicator CompleteIcon
+                .setStepsViewIndicatorDefaultIcon(ContextCompat.getDrawable(applicationContext, R.drawable.outline_radio_button_checked_24)) //??StepsViewIndicator DefaultIcon
+                .setStepsViewIndicatorAttentionIcon(ContextCompat.getDrawable(applicationContext, R.drawable.uncheckedd))
+        val query: Query = FirebaseDatabase.getInstance().reference.child("Profiles").child(FirebaseAuth.getInstance().currentUser.uid).child("Cart")
         val options: FirebaseRecyclerOptions<cartitemdetails> = FirebaseRecyclerOptions.Builder<cartitemdetails>()
                 .setQuery(query, object : SnapshotParser<cartitemdetails?> {
-                    public override fun parseSnapshot(snapshot: DataSnapshot): cartitemdetails {
+                    override fun parseSnapshot(snapshot: DataSnapshot): cartitemdetails {
                         return cartitemdetails(snapshot.child("size").getValue(String::class.java), snapshot.child("sizename").getValue(String::class.java), snapshot.child("colorcode").getValue(String::class.java), snapshot.child("colorname").getValue(String::class.java), snapshot.child("id").getValue(String::class.java), snapshot.child("image").getValue(String::class.java), snapshot.child("quantity").getValue(Int::class.java))
                     }
                 }).build()
         firebaseRecyclerAdapter = object : FirebaseRecyclerAdapter<cartitemdetails, ItemViewHolder>(options) {
-            public override fun onViewAttachedToWindow(holder: ItemViewHolder) {
+            override fun onViewAttachedToWindow(holder: ItemViewHolder) {
                 super.onViewAttachedToWindow(holder)
-                binding.progresslayout.setVisibility(View.GONE)
-                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                binding.progresslayout.visibility = View.GONE
+                window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
                 binding.itemsrecyview.scheduleLayoutAnimation()
             }
 
             override fun onBindViewHolder(holder: ItemViewHolder, position: Int, model: cartitemdetails) {
-                FirebaseDatabase.getInstance().getReference().child("Items").child(model.id!!).addValueEventListener(object : ValueEventListener {
-                    public override fun onDataChange(snapshot: DataSnapshot) {
+                FirebaseDatabase.getInstance().reference.child("Items").child(model.id!!).addValueEventListener(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
                         val itemdetails: itemdetails? = snapshot.getValue(itemdetails::class.java)
-                        holder.name.setText(itemdetails!!.name)
+                        holder.name.text = itemdetails!!.name
                         val format: Format = NumberFormat.getCurrencyInstance(Locale("en", "in"))
-                        holder.price.setText(format.format(BigDecimal(itemdetails.price)))
-                        holder.product.setText(itemdetails.product)
-                        holder.quantity.setText("Quantity : " + model.quantity)
+                        holder.price.text = format.format(BigDecimal(itemdetails.price))
+                        holder.product.text = itemdetails.product
+                        holder.quantity.text = "Quantity : " + model.quantity
                     }
 
-                    public override fun onCancelled(error: DatabaseError) {}
+                    override fun onCancelled(error: DatabaseError) {}
                 })
-                holder.size.setText("Color: " + model.colorname + ", " + "Size : " + model.size)
-                Glide.with(getApplicationContext()).load(model.image).into(holder.imageView)
+                holder.size.text = "Color: " + model.colorname + ", " + "Size : " + model.size
+                Glide.with(applicationContext).load(model.image).into(holder.imageView)
             }
 
-            public override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
-                val view: View = LayoutInflater.from(parent.getContext()).inflate(R.layout.orderitem, parent, false)
+            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
+                val view: View = LayoutInflater.from(parent.context).inflate(R.layout.orderitem, parent, false)
                 return ItemViewHolder(view)
             }
         }
-        binding.itemsrecyview.setLayoutManager(LinearLayoutManager(this@OrderPaymentDetails))
-        binding.itemsrecyview.setAdapter(firebaseRecyclerAdapter)
+        binding.itemsrecyview.layoutManager = LinearLayoutManager(this@OrderPaymentDetails)
+        binding.itemsrecyview.adapter = firebaseRecyclerAdapter
         binding.continuetopay.setOnClickListener(object : View.OnClickListener {
-            public override fun onClick(v: View) {
-                binding.progresslayout.setVisibility(View.VISIBLE)
-                getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+            override fun onClick(v: View) {
+                binding.progresslayout.visibility = View.VISIBLE
+                window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                         WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
                 //FirebaseDatabase.getInstance().getReference().child()
-                FirebaseDatabase.getInstance().getReference().child("Profiles").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).addListenerForSingleValueEvent(object : ValueEventListener {
-                    public override fun onDataChange(snapshot: DataSnapshot) {
+                FirebaseDatabase.getInstance().reference.child("Profiles").child(FirebaseAuth.getInstance().currentUser.uid).addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
                         val order = mutableMapOf<String?, Any?>()
                         order.put("name", name)
                         order.put("address", addresstext)
@@ -168,22 +168,24 @@ class OrderPaymentDetails : AppCompatActivity(), PaymentResultWithDataListener {
                         // order.put("discount", String.valueOf(dis));
                         // order.put("delivery", String.valueOf(del));
                         // order.put("total", total);
-                        order.put("userid", FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        order.put("userid", FirebaseAuth.getInstance().currentUser.uid)
                         order.put("timestamp", ServerValue.TIMESTAMP)
                         order.put("status", "Payment Pending")
                         order.put("orderid", orderid)
                         order.put("type", "new")
-                        val fromPath: DatabaseReference = FirebaseDatabase.getInstance().getReference().child("Profiles").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Cart")
-                        val toPath: DatabaseReference = FirebaseDatabase.getInstance().getReference().child("Orders").child(orderid)
+                        val fromPath: DatabaseReference = FirebaseDatabase.getInstance().reference.child("Profiles").child(FirebaseAuth.getInstance().currentUser.uid).child("Cart")
+                        val toPath: DatabaseReference = FirebaseDatabase.getInstance().reference.child("Orders").child(orderid)
                         fromPath.addListenerForSingleValueEvent(object : ValueEventListener {
-                            public override fun onDataChange(dataSnapshot: DataSnapshot) {
-                                toPath.child("items").setValue(dataSnapshot.getValue(), object : DatabaseReference.CompletionListener {
-                                    public override fun onComplete(error: DatabaseError?, ref: DatabaseReference) {
-                                        toPath.updateChildren(order).addOnCompleteListener(object : OnCompleteListener<Void?> {
-                                            public override fun onComplete(p0: Task<Void?>) {
-                                                if (p0.isSuccessful()) {
+                            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                toPath.child("items").setValue(dataSnapshot.value
+                                ) { error, ref ->
+                                    toPath.updateChildren(order)
+                                        .addOnCompleteListener(object : OnCompleteListener<Void?> {
+                                            override fun onComplete(p0: Task<Void?>) {
+                                                if (p0.isSuccessful) {
                                                     val co: Checkout = Checkout()
-                                                    val image: Int = R.mipmap.ic_launcher // Can be any drawable
+                                                    val image: Int =
+                                                        R.mipmap.ic_launcher // Can be any drawable
                                                     co.setKeyID("rzp_test_dt2sl2ttn6g114")
                                                     try {
                                                         val options: JSONObject = JSONObject()
@@ -193,7 +195,11 @@ class OrderPaymentDetails : AppCompatActivity(), PaymentResultWithDataListener {
                                                         options.put("amount", t * 100)
                                                         options.put("send_sms_hash", true)
                                                         val preFill: JSONObject = JSONObject()
-                                                        preFill.put("email", snapshot.child("email").getValue(String::class.java))
+                                                        preFill.put(
+                                                            "email",
+                                                            snapshot.child("email")
+                                                                .getValue(String::class.java)
+                                                        )
                                                         preFill.put("contact", phone)
                                                         options.put("prefill", preFill)
                                                         co.open(this@OrderPaymentDetails, options)
@@ -201,30 +207,34 @@ class OrderPaymentDetails : AppCompatActivity(), PaymentResultWithDataListener {
                                                         e.printStackTrace()
                                                     }
                                                 } else {
-                                                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-                                                    binding.progresslayout.setVisibility(View.GONE)
+                                                    window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                                                    binding.progresslayout.visibility = View.GONE
                                                     Sneaker.with(this@OrderPaymentDetails)
-                                                            .setTitle("Some Error Occurred", R.color.white)
-                                                            .setMessage("Please Try Again", R.color.white)
-                                                            .setDuration(2000)
-                                                            .setIcon(R.drawable.delete2, R.color.white)
-                                                            .autoHide(true)
-                                                            .setHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
-                                                            .setCornerRadius(10, 0)
-                                                            .sneak(R.color.teal_200)
+                                                        .setTitle(
+                                                            "Some Error Occurred",
+                                                            R.color.white
+                                                        )
+                                                        .setMessage(
+                                                            "Please Try Again",
+                                                            R.color.white
+                                                        )
+                                                        .setDuration(2000)
+                                                        .setIcon(R.drawable.delete2, R.color.white)
+                                                        .autoHide(true)
+                                                        .setHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
+                                                        .setCornerRadius(10, 0)
+                                                        .sneak(R.color.teal_200)
                                                 }
                                             }
                                         })
-                                    }
                                 }
-                                )
                             }
 
-                            public override fun onCancelled(error: DatabaseError) {}
+                            override fun onCancelled(error: DatabaseError) {}
                         })
                     }
 
-                    public override fun onCancelled(error: DatabaseError) {}
+                    override fun onCancelled(error: DatabaseError) {}
                 })
             }
         })
@@ -232,30 +242,30 @@ class OrderPaymentDetails : AppCompatActivity(), PaymentResultWithDataListener {
 
     override fun onResume() {
         super.onResume()
-        firebaseRecyclerAdapter!!.startListening()
+        firebaseRecyclerAdapter.startListening()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        firebaseRecyclerAdapter!!.stopListening()
+        firebaseRecyclerAdapter.stopListening()
     }
 
-    public override fun onPaymentSuccess(s: String, paymentData: PaymentData) {
+    override fun onPaymentSuccess(s: String, paymentData: PaymentData) {
         val map = mutableMapOf<String?, Any?>()
         map.put("text", "Order Placed")
         map.put("timestamp", ServerValue.TIMESTAMP)
         Log.i("payemnt", paymentData.toString())
         val order = mutableMapOf<String?, Any?>()
         order.put("status", "Payment Success")
-        order.put("razorpay_payment_id", paymentData.getPaymentId())
-        order.put("razorpay_order_id", paymentData.getOrderId())
-        order.put("razorpay_signature", paymentData.getSignature())
-        FirebaseDatabase.getInstance().getReference().child("Orders").child(orderid).child("tracking").child(UUID.randomUUID().toString()).setValue(map)
-        FirebaseDatabase.getInstance().getReference().child("Orders").child(orderid).updateChildren(order).addOnCompleteListener(object : OnCompleteListener<Void?> {
-            public override fun onComplete(task: Task<Void?>) {
-                if (task.isSuccessful()) {
-                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-                    binding.progresslayout.setVisibility(View.GONE)
+        order.put("razorpay_payment_id", paymentData.paymentId)
+        order.put("razorpay_order_id", paymentData.orderId)
+        order.put("razorpay_signature", paymentData.signature)
+        FirebaseDatabase.getInstance().reference.child("Orders").child(orderid).child("tracking").child(UUID.randomUUID().toString()).setValue(map)
+        FirebaseDatabase.getInstance().reference.child("Orders").child(orderid).updateChildren(order).addOnCompleteListener(object : OnCompleteListener<Void?> {
+            override fun onComplete(task: Task<Void?>) {
+                if (task.isSuccessful) {
+                    window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                    binding.progresslayout.visibility = View.GONE
                     Toast.makeText(this@OrderPaymentDetails, "Success", Toast.LENGTH_SHORT).show()
                     val intent: Intent = Intent(this@OrderPaymentDetails, OrderPaymentStatus::class.java)
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -269,17 +279,17 @@ class OrderPaymentDetails : AppCompatActivity(), PaymentResultWithDataListener {
         })
     }
 
-    public override fun onPaymentError(i: Int, s: String, paymentData: PaymentData) {
+    override fun onPaymentError(i: Int, s: String, paymentData: PaymentData) {
         val order = mutableMapOf<String?, Any?>()
         order.put("status", "Payment Failed")
-        FirebaseDatabase.getInstance().getReference().child("Orders").child(orderid).updateChildren(order).addOnCompleteListener(object : OnCompleteListener<Void?> {
-            public override fun onComplete(task: Task<Void?>) {
-                if (task.isSuccessful()) {
+        FirebaseDatabase.getInstance().reference.child("Orders").child(orderid).updateChildren(order).addOnCompleteListener(object : OnCompleteListener<Void?> {
+            override fun onComplete(task: Task<Void?>) {
+                if (task.isSuccessful) {
                 }
             }
         })
-        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-        binding.progresslayout.setVisibility(View.GONE)
+        window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+        binding.progresslayout.visibility = View.GONE
         if (i == Checkout.PAYMENT_CANCELED) {
             DialogSheet(this@OrderPaymentDetails, false)
                     .setTitle("Payment Failed")
@@ -290,7 +300,7 @@ class OrderPaymentDetails : AppCompatActivity(), PaymentResultWithDataListener {
                     .setMessageTextSize(14) // In SP
                     .setCancelable(false)
                     .setPositiveButton("Okay", object : DialogSheet.OnPositiveClickListener {
-                        public override fun onClick(view: View?) {}
+                        override fun onClick(view: View?) {}
                     })
                     .setRoundedCorners(true) // Default value is true
                     .setBackgroundColor(Color.WHITE) // Your custom background color
@@ -306,7 +316,7 @@ class OrderPaymentDetails : AppCompatActivity(), PaymentResultWithDataListener {
                     .setIconResource(R.drawable.info)
                     .setCancelable(false)
                     .setPositiveButton("Okay", object : DialogSheet.OnPositiveClickListener {
-                        public override fun onClick(view: View?) {}
+                        override fun onClick(view: View?) {}
                     })
                     .setRoundedCorners(true) // Default value is true
                     .setBackgroundColor(Color.WHITE) // Your custom background color
@@ -322,7 +332,7 @@ class OrderPaymentDetails : AppCompatActivity(), PaymentResultWithDataListener {
                     .setIconResource(R.drawable.info)
                     .setCancelable(false)
                     .setPositiveButton("Okay", object : DialogSheet.OnPositiveClickListener {
-                        public override fun onClick(view: View?) {}
+                        override fun onClick(view: View?) {}
                     })
                     .setRoundedCorners(true) // Default value is true
                     .setBackgroundColor(Color.WHITE) // Your custom background color
@@ -338,7 +348,7 @@ class OrderPaymentDetails : AppCompatActivity(), PaymentResultWithDataListener {
                     .setCancelable(false)
                     .setIconResource(R.drawable.info)
                     .setPositiveButton("Okay", object : DialogSheet.OnPositiveClickListener {
-                        public override fun onClick(view: View?) {}
+                        override fun onClick(view: View?) {}
                     })
                     .setRoundedCorners(true) // Default value is true
                     .setBackgroundColor(Color.WHITE) // Your custom background color
@@ -347,7 +357,7 @@ class OrderPaymentDetails : AppCompatActivity(), PaymentResultWithDataListener {
         }
     }
 
-    inner class ItemViewHolder constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var name: TextView
         var size: TextView
         var price: TextView
@@ -390,19 +400,19 @@ class OrderPaymentDetails : AppCompatActivity(), PaymentResultWithDataListener {
 
     private fun checkOrder(): String {
         orderid = getAlphaNumericString(15)
-        FirebaseDatabase.getInstance().getReference().child("Orders").addListenerForSingleValueEvent(object : ValueEventListener {
-            public override fun onDataChange(snapshot: DataSnapshot) {
+        FirebaseDatabase.getInstance().reference.child("Orders").addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.child(orderid).exists()) {
                     checkOrder()
                 }
             }
 
-            public override fun onCancelled(error: DatabaseError) {}
+            override fun onCancelled(error: DatabaseError) {}
         })
         return orderid
     }
 
-    public override fun onBackPressed() {
+    override fun onBackPressed() {
         super.onBackPressed()
         CustomIntent.customType(this@OrderPaymentDetails, "right-to-left")
     }

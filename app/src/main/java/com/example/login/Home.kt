@@ -6,7 +6,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import android.view.*
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import com.example.login.Fragments.*
+import com.example.login.fragments.*
 import com.example.login.databinding.ActivityHomeBinding
 import com.example.login.dataclass.SliderItem
 import java.util.ArrayList
@@ -14,10 +14,10 @@ import java.util.ArrayList
 class Home : AppCompatActivity() {
 
 
-    @kotlin.jvm.JvmField
+    @JvmField
     var cat: String = ""
 
-    @kotlin.jvm.JvmField
+    @JvmField
     var posi: Int = 0
     lateinit var items: ArrayList<SliderItem>
     lateinit var binding: ActivityHomeBinding
@@ -34,7 +34,7 @@ class Home : AppCompatActivity() {
                 .replace(R.id.cons, fragment, "Home")
                 .commit()
         binding.bottomNavigation.setOnNavigationItemSelectedListener(object : BottomNavigationView.OnNavigationItemSelectedListener {
-            public override fun onNavigationItemSelected(item: MenuItem): Boolean {
+            override fun onNavigationItemSelected(item: MenuItem): Boolean {
                 when (item.getItemId()) {
                     R.id.page_1 -> {
                         val fragment: Fragment = HomeFragment()

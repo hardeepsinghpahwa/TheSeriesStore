@@ -26,14 +26,14 @@ class MainActivity : AppCompatActivity() {
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         binding.executePendingBindings()
-        binding.login.setOnClickListener(object : View.OnClickListener {
-            override fun onClick(v: View) {
-                startActivity(Intent(this@MainActivity, Login::class.java))
-                CustomIntent.customType(this@MainActivity, "fadein-to-fadeout")
-            }
-        })
-        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-            FirebaseDatabase.getInstance().getReference().child("Profiles").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).addListenerForSingleValueEvent(object : ValueEventListener {
+        binding.login.setOnClickListener {
+            startActivity(Intent(this@MainActivity, Login::class.java))
+            CustomIntent.customType(this@MainActivity, "fadein-to-fadeout")
+        }
+        if (FirebaseAuth.getInstance().currentUser != null) {
+            FirebaseDatabase.getInstance().reference.child("Profiles").child(
+                FirebaseAuth.getInstance().currentUser!!.uid
+            ).addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {
                         if (snapshot.child("name").exists()) {
@@ -62,15 +62,11 @@ class MainActivity : AppCompatActivity() {
                 public override fun onCancelled(error: DatabaseError) {}
             })
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-                    WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
+        window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
+        binding.newlogin.setOnClickListener {
+            startActivity(Intent(this@MainActivity, NewLogin::class.java))
+            CustomIntent.customType(this@MainActivity, "fadein-to-fadeout")
         }
-        binding.newlogin.setOnClickListener(object : View.OnClickListener {
-            public override fun onClick(v: View) {
-                startActivity(Intent(this@MainActivity, NewLogin::class.java))
-                CustomIntent.customType(this@MainActivity, "fadein-to-fadeout")
-            }
-        })
     }
 }

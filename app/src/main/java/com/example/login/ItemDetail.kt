@@ -65,53 +65,54 @@ class ItemDetail : AppCompatActivity() {
         })
 
         //id = "01";
-        id = getIntent().getStringExtra("id")!!
-        FirebaseDatabase.getInstance().getReference().child("Items").child((id)!!).addListenerForSingleValueEvent(object : ValueEventListener {
+        id = intent.getStringExtra("id")!!
+        FirebaseDatabase.getInstance().reference.child("Items").child((id)).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-                binding.progresslayout.setVisibility(View.GONE)
-                binding.name.setText(Objects.requireNonNull(snapshot).child("name").getValue(String::class.java))
+                window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                binding.progresslayout.visibility = View.GONE
+                binding.name.text = Objects.requireNonNull(snapshot).child("name").getValue(String::class.java)
                 val format: Format = NumberFormat.getCurrencyInstance(Locale("en", "in"))
-                binding.price.setText(format.format(BigDecimal(Objects.requireNonNull(snapshot).child("price").getValue(String::class.java))))
-                Glide.with(getApplicationContext()).load(Objects.requireNonNull(snapshot).child("image").getValue(String::class.java)).into(binding.image)
+                binding.price.text =
+                    format.format(BigDecimal(Objects.requireNonNull(snapshot).child("price").getValue(String::class.java)))
+                Glide.with(applicationContext).load(Objects.requireNonNull(snapshot).child("image").getValue(String::class.java)).into(binding.image)
                 YoYo.with(Techniques.FadeInDown)
                         .duration(500)
                         .playOn(binding.image)
                 currentimage = snapshot.child("image").getValue(String::class.java)!!
-                binding.product.setText(Objects.requireNonNull(snapshot).child("product").getValue(String::class.java))
+                binding.product.text = Objects.requireNonNull(snapshot).child("product").getValue(String::class.java)
                 if (snapshot.child("detail1").getValue(String::class.java) != null) {
-                    binding.detail1.setText(snapshot.child("detail1").getValue(String::class.java))
+                    binding.detail1.text = snapshot.child("detail1").getValue(String::class.java)
                 } else {
-                    binding.detail1.setVisibility(View.GONE)
+                    binding.detail1.visibility = View.GONE
                 }
                 if (snapshot.child("detail2").getValue(String::class.java) != null) {
-                    binding.detail2.setText(snapshot.child("detail2").getValue(String::class.java))
+                    binding.detail2.text = snapshot.child("detail2").getValue(String::class.java)
                 } else {
-                    binding.detail2.setVisibility(View.GONE)
+                    binding.detail2.visibility = View.GONE
                 }
                 if (snapshot.child("detail3").getValue(String::class.java) != null) {
-                    binding.detail3.setText(snapshot.child("detail3").getValue(String::class.java))
+                    binding.detail3.text = snapshot.child("detail3").getValue(String::class.java)
                 } else {
-                    binding.detail3.setVisibility(View.GONE)
+                    binding.detail3.visibility = View.GONE
                 }
                 if (snapshot.child("detail4").getValue(String::class.java) != null) {
-                    binding.detail4.setText(snapshot.child("detail4").getValue(String::class.java))
+                    binding.detail4.text = snapshot.child("detail4").getValue(String::class.java)
                 } else {
-                    binding.detail4.setVisibility(View.GONE)
+                    binding.detail4.visibility = View.GONE
                 }
                 binding.wishlistitem.setOnClickListener {
                         run {
-                            getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                            window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                                     WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
                             binding.progresslayout.bringToFront()
-                            binding.progresslayout.setVisibility(View.VISIBLE)
-                            FirebaseDatabase.getInstance().getReference().child("Profiles").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Wishlist").addListenerForSingleValueEvent(object : ValueEventListener {
-                                public override fun onDataChange(snapshot: DataSnapshot) {
+                            binding.progresslayout.visibility = View.VISIBLE
+                            FirebaseDatabase.getInstance().reference.child("Profiles").child(FirebaseAuth.getInstance().currentUser.uid).child("Wishlist").addListenerForSingleValueEvent(object : ValueEventListener {
+                                override fun onDataChange(snapshot: DataSnapshot) {
                                     count = 0
-                                    for (dataSnapshot: DataSnapshot in snapshot.getChildren()) {
+                                    for (dataSnapshot: DataSnapshot in snapshot.children) {
                                         if ((dataSnapshot.child("id").getValue(String::class.java) == id) && (dataSnapshot.child("colorcode").getValue(String::class.java) == colorcode) && (dataSnapshot.child("size").getValue(String::class.java) == size)) {
-                                            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-                                            binding.progresslayout.setVisibility(View.GONE)
+                                            window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                                            binding.progresslayout.visibility = View.GONE
                                             count++
                                             Sneaker.with(this@ItemDetail)
                                                     .setTitle("Item Already In Wishlist", R.color.white)
@@ -122,7 +123,7 @@ class ItemDetail : AppCompatActivity() {
                                                     .setHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
                                                     .setCornerRadius(10, 0)
                                                     .setOnSneakerClickListener(object : OnSneakerClickListener {
-                                                        public override fun onSneakerClick(view: View) {
+                                                        override fun onSneakerClick(view: View) {
                                                             startActivity(Intent(this@ItemDetail, Cart::class.java))
                                                             CustomIntent.customType(this@ItemDetail, "fadein-to-fadeout")
                                                         }
@@ -139,11 +140,11 @@ class ItemDetail : AppCompatActivity() {
                                         map.put("size", size)
                                         map.put("sizename", sizename)
                                         map.put("image", currentimage)
-                                        FirebaseDatabase.getInstance().getReference().child("Profiles").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Wishlist").child(UUID.randomUUID().toString()).setValue(map).addOnCompleteListener(object : OnCompleteListener<Void?> {
-                                            public override fun onComplete(task: Task<Void?>) {
-                                                if (task.isSuccessful()) {
-                                                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-                                                    binding.progresslayout.setVisibility(View.GONE)
+                                        FirebaseDatabase.getInstance().reference.child("Profiles").child(FirebaseAuth.getInstance().currentUser.uid).child("Wishlist").child(UUID.randomUUID().toString()).setValue(map).addOnCompleteListener(object : OnCompleteListener<Void?> {
+                                            override fun onComplete(task: Task<Void?>) {
+                                                if (task.isSuccessful) {
+                                                    window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                                                    binding.progresslayout.visibility = View.GONE
                                                     Toast.makeText(this@ItemDetail, "Added", Toast.LENGTH_SHORT).show()
                                                     Sneaker.with(this@ItemDetail)
                                                             .setTitle("Item Added To Wishlist", R.color.white)
@@ -154,15 +155,15 @@ class ItemDetail : AppCompatActivity() {
                                                             .setHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
                                                             .setCornerRadius(10, 0)
                                                             .setOnSneakerClickListener(object : OnSneakerClickListener {
-                                                                public override fun onSneakerClick(view: View) {
+                                                                override fun onSneakerClick(view: View) {
                                                                     startActivity(Intent(this@ItemDetail, Wishlist::class.java))
                                                                     CustomIntent.customType(this@ItemDetail, "fadein-to-fadeout")
                                                                 }
                                                             })
                                                             .sneak(R.color.green)
                                                 } else {
-                                                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-                                                    binding.progresslayout.setVisibility(View.GONE)
+                                                    window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                                                    binding.progresslayout.visibility = View.GONE
                                                     Sneaker.with(this@ItemDetail)
                                                             .setTitle("Error Adding Item To Wishlist", R.color.white)
                                                             .setMessage("Please Try Again")
@@ -178,24 +179,24 @@ class ItemDetail : AppCompatActivity() {
                                     }
                                 }
 
-                                public override fun onCancelled(error: DatabaseError) {}
+                                override fun onCancelled(error: DatabaseError) {}
                             })
                         }
                 }
 
                 binding.addtocart.setOnClickListener(object : View.OnClickListener {
-                    public override fun onClick(v: View) {
-                        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                    override fun onClick(v: View) {
+                        window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
                         binding.progresslayout.bringToFront()
-                        binding.progresslayout.setVisibility(View.VISIBLE)
-                        FirebaseDatabase.getInstance().getReference().child("Profiles").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Cart").addListenerForSingleValueEvent(object : ValueEventListener {
-                            public override fun onDataChange(snapshot: DataSnapshot) {
+                        binding.progresslayout.visibility = View.VISIBLE
+                        FirebaseDatabase.getInstance().reference.child("Profiles").child(FirebaseAuth.getInstance().currentUser.uid).child("Cart").addListenerForSingleValueEvent(object : ValueEventListener {
+                            override fun onDataChange(snapshot: DataSnapshot) {
                                 count = 0
-                                for (dataSnapshot: DataSnapshot in snapshot.getChildren()) {
+                                for (dataSnapshot: DataSnapshot in snapshot.children) {
                                     if ((dataSnapshot.child("id").getValue(String::class.java) == id) && (dataSnapshot.child("colorcode").getValue(String::class.java) == colorcode) && (dataSnapshot.child("size").getValue(String::class.java) == size)) {
-                                        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-                                        binding.progresslayout.setVisibility(View.GONE)
+                                        window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                                        binding.progresslayout.visibility = View.GONE
                                         count++
                                         Sneaker.with(this@ItemDetail)
                                                 .setTitle("Item Already In Cart", R.color.white)
@@ -206,7 +207,7 @@ class ItemDetail : AppCompatActivity() {
                                                 .setHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
                                                 .setCornerRadius(10, 0)
                                                 .setOnSneakerClickListener(object : OnSneakerClickListener {
-                                                    public override fun onSneakerClick(view: View) {
+                                                    override fun onSneakerClick(view: View) {
                                                         startActivity(Intent(this@ItemDetail, Cart::class.java))
                                                         CustomIntent.customType(this@ItemDetail, "fadein-to-fadeout")
                                                     }
@@ -224,11 +225,11 @@ class ItemDetail : AppCompatActivity() {
                                     map.put("quantity", 1)
                                     map.put("sizename", sizename)
                                     map.put("image", currentimage)
-                                    FirebaseDatabase.getInstance().getReference().child("Profiles").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Cart").child(UUID.randomUUID().toString()).setValue(map).addOnCompleteListener(object : OnCompleteListener<Void?> {
-                                        public override fun onComplete(task: Task<Void?>) {
-                                            if (task.isSuccessful()) {
-                                                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-                                                binding.progresslayout.setVisibility(View.GONE)
+                                    FirebaseDatabase.getInstance().reference.child("Profiles").child(FirebaseAuth.getInstance().currentUser.uid).child("Cart").child(UUID.randomUUID().toString()).setValue(map).addOnCompleteListener(object : OnCompleteListener<Void?> {
+                                        override fun onComplete(task: Task<Void?>) {
+                                            if (task.isSuccessful) {
+                                                window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                                                binding.progresslayout.visibility = View.GONE
                                                 Toast.makeText(this@ItemDetail, "Added", Toast.LENGTH_SHORT).show()
                                                 Sneaker.with(this@ItemDetail)
                                                         .setTitle("Item Added To Cart", R.color.white)
@@ -239,15 +240,15 @@ class ItemDetail : AppCompatActivity() {
                                                         .setHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
                                                         .setCornerRadius(10, 0)
                                                         .setOnSneakerClickListener(object : OnSneakerClickListener {
-                                                            public override fun onSneakerClick(view: View) {
+                                                            override fun onSneakerClick(view: View) {
                                                                 startActivity(Intent(this@ItemDetail, Cart::class.java))
                                                                 CustomIntent.customType(this@ItemDetail, "fadein-to-fadeout")
                                                             }
                                                         })
                                                         .sneak(R.color.green)
                                             } else {
-                                                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-                                                binding.progresslayout.setVisibility(View.GONE)
+                                                window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                                                binding.progresslayout.visibility = View.GONE
                                                 Sneaker.with(this@ItemDetail)
                                                         .setTitle("Error Adding Item To Cart", R.color.white)
                                                         .setMessage("Please Try Again")
@@ -263,18 +264,18 @@ class ItemDetail : AppCompatActivity() {
                                 }
                             }
 
-                            public override fun onCancelled(error: DatabaseError) {}
+                            override fun onCancelled(error: DatabaseError) {}
                         })
                     }
                 })
             }
 
-            public override fun onCancelled(error: DatabaseError) {}
+            override fun onCancelled(error: DatabaseError) {}
         })
-        val query: Query = FirebaseDatabase.getInstance().getReference().child("Items").child((id)!!).child("colors")
+        val query: Query = FirebaseDatabase.getInstance().reference.child("Items").child((id)).child("colors")
         val options: FirebaseRecyclerOptions<colordetails> = FirebaseRecyclerOptions.Builder<colordetails>()
                 .setQuery(query, object : SnapshotParser<colordetails?> {
-                    public override fun parseSnapshot(snapshot: DataSnapshot): colordetails {
+                    override fun parseSnapshot(snapshot: DataSnapshot): colordetails {
                         return colordetails(snapshot.child("colorcode").getValue(String::class.java), snapshot.child("name").getValue(String::class.java))
                     }
                 }).build()
@@ -285,26 +286,28 @@ class ItemDetail : AppCompatActivity() {
                 if (position == 0) {
                     colorcode = model.colorcode!!
                     colorname = model.name!!
-                    holder.colorlayout.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.greystroke))
+                    holder.colorlayout.background = ContextCompat.getDrawable(applicationContext, R.drawable.greystroke)
                 }
                 holder.itemView.setOnClickListener(object : View.OnClickListener {
-                    public override fun onClick(v: View) {
-                        colorcode = firebaseRecyclerAdapter!!.getItem(position).colorcode!!
-                        colorname = firebaseRecyclerAdapter!!.getItem(position).name!!
-                        for (i in 0 until firebaseRecyclerAdapter!!.getItemCount()) {
+                    override fun onClick(v: View) {
+                        colorcode = firebaseRecyclerAdapter.getItem(position).colorcode!!
+                        colorname = firebaseRecyclerAdapter.getItem(position).name!!
+                        for (i in 0 until firebaseRecyclerAdapter.itemCount) {
                             if (position == i) {
-                                val view: View? = binding.colorsrecyview.getLayoutManager()!!.findViewByPosition(i)
+                                val view: View? = binding.colorsrecyview.layoutManager!!.findViewByPosition(i)
                                 if (view != null) {
                                     val relativeLayout: RelativeLayout? = view.findViewById(R.id.colorlayout)
-                                    if (relativeLayout != null) relativeLayout.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.greystroke))
+                                    if (relativeLayout != null) relativeLayout.background =
+                                        ContextCompat.getDrawable(
+                                            applicationContext, R.drawable.greystroke)
                                 }
-                                FirebaseDatabase.getInstance().getReference().child("Items").child((id)!!).child("images").addListenerForSingleValueEvent(object : ValueEventListener {
-                                    public override fun onDataChange(snapshot: DataSnapshot) {
+                                FirebaseDatabase.getInstance().reference.child("Items").child((id)).child("images").addListenerForSingleValueEvent(object : ValueEventListener {
+                                    override fun onDataChange(snapshot: DataSnapshot) {
                                         no = 0
-                                        for (dataSnapshot: DataSnapshot in snapshot.getChildren()) {
+                                        for (dataSnapshot: DataSnapshot in snapshot.children) {
                                             if (no == position) {
                                                 currentimage = dataSnapshot.child("image").getValue(String::class.java)!!
-                                                Glide.with(getApplicationContext()).load(dataSnapshot.child("image").getValue(String::class.java)).into(binding.image)
+                                                Glide.with(applicationContext).load(dataSnapshot.child("image").getValue(String::class.java)).into(binding.image)
                                                 YoYo.with(Techniques.FadeInDown)
                                                         .duration(500)
                                                         .playOn(binding.image)
@@ -314,13 +317,13 @@ class ItemDetail : AppCompatActivity() {
                                         }
                                     }
 
-                                    public override fun onCancelled(error: DatabaseError) {}
+                                    override fun onCancelled(error: DatabaseError) {}
                                 })
                             } else {
-                                val view: View? = binding.colorsrecyview.getLayoutManager()!!.findViewByPosition(i)
+                                val view: View? = binding.colorsrecyview.layoutManager!!.findViewByPosition(i)
                                 if (view != null) {
                                     val relativeLayout: RelativeLayout? = view.findViewById(R.id.colorlayout)
-                                    if (relativeLayout != null) relativeLayout.setBackground(null)
+                                    if (relativeLayout != null) relativeLayout.background = null
                                 }
                             }
                         }
@@ -328,73 +331,82 @@ class ItemDetail : AppCompatActivity() {
                 })
             }
 
-            public override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ColorViewHolder {
-                val view: View = LayoutInflater.from(parent.getContext()).inflate(R.layout.coloritem, parent, false)
+            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ColorViewHolder {
+                val view: View = LayoutInflater.from(parent.context).inflate(R.layout.coloritem, parent, false)
                 return ColorViewHolder(view)
             }
         }
-        binding.colorsrecyview.setLayoutManager(LinearLayoutManager(getApplicationContext(), RecyclerView.HORIZONTAL, false))
-        binding.colorsrecyview.setAdapter(firebaseRecyclerAdapter)
-        val query2: Query = FirebaseDatabase.getInstance().getReference().child("Items").child((id)!!).child("sizes")
+        binding.colorsrecyview.layoutManager =
+            LinearLayoutManager(applicationContext, RecyclerView.HORIZONTAL, false)
+        binding.colorsrecyview.adapter = firebaseRecyclerAdapter
+        val query2: Query = FirebaseDatabase.getInstance().reference.child("Items").child((id)).child("sizes")
         val options2: FirebaseRecyclerOptions<colordetails> = FirebaseRecyclerOptions.Builder<colordetails>()
-                .setQuery(query2, object : SnapshotParser<colordetails?> {
-                    public override fun parseSnapshot(snapshot: DataSnapshot): colordetails {
-                        return colordetails(snapshot.child("size").getValue(String::class.java), snapshot.child("name").getValue(String::class.java))
-                    }
-                }).build()
+                .setQuery(query2
+                ) { snapshot ->
+                    colordetails(
+                        snapshot.child("size").getValue(String::class.java),
+                        snapshot.child("name").getValue(String::class.java)
+                    )
+                }.build()
         firebaseRecyclerAdapter2 = object : FirebaseRecyclerAdapter<colordetails, SizeViewHolder>(options2) {
             override fun onBindViewHolder(holder: SizeViewHolder, @SuppressLint("RecyclerView") position: Int, model: colordetails) {
-                holder.size.setText(model.colorcode)
+                holder.size.text = model.colorcode
                 if (position == 0) {
                     size = model.colorcode!!
                     sizename = model.name!!
-                    holder.colorlayout.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.greystroke))
+                    holder.colorlayout.background = ContextCompat.getDrawable(applicationContext, R.drawable.greystroke)
                 }
-                holder.itemView.setOnClickListener(object : View.OnClickListener {
-                    public override fun onClick(v: View) {
-                        size = firebaseRecyclerAdapter2!!.getItem(position).colorcode!!
-                        sizename = firebaseRecyclerAdapter2!!.getItem(position).name!!
-                        for (i in 0 until firebaseRecyclerAdapter2!!.getItemCount()) {
-                            if (position == i) {
-                                val view: View? = binding.sizerecyview.getLayoutManager()!!.findViewByPosition(i)
-                                if (view != null) {
-                                    val relativeLayout: RelativeLayout? = view.findViewById(R.id.colorlayout)
-                                    if (relativeLayout != null) relativeLayout.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.greystroke))
-                                }
-                            } else {
-                                val view: View? = binding.sizerecyview.getLayoutManager()!!.findViewByPosition(i)
-                                if (view != null) {
-                                    val relativeLayout: RelativeLayout? = view.findViewById(R.id.colorlayout)
-                                    if (relativeLayout != null) relativeLayout.setBackground(null)
-                                }
+                holder.itemView.setOnClickListener {
+                    size = firebaseRecyclerAdapter2.getItem(position).colorcode!!
+                    sizename = firebaseRecyclerAdapter2.getItem(position).name!!
+                    for (i in 0 until firebaseRecyclerAdapter2.itemCount) {
+                        if (position == i) {
+                            val view: View? =
+                                binding.sizerecyview.layoutManager!!.findViewByPosition(i)
+                            if (view != null) {
+                                val relativeLayout: RelativeLayout? =
+                                    view.findViewById(R.id.colorlayout)
+                                if (relativeLayout != null) relativeLayout.background =
+                                    ContextCompat.getDrawable(
+                                        applicationContext, R.drawable.greystroke
+                                    )
+                            }
+                        } else {
+                            val view: View? =
+                                binding.sizerecyview.layoutManager!!.findViewByPosition(i)
+                            if (view != null) {
+                                val relativeLayout: RelativeLayout? =
+                                    view.findViewById(R.id.colorlayout)
+                                if (relativeLayout != null) relativeLayout.background = null
                             }
                         }
                     }
-                })
+                }
             }
 
-            public override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SizeViewHolder {
-                val view: View = LayoutInflater.from(parent.getContext()).inflate(R.layout.sizeitem, parent, false)
+            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SizeViewHolder {
+                val view: View = LayoutInflater.from(parent.context).inflate(R.layout.sizeitem, parent, false)
                 return SizeViewHolder(view)
             }
         }
-        binding.sizerecyview.setLayoutManager(LinearLayoutManager(getApplicationContext(), RecyclerView.HORIZONTAL, false))
-        binding.sizerecyview.setAdapter(firebaseRecyclerAdapter2)
+        binding.sizerecyview.layoutManager =
+            LinearLayoutManager(applicationContext, RecyclerView.HORIZONTAL, false)
+        binding.sizerecyview.adapter = firebaseRecyclerAdapter2
     }
 
     override fun onResume() {
         super.onResume()
-        firebaseRecyclerAdapter!!.startListening()
-        firebaseRecyclerAdapter2!!.startListening()
+        firebaseRecyclerAdapter.startListening()
+        firebaseRecyclerAdapter2.startListening()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        firebaseRecyclerAdapter!!.stopListening()
-        firebaseRecyclerAdapter2!!.startListening()
+        firebaseRecyclerAdapter.stopListening()
+        firebaseRecyclerAdapter2.startListening()
     }
 
-    inner class ColorViewHolder constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ColorViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var colorlayout: RelativeLayout
         var color: RelativeLayout
 
@@ -404,7 +416,7 @@ class ItemDetail : AppCompatActivity() {
         }
     }
 
-    inner class SizeViewHolder constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class SizeViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var colorlayout: RelativeLayout
         var size: TextView
 
@@ -414,7 +426,7 @@ class ItemDetail : AppCompatActivity() {
         }
     }
 
-    public override fun onBackPressed() {
+    override fun onBackPressed() {
         super.onBackPressed()
         CustomIntent.customType(this@ItemDetail, "right-to-left")
     }

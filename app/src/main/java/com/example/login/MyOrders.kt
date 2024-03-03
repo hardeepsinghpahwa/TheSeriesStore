@@ -12,7 +12,7 @@ import android.content.Intent
 import maes.tech.intentanim.CustomIntent
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.login.Fragments.itemdetails
+import com.example.login.fragments.itemdetails
 import com.bumptech.glide.Glide
 import android.graphics.Bitmap
 import android.view.*

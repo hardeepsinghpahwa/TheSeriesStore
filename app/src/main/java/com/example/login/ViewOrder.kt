@@ -45,7 +45,8 @@ class ViewOrder : AppCompatActivity() {
         FirebaseDatabase.getInstance().getReference().child("Orders").child((id)!!).addListenerForSingleValueEvent(object : ValueEventListener {
             public override fun onDataChange(snapshot: DataSnapshot) {
                 val format: Format = NumberFormat.getCurrencyInstance(Locale("en", "in"))
-                binding.total.setText(format.format(BigDecimal(Objects.requireNonNull(snapshot).child("price").getValue(Long::class.java).toString())))
+                binding.total.text =
+                    format.format(BigDecimal(Objects.requireNonNull(snapshot).child("price").getValue(Long::class.java).toString()))
                 //                subtotal.setText(format.format(new BigDecimal("")));
                 binding.address.setText(snapshot.child("name").getValue(String::class.java) + "\n" + snapshot.child("phone").getValue(String::class.java) + "\n" + snapshot.child("address").getValue(String::class.java))
                 snapshot.child("items").getRef().addListenerForSingleValueEvent(object : ValueEventListener {
@@ -55,7 +56,7 @@ class ViewOrder : AppCompatActivity() {
                             products.add((ite))
                         }
                         val adapter: YourAdapter = YourAdapter(products)
-                        pluto.create(adapter, 2000, getLifecycle())
+                        pluto.create(adapter, 2000, lifecycle)
                         pluto.setCustomIndicator(findViewById(R.id.indicator))
                         pluto.setDuration(5000)
                         pluto.stopAutoCycle()

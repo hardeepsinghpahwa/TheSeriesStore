@@ -1,4 +1,4 @@
-package com.example.login.Fragments
+package com.example.login.fragments
 
 class itemdetails {
     var image: String? = null

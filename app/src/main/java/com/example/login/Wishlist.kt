@@ -14,7 +14,7 @@ import dev.shreyaspatil.MaterialDialog.MaterialDialog
 import dev.shreyaspatil.MaterialDialog.AbstractDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.cardview.widget.CardView
-import com.example.login.Fragments.itemdetails
+import com.example.login.fragments.itemdetails
 import com.bumptech.glide.Glide
 import android.os.*
 import android.view.*

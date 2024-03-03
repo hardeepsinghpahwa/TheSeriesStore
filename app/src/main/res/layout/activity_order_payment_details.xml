@@ -177,7 +177,7 @@
                         android:id="@+id/shipping"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="TextView"
+                        android:text="FREE"
                         android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="@+id/textView25"
                         app:layout_constraintEnd_toEndOf="@+id/subtotal"
