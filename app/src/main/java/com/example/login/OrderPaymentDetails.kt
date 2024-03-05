@@ -38,7 +38,7 @@ import java.text.NumberFormat
 import java.util.*
 
 class OrderPaymentDetails : AppCompatActivity(), PaymentResultWithDataListener {
-    lateinit var firebaseRecyclerAdapter: FirebaseRecyclerAdapter<cartitemdetails, ItemViewHolder>
+    private lateinit var firebaseRecyclerAdapter: FirebaseRecyclerAdapter<cartitemdetails, ItemViewHolder>
     lateinit var name: String
     lateinit var phone: String
     lateinit var addresstext: String
@@ -59,7 +59,7 @@ class OrderPaymentDetails : AppCompatActivity(), PaymentResultWithDataListener {
         checkOrder()
         binding.back.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View) {
-                onBackPressed()
+                onBackPressedDispatcher.onBackPressed()
             }
         })
         name = intent.getStringExtra("name")!!

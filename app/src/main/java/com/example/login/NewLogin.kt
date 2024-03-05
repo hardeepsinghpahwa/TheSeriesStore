@@ -35,24 +35,24 @@ class NewLogin : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_new_login)
         binding.executePendingBindings()
         findViewById<View>(R.id.back).setOnClickListener(object : View.OnClickListener {
-            public override fun onClick(v: View) {
+            override fun onClick(v: View) {
                 onBackPressed()
             }
         })
         binding.proceed.setOnClickListener(object : View.OnClickListener {
-            public override fun onClick(v: View) {
-                if (binding.phone.getText()!!.length == 14) {
-                    binding.progressbar2.setVisibility(View.VISIBLE)
-                    FirebaseDatabase.getInstance().getReference().child("Profiles").addListenerForSingleValueEvent(object : ValueEventListener {
-                        public override fun onDataChange(snapshot: DataSnapshot) {
+            override fun onClick(v: View) {
+                if (binding.phone.text!!.length == 14) {
+                    binding.progressbar2.visibility = View.VISIBLE
+                    FirebaseDatabase.getInstance().reference.child("Profiles").addListenerForSingleValueEvent(object : ValueEventListener {
+                        override fun onDataChange(snapshot: DataSnapshot) {
                             i = 0
-                            for (dataSnapshot: DataSnapshot in snapshot.getChildren()) {
-                                if ((dataSnapshot.child("phone").getValue(String::class.java) == binding.phone.getText().toString().substring(4))) {
+                            for (dataSnapshot: DataSnapshot in snapshot.children) {
+                                if ((dataSnapshot.child("phone").getValue(String::class.java) == binding.phone.text.toString().substring(4))) {
                                     i++
                                 }
                             }
                             if (i > 0) {
-                                binding.progressbar2.setVisibility(View.GONE)
+                                binding.progressbar2.visibility = View.GONE
                                 Sneaker.with(this@NewLogin)
                                         .setTitle("Phone Number Already Registered", R.color.white)
                                         .setMessage("Please Sign In Instead", R.color.white)
@@ -70,15 +70,15 @@ class NewLogin : AppCompatActivity() {
                                     }
                                 }, 2000);*/
                             } else {
-                                binding.progressbar2.setVisibility(View.GONE)
+                                binding.progressbar2.visibility = View.GONE
                                 val intent: Intent = Intent(this@NewLogin, VerifyOtp::class.java)
-                                intent.putExtra("phone", binding.phone.getText().toString().substring(4))
+                                intent.putExtra("phone", binding.phone.text.toString().substring(4))
                                 startActivity(intent)
                                 CustomIntent.customType(this@NewLogin, "left-to-right")
                             }
                         }
 
-                        public override fun onCancelled(error: DatabaseError) {}
+                        override fun onCancelled(error: DatabaseError) {}
                     })
                 } else {
                     //MDToast.makeText(NewLogin.this, "Enter a valid phone number", MDToast.LENGTH_SHORT, MDToast.TYPE_ERROR).show();
@@ -95,38 +95,38 @@ class NewLogin : AppCompatActivity() {
             }
         })
         binding.cons.setOnTouchListener(object : OnTouchListener {
-            public override fun onTouch(view: View, motionEvent: MotionEvent): Boolean {
+            override fun onTouch(view: View, motionEvent: MotionEvent): Boolean {
                 val inputMethodManager: InputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-                inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0)
+                inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
                 binding.phone.clearFocus()
                 return false
             }
         })
-        binding.phone.setOnFocusChangeListener(object : OnFocusChangeListener {
-            public override fun onFocusChange(v: View, hasFocus: Boolean) {
+        binding.phone.onFocusChangeListener = object : OnFocusChangeListener {
+            override fun onFocusChange(v: View, hasFocus: Boolean) {
                 if (hasFocus) {
-                    binding.phone.setHint("")
+                    binding.phone.hint = ""
                     binding.phone.setText("+91 ")
-                    Selection.setSelection(binding.phone.getText(), binding.phone.getText()!!.length)
-                } else binding.phone.setHint("Enter Phone Number")
+                    Selection.setSelection(binding.phone.text, binding.phone.text!!.length)
+                } else binding.phone.hint = "Enter Phone Number"
             }
-        })
+        }
         binding.phone.addTextChangedListener(object : TextWatcher {
-            public override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
-            public override fun beforeTextChanged(s: CharSequence, start: Int, count: Int,
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int,
                                                   after: Int) {
             }
 
-            public override fun afterTextChanged(s: Editable) {
+            override fun afterTextChanged(s: Editable) {
                 if (!s.toString().startsWith("+91 ")) {
                     binding.phone.setText("+91 ")
-                    Selection.setSelection(binding.phone.getText(), binding.phone.getText()!!.length)
+                    Selection.setSelection(binding.phone.text, binding.phone.text!!.length)
                 }
             }
         })
     }
 
-    public override fun onBackPressed() {
+    override fun onBackPressed() {
         super.onBackPressed()
         CustomIntent.customType(this@NewLogin, "fadein-to-fadeout")
     }

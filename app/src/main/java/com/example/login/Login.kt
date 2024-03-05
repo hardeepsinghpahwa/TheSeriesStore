@@ -36,7 +36,7 @@ class Login : AppCompatActivity() {
 
         findViewById<View>(R.id.back).setOnClickListener(object : View.OnClickListener {
             public override fun onClick(v: View) {
-                onBackPressed()
+                onBackPressedDispatcher.onBackPressed()
             }
         })
         binding.login.setOnClickListener(object : View.OnClickListener {

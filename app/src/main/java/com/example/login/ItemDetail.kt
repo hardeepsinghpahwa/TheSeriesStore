@@ -52,17 +52,11 @@ class ItemDetail : AppCompatActivity() {
         window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
 
-        binding.back.setOnClickListener(object : View.OnClickListener {
-            override fun onClick(v: View) {
-                onBackPressed()
-            }
-        })
-        binding.cart.setOnClickListener(object : View.OnClickListener {
-            override fun onClick(v: View) {
-                startActivity(Intent(this@ItemDetail, Cart::class.java))
-                CustomIntent.customType(this@ItemDetail, "fadein-to-fadeout")
-            }
-        })
+        binding.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
+        binding.cart.setOnClickListener {
+            startActivity(Intent(this@ItemDetail, Cart::class.java))
+            CustomIntent.customType(this@ItemDetail, "fadein-to-fadeout")
+        }
 
         //id = "01";
         id = intent.getStringExtra("id")!!

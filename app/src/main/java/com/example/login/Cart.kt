@@ -117,7 +117,7 @@ class Cart : AppCompatActivity() {
 
         binding.back.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View) {
-                onBackPressed()
+                onBackPressedDispatcher.onBackPressed()
             }
         })
         FirebaseDatabase.getInstance().reference.child("Profiles")

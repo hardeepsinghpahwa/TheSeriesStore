@@ -139,7 +139,7 @@ class VerifyOtp : AppCompatActivity() {
                         .setHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
                         .setCornerRadius(10, 0)
                         .sneak(R.color.teal_200)
-                onBackPressed()
+                onBackPressedDispatcher.onBackPressed()
             }
 
             public override fun onCodeSent(s: String, forceResendingToken: ForceResendingToken) {

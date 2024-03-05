@@ -61,7 +61,7 @@ class Address : AppCompatActivity() {
 
 
         binding.back.setOnClickListener {
-            onBackPressed()
+            onBackPressedDispatcher.onBackPressed()
         }
 
         window.setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,

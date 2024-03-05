@@ -29,7 +29,7 @@ class MyOrders : AppCompatActivity() {
     var firebaseRecyclerAdapter: FirebaseRecyclerAdapter<cartitemdetails, CartViewHolder>? = null
     var imgs: ArrayList<Bitmap>? = null
     var i: Int = 0
-    lateinit var binding:ActivityMyOrdersBinding
+    lateinit var binding: ActivityMyOrdersBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -37,99 +37,141 @@ class MyOrders : AppCompatActivity() {
         binding.executePendingBindings()
 
         imgs = ArrayList()
-        binding.back.setOnClickListener(object : View.OnClickListener {
-            public override fun onClick(v: View) {
-                onBackPressed()
-            }
-        })
-        val query: Query = FirebaseDatabase.getInstance().getReference().child("Orders").orderByChild("userid").equalTo(FirebaseAuth.getInstance().getCurrentUser().getUid())
-        val options: FirebaseRecyclerOptions<cartitemdetails> = FirebaseRecyclerOptions.Builder<cartitemdetails>()
-                .setQuery(query, object : SnapshotParser<cartitemdetails?> {
-                    public override fun parseSnapshot(snapshot: DataSnapshot): cartitemdetails {
-                        return cartitemdetails(snapshot.child("size").getValue(String::class.java), snapshot.child("sizename").getValue(String::class.java), snapshot.child("colorcode").getValue(String::class.java), snapshot.child("colorname").getValue(String::class.java), snapshot.getKey(), snapshot.child("image").getValue(String::class.java), snapshot.child("quantity").getValue(Int::class.java))
-                    }
-                }).build()
-        firebaseRecyclerAdapter = object : FirebaseRecyclerAdapter<cartitemdetails, CartViewHolder>(options) {
-            public override fun onViewAttachedToWindow(holder: CartViewHolder) {
-                super.onViewAttachedToWindow(holder)
-                // itemsnumber.setText(firebaseRecyclerAdapter.getItemCount()+" items");
-                //progresslayout.setVisibility(View.GONE);
-                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-            }
+        binding.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
-            override fun onBindViewHolder(holder: CartViewHolder, @SuppressLint("RecyclerView") position: Int, model: cartitemdetails) {
-                imgs = ArrayList()
-                if (position % 2 != 0) {
-                    holder.itemView.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.lightgrey))
+        val query: Query =
+            FirebaseDatabase.getInstance().reference.child("Orders").orderByChild("userid").equalTo(
+                FirebaseAuth.getInstance().currentUser!!.uid
+            )
+        val options: FirebaseRecyclerOptions<cartitemdetails> =
+            FirebaseRecyclerOptions.Builder<cartitemdetails>()
+                .setQuery(
+                    query
+                ) { snapshot ->
+                    cartitemdetails(
+                        snapshot.child("size").getValue(String::class.java),
+                        snapshot.child("sizename").getValue(String::class.java),
+                        snapshot.child("colorcode").getValue(String::class.java),
+                        snapshot.child("colorname").getValue(String::class.java),
+                        snapshot.key,
+                        snapshot.child("image").getValue(String::class.java),
+                        snapshot.child("quantity").getValue(Int::class.java)
+                    )
+                }.build()
+        firebaseRecyclerAdapter =
+            object : FirebaseRecyclerAdapter<cartitemdetails, CartViewHolder>(options) {
+                override fun onViewAttachedToWindow(holder: CartViewHolder) {
+                    super.onViewAttachedToWindow(holder)
+                    // itemsnumber.setText(firebaseRecyclerAdapter.getItemCount()+" items");
+                    //progresslayout.setVisibility(View.GONE);
+                    window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
                 }
-                firebaseRecyclerAdapter!!.getRef(position).child("tracking").getRef().orderByChild("timestamp").addListenerForSingleValueEvent(object : ValueEventListener {
-                    public override fun onDataChange(snapshot: DataSnapshot) {
-                        for (dataSnapshot: DataSnapshot in snapshot.getChildren()) {
-                            holder.status.setText(dataSnapshot.child("text").getValue(String::class.java) + ", " + getTime((dataSnapshot.child("timestamp").getValue(Long::class.java))!!))
-                            break
-                        }
+
+                override fun onBindViewHolder(
+                    holder: CartViewHolder,
+                    @SuppressLint("RecyclerView") position: Int,
+                    model: cartitemdetails
+                ) {
+                    imgs = ArrayList()
+                    if (position % 2 != 0) {
+                        holder.itemView.setBackgroundColor(
+                            ContextCompat.getColor(
+                                applicationContext,
+                                R.color.lightgrey
+                            )
+                        )
                     }
-
-                    public override fun onCancelled(error: DatabaseError) {}
-                })
-                firebaseRecyclerAdapter!!.getRef(position).child("items").addListenerForSingleValueEvent(object : ValueEventListener {
-                    public override fun onDataChange(snapshot: DataSnapshot) {
-                        /* itemdetails itemdetails = snapshot.getValue(com.example.login.Fragments.itemdetails.class);
-
-                        holder.name.setText(itemdetails.getName());
-                        Format format = NumberFormat.getCurrencyInstance(new Locale("en", "in"));
-                        holder.price.setText(format.format(new BigDecimal(itemdetails.getPrice())));
-*/
-                        // holder.product.setText(itemdetails.getProduct());
-
-                        // holder.quantity.setText(""+model.getQuantity());
-                        val cartitemdetails: cartitemdetails? = snapshot.getValue(cartitemdetails::class.java)
-                        if (snapshot.getChildrenCount() == 1L) {
-                            holder.itemsnum.setVisibility(View.GONE)
-                        } else {
-                            holder.itemsnum.setText("+ " + (snapshot.getChildrenCount() - 1) + " items")
-                        }
-                        snapshot.getRef().addListenerForSingleValueEvent(object : ValueEventListener {
-                            public override fun onDataChange(snapshot: DataSnapshot) {
-                                for (dataSnapshot: DataSnapshot in snapshot.getChildren()) {
-                                    Glide.with(getApplicationContext()).load(dataSnapshot.child("image").getValue(String::class.java)).into(holder.image)
-                                    holder.specs.setText("Size : " + dataSnapshot.child("size").getValue(String::class.java) + ", " + dataSnapshot.child("colorname").getValue(String::class.java))
-                                    FirebaseDatabase.getInstance().getReference().child("Items").child((dataSnapshot.child("id").getValue(String::class.java))!!).addListenerForSingleValueEvent(object : ValueEventListener {
-                                        public override fun onDataChange(snapshot: DataSnapshot) {
-                                            val itemdetails: itemdetails? = snapshot.getValue(itemdetails::class.java)
-                                            i = 0
-                                            holder.name.setText(itemdetails!!.name)
-                                        }
-
-                                        public override fun onCancelled(error: DatabaseError) {}
-                                    })
+                    firebaseRecyclerAdapter!!.getRef(position)
+                        .child("tracking").ref.orderByChild("timestamp")
+                        .addListenerForSingleValueEvent(object : ValueEventListener {
+                            override fun onDataChange(snapshot: DataSnapshot) {
+                                for (dataSnapshot: DataSnapshot in snapshot.children) {
+                                    holder.status.text = dataSnapshot.child("text")
+                                        .getValue(String::class.java) + "\n" + getTime(
+                                        (dataSnapshot.child(
+                                            "timestamp"
+                                        ).getValue(Long::class.java))!!
+                                    )
                                     break
                                 }
                             }
 
-                            public override fun onCancelled(error: DatabaseError) {}
+                            override fun onCancelled(error: DatabaseError) {}
                         })
-                    }
+                    firebaseRecyclerAdapter!!.getRef(position).child("items")
+                        .addListenerForSingleValueEvent(object : ValueEventListener {
+                            override fun onDataChange(snapshot: DataSnapshot) {
+                                /* itemdetails itemdetails = snapshot.getValue(com.example.login.Fragments.itemdetails.class);
 
-                    public override fun onCancelled(error: DatabaseError) {}
-                })
-                holder.itemView.setOnClickListener(object : View.OnClickListener {
-                    public override fun onClick(v: View) {
-                        val intent: Intent = Intent(this@MyOrders, ViewOrder::class.java)
+                                holder.name.setText(itemdetails.getName());
+                                Format format = NumberFormat.getCurrencyInstance(new Locale("en", "in"));
+                                holder.price.setText(format.format(new BigDecimal(itemdetails.getPrice())));
+        */
+                                // holder.product.setText(itemdetails.getProduct());
+
+                                // holder.quantity.setText(""+model.getQuantity());
+                                val cartitemdetails: cartitemdetails? =
+                                    snapshot.getValue(cartitemdetails::class.java)
+                                if (snapshot.childrenCount == 1L) {
+                                    holder.itemsnum.visibility = View.GONE
+                                } else {
+                                    holder.itemsnum.text =
+                                        "+ " + (snapshot.childrenCount - 1) + " items"
+                                }
+                                snapshot.ref.addListenerForSingleValueEvent(object :
+                                    ValueEventListener {
+                                    override fun onDataChange(snapshot: DataSnapshot) {
+                                        for (dataSnapshot: DataSnapshot in snapshot.children) {
+                                            Glide.with(applicationContext).load(
+                                                dataSnapshot.child("image")
+                                                    .getValue(String::class.java)
+                                            ).into(holder.image)
+                                            holder.specs.text =
+                                                "Size : " + dataSnapshot.child("size")
+                                                    .getValue(String::class.java) + ", " + dataSnapshot.child(
+                                                    "colorname"
+                                                ).getValue(String::class.java)
+                                            FirebaseDatabase.getInstance().reference.child("Items")
+                                                .child(
+                                                    (dataSnapshot.child("id")
+                                                        .getValue(String::class.java))!!
+                                                ).addListenerForSingleValueEvent(object :
+                                                ValueEventListener {
+                                                override fun onDataChange(snapshot: DataSnapshot) {
+                                                    val itemdetails: itemdetails? =
+                                                        snapshot.getValue(itemdetails::class.java)
+                                                    i = 0
+                                                    holder.name.text = itemdetails!!.name
+                                                }
+
+                                                override fun onCancelled(error: DatabaseError) {}
+                                            })
+                                            break
+                                        }
+                                    }
+
+                                    override fun onCancelled(error: DatabaseError) {}
+                                })
+                            }
+
+                            override fun onCancelled(error: DatabaseError) {}
+                        })
+                    holder.itemView.setOnClickListener {
+                        val intent = Intent(this@MyOrders, ViewOrder::class.java)
                         intent.putExtra("id", firebaseRecyclerAdapter!!.getItem(position).id)
                         startActivity(intent)
                         CustomIntent.customType(this@MyOrders, "left-to-right")
                     }
-                })
-            }
+                }
 
-            public override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CartViewHolder {
-                val view: View = LayoutInflater.from(parent.getContext()).inflate(R.layout.order, parent, false)
-                return CartViewHolder(view)
+                override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CartViewHolder {
+                    val view: View =
+                        LayoutInflater.from(parent.context).inflate(R.layout.order, parent, false)
+                    return CartViewHolder(view)
+                }
             }
-        }
-        binding.ordersrecyview.setLayoutManager(LinearLayoutManager(getApplicationContext()))
-        binding.ordersrecyview.setAdapter(firebaseRecyclerAdapter)
+        binding.ordersrecyview.layoutManager = LinearLayoutManager(applicationContext)
+        binding.ordersrecyview.adapter = firebaseRecyclerAdapter
     }
 
     override fun onResume() {
@@ -137,12 +179,12 @@ class MyOrders : AppCompatActivity() {
         firebaseRecyclerAdapter!!.startListening()
     }
 
-    public override fun onBackPressed() {
+    override fun onBackPressed() {
         super.onBackPressed()
         CustomIntent.customType(this@MyOrders, "right-to-left")
     }
 
-    inner class CartViewHolder constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class CartViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var name: TextView
         var specs: TextView
         var itemsnum: TextView
@@ -160,8 +202,8 @@ class MyOrders : AppCompatActivity() {
 
     private fun getTime(time: Long): String {
         val c: Calendar = Calendar.getInstance()
-        c.setTimeInMillis(time)
-        val d: Date = c.getTime()
+        c.timeInMillis = time
+        val d: Date = c.time
         val sdf: SimpleDateFormat = SimpleDateFormat("dd MMMM yyyy, hh:mm aa")
         return sdf.format(d)
     }

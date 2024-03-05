@@ -22,6 +22,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.daimajia.androidanimations.library.Techniques
 import com.daimajia.androidanimations.library.YoYo
+import com.example.login.AllProductScreen
 import com.example.login.Cart
 import com.example.login.Home
 import com.example.login.ItemDetail
@@ -81,7 +82,7 @@ class HomeFragment : Fragment() {
                 override fun onCancelled(error: DatabaseError) {}
             })
         binding.tshirtsseeall.setOnClickListener {
-
+            startActivity(Intent(activity!!,AllProductScreen::class.java))
         }
         binding.shopbyseriesseeall.setOnClickListener {
             bottomNavigationView.selectedItemId =

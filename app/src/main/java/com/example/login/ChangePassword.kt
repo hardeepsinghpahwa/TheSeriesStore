@@ -29,7 +29,7 @@ class ChangePassword constructor() : AppCompatActivity() {
 
         binding.back.setOnClickListener(object : View.OnClickListener {
             public override fun onClick(v: View) {
-                onBackPressed()
+                onBackPressedDispatcher.onBackPressed()
             }
         })
         binding.changepassword.setOnClickListener(object : View.OnClickListener {
