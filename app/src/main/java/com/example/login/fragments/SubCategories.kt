@@ -104,10 +104,11 @@ class SubCategories : Fragment() {
                         CustomIntent.customType(activity, "left-to-right")
                     }
 
-                    if(position==0){
-                        val animation = AnimationUtils.loadLayoutAnimation(activity, R.anim.layoutanim)
-                        binding.productsrecyview.layoutAnimation = animation
+                    if (position == 0) {
                         binding.progressbar.visibility = View.GONE
+                        val animation =
+                            AnimationUtils.loadLayoutAnimation(activity, R.anim.layoutanim)
+                        binding.productsrecyview.layoutAnimation = animation
                     }
                 }
 

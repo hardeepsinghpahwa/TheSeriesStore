@@ -115,11 +115,7 @@ class Cart : AppCompatActivity() {
                 )
             )
 
-        binding.back.setOnClickListener(object : View.OnClickListener {
-            override fun onClick(v: View) {
-                onBackPressedDispatcher.onBackPressed()
-            }
-        })
+        binding.back.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
         FirebaseDatabase.getInstance().reference.child("Profiles")
             .child(FirebaseAuth.getInstance().currentUser!!.uid).child("Cart")
             .addListenerForSingleValueEvent(object : ValueEventListener {
@@ -145,7 +141,7 @@ class Cart : AppCompatActivity() {
                             .addListenerForSingleValueEvent(object : ValueEventListener {
                                 override fun onDataChange(snapshot2: DataSnapshot) {
                                     t += ((dataSnapshot.child("quantity")
-                                        .getValue(Int::class.java)))!! * Integer.valueOf(
+                                         .getValue(Int::class.java)))!! * Integer.valueOf(
                                         snapshot2.child("price").getValue(String::class.java)!!
                                     )
                                     val format: Format =
